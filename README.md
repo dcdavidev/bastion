@@ -26,11 +26,23 @@ Bastion is a single-user, open-source E2EE secrets vault built with Go. It provi
    npm install
    ```
 
-## 🛠 Tech Stack
-- **Backend:** Go (Golang)
-- **Frontend:** React + TypeScript (Vite)
-- **Database:** PostgreSQL
-- **Security:** Argon2id, AES-256-GCM
+## 🛡 Tech Stack & Architecture
+- **Backend:** Go (Golang) 1.24+ with [chi](https://github.com/go-chi/chi) router.
+- **Frontend:** React + TypeScript (Vite).
+- **Database:** PostgreSQL with [pgx](https://github.com/jackc/pgx) driver.
+- **Security:**
+  - **Argon2id:** For secure admin password hashing and key derivation.
+  - **AES-256-GCM:** For authenticated encryption (Key Wrapping).
+  - **Blind Backend:** Secrets are never processed in plaintext by the server.
+
+## 🏗 Project Structure
+- `cmd/server/`: Backend entrypoint and server configuration.
+- `internal/api/`: REST API handlers (incoming).
+- `internal/auth/`: Admin authentication and authorization.
+- `internal/crypto/`: Cryptographic primitives (encryption/decryption).
+- `internal/db/`: Database connection and pooling.
+- `internal/models/`: Data structures and domain models.
+- `frontend/`: React application.
 
 ## 🤝 Contributing
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our development process.

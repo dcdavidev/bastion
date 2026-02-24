@@ -11,16 +11,20 @@ To ensure a smooth development experience, please make sure you have the followi
 - **Node.js 24+**: For the React frontend.
 - **pnpm** (preferred) or **npm**: Package manager for the frontend.
 - **Docker**: Used to run PostgreSQL locally for development.
-- **VS Code**: Recommended editor with the following extensions:
-  - Go (`golang.go`)
-  - ESLint (`dbaeumer.vscode-eslint`)
-  - Prettier (`esbenp.prettier-vscode`)
-  - EditorConfig (`editorconfig.editorconfig`)
+- **VS Code**: Recommended editor with extensions.
+
+### Backend Tech Details
+- **Router**: [chi v5](https://github.com/go-chi/chi)
+- **Environment Management**: [godotenv](https://github.com/joho/godotenv)
+- **Database Driver**: [pgx v5](https://github.com/jackc/pgx)
 
 ### Setup Environment
 1. Follow the installation steps in the [README.md](README.md).
-2. VS Code users: Accept the recommended extensions when opening the project.
-3. Ensure `.editorconfig` is respected by your IDE.
+2. Copy `.env.example` to `.env` and fill in the required variables:
+   ```bash
+   cp .env.example .env
+   ```
+3. VS Code users: Accept the recommended extensions when opening the project.
 
 ## 📜 Coding Standards
 - **Go**: Follow standard Go Layout and idiomatic patterns.
