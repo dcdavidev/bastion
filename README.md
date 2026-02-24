@@ -51,6 +51,11 @@ The application requires the following environment variables (see `.env.example`
 | `JWT_SECRET`          | Secret key used to sign session tokens.             |
 | `MASTER_KEY`          | 32-byte hex-encoded key for the Key Wrapping layer. |
 
+### Security Model & Variables
+- **Admin Auth:** Access is granted by verifying a password against the `ADMIN_PASSWORD_HASH` using Argon2id. No user data is stored in the database for the admin.
+- **Key Wrapping:** The `MASTER_KEY` is the root of trust. It is used to encrypt (wrap) per-project or per-client data keys. This ensures that even if the database is compromised, secrets remain encrypted.
+- **Blind Backend:** Plaintext secrets never touch the server. Encryption happens at the edge (CLI or Frontend).
+
 ## 🏗 Project Structure
 
 - `cmd/server/`: Backend entrypoint and server configuration.

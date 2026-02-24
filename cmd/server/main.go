@@ -26,6 +26,9 @@ func main() {
 	}
 	defer database.Close()
 
+	// Initialize API Handler
+	h := api.NewHandler(database)
+
 	r := chi.NewRouter()
 
 	// Standard middleware stack
@@ -37,7 +40,17 @@ func main() {
 
 	// API Routes
 	r.Route("/api/v1", func(r chi.Router) {
+		// Public routes
 		r.Post("/auth/login", api.LoginHandler)
+
+		// Protected routes
+		r.Group(func(r chi.Router) {
+			r.Use(auth.JWTMiddleware)
+			
+			r.Get("/clients", h.ListClients)
+			r.Post("/clients", h.CreateClient)
+			r.Delete("/clients/{id}", h.DeleteClient)
+		})
 	})
 
 	// Health check
