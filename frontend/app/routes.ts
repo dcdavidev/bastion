@@ -14,7 +14,10 @@ export default [
     layout("components/dashboard-layout.tsx", [
       route("dashboard", "routes/dashboard/overview.tsx"),
       route("dashboard/clients", "routes/dashboard/clients.tsx"),
+      route("dashboard/clients/:clientId", "routes/dashboard/projects.tsx"),
+      route("dashboard/projects/:projectId", "routes/dashboard/secrets.tsx"),
       route("dashboard/audit", "routes/dashboard/audit.tsx"),
+      route("dashboard/collaborators", "routes/dashboard/collaborators.tsx"),
     ]),
   ]),
 

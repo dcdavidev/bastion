@@ -11,6 +11,15 @@ importers:
       '@fontsource-variable/inter':
         specifier: ^5.2.8
         version: 5.2.8
+      '@fontsource-variable/kode-mono':
+        specifier: ^5.2.8
+        version: 5.2.8
+      '@fontsource/inknut-antiqua':
+        specifier: ^5.2.8
+        version: 5.2.8
+      '@fontsource/momo-trust-display':
+        specifier: ^5.2.1
+        version: 5.2.1
       '@pittorica/react':
         specifier: ^0.26.3
         version: 0.26.3(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -23,6 +32,9 @@ importers:
       '@react-router/serve':
         specifier: 7.12.0
         version: 7.12.0(react-router@7.12.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(typescript@5.9.3)
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
       isbot:
         specifier: ^5.1.31
         version: 5.1.35
@@ -754,6 +766,15 @@ packages:
 
   '@fontsource-variable/inter@5.2.8':
     resolution: {integrity: sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ==}
+
+  '@fontsource-variable/kode-mono@5.2.8':
+    resolution: {integrity: sha512-X1O4RAIPyP4Vm8rVoKHirg3amVdE2XvIAQUvDRU17aCzSUz648/9w2KJafH1vK6g0uy7U8PrOCc1I11riXhHwQ==}
+
+  '@fontsource/inknut-antiqua@5.2.8':
+    resolution: {integrity: sha512-Ldkr6Zx5wb4wMtI1QDy7NeawFI3rHSawR/Z07ohkJbPF0gd1Df3ircCsEyg8U2zwCCrRXOpbBD/Mdm+bEC+P+A==}
+
+  '@fontsource/momo-trust-display@5.2.1':
+    resolution: {integrity: sha512-s2iPIYBntsjiqlFGmof3pEx8qOXAj70QXib82HfSu+l0pKwJvIEtObSrje1Qcgs+MBtaGDIUFofgfX6dIUKwkw==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -2430,6 +2451,9 @@ packages:
   has-tostringtag@1.0.2:
     resolution: {integrity: sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==}
     engines: {node: '>= 0.4'}
+
+  hash-wasm@4.12.0:
+    resolution: {integrity: sha512-+/2B2rYLb48I/evdOIhP+K/DD2ca2fgBjp6O+GBEnCDk2e4rpeXIK8GvIyRPjTezgmWn9gmKwkQjjx6BtqDHVQ==}
 
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
@@ -4605,6 +4629,12 @@ snapshots:
 
   '@fontsource-variable/inter@5.2.8': {}
 
+  '@fontsource-variable/kode-mono@5.2.8': {}
+
+  '@fontsource/inknut-antiqua@5.2.8': {}
+
+  '@fontsource/momo-trust-display@5.2.1': {}
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.7':
@@ -6672,6 +6702,8 @@ snapshots:
   has-tostringtag@1.0.2:
     dependencies:
       has-symbols: 1.1.0
+
+  hash-wasm@4.12.0: {}
 
   hasown@2.0.2:
     dependencies:

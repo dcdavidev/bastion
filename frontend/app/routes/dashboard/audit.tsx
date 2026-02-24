@@ -1,0 +1,112 @@
+import { useState, useEffect } from "react";
+import { Box, Text, Stack, Card, Button, Table, Input, Select } from "@pittorica/react";
+import { useAuth } from "../../contexts/auth-context";
+import { Search, Filter } from "lucide-react";
+
+interface AuditLog {
+  id: string;
+  action: string;
+  target_type: string;
+  target_id: string;
+  metadata: any;
+  created_at: string;
+}
+
+export default function AuditLogs() {
+  const [logs, setLogs] = useState<AuditLog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [actionFilter, setActionFilter] = useState("");
+  const [targetFilter, setTargetFilter] = useState("");
+  const { token } = useAuth();
+
+  useEffect(() => {
+    fetchLogs();
+  }, [token, actionFilter, targetFilter]);
+
+  async function fetchLogs() {
+    setLoading(true);
+    let url = `/api/v1/audit?limit=100`;
+    if (actionFilter) url += `&action=${actionFilter}`;
+    if (targetFilter) url += `&target_type=${targetFilter}`;
+
+    try {
+      const response = await fetch(url, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setLogs(data || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch logs", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <Stack gap="6">
+      <Box>
+        <Text size="6" weight="bold">Audit Logs</Text>
+        <Text color="muted">Full history of sensitive operations within the vault.</Text>
+      </Box>
+
+      <Card padding="4">
+        <Stack direction="row" gap="4" alignItems="center">
+          <Box display="flex" alignItems="center" gap="2" flex="1">
+            <Filter size={16} color="muted" />
+            <Input 
+              placeholder="Filter by Action (e.g. READ_SECRET)" 
+              value={actionFilter}
+              onChange={(e) => setActionFilter(e.target.value)}
+            />
+          </Box>
+          <Box flex="1">
+            <Input 
+              placeholder="Filter by Target (e.g. PROJECT)" 
+              value={targetFilter}
+              onChange={(e) => setTargetFilter(e.target.value)}
+            />
+          </Box>
+          <Button variant="ghost" onClick={() => { setActionFilter(""); setTargetFilter(""); }}>Clear</Button>
+        </Stack>
+      </Card>
+
+      <Card padding="0" overflow="hidden">
+        <Table>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Timestamp</Table.HeaderCell>
+              <Table.HeaderCell>Action</Table.HeaderCell>
+              <Table.HeaderCell>Target</Table.HeaderCell>
+              <Table.HeaderCell>Metadata</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {loading ? (
+              <Table.Row><Table.Cell colSpan={4} textAlign="center"><Box padding="8"><Text color="muted">Loading logs...</Text></Box></Table.Cell></Table.Row>
+            ) : logs.length === 0 ? (
+              <Table.Row><Table.Cell colSpan={4} textAlign="center"><Box padding="8"><Text color="muted">No logs found.</Text></Box></Table.Cell></Table.Row>
+            ) : logs.map((log) => (
+              <Table.Row key={log.id}>
+                <Table.Cell><Text size="1" color="muted">{new Date(log.created_at).toLocaleString()}</Text></Table.Cell>
+                <Table.Cell><Text weight="bold" size="2">{log.action}</Text></Table.Cell>
+                <Table.Cell>
+                  <Stack gap="0">
+                    <Text size="2">{log.target_type}</Text>
+                    <Text size="1" color="muted" family="mono">{log.target_id}</Text>
+                  </Stack>
+                </Table.Cell>
+                <Table.Cell>
+                  <Text size="1" family="mono" color="muted">
+                    {JSON.stringify(log.metadata)}
+                  </Text>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
+      </Card>
+    </Stack>
+  );
+}
