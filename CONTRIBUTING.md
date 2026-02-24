@@ -24,7 +24,12 @@ To ensure a smooth development experience, please make sure you have the followi
    ```bash
    cp .env.example .env
    ```
-3. VS Code users: Accept the recommended extensions when opening the project.
+3. Initialize the database schema:
+   ```bash
+   # You can run this directly if you have psql installed
+   psql $DATABASE_URL -f internal/db/migrations/000001_initial_schema.up.sql
+   ```
+4. VS Code users: Accept the recommended extensions when opening the project.
 
 ## 📜 Coding Standards
 - **Go**: Follow standard Go Layout and idiomatic patterns.
