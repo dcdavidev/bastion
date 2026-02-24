@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"path/filepath"
 
 	"github.com/dcdavidev/bastion/internal/crypto"
 	"github.com/dcdavidev/bastion/internal/models"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )
 
@@ -28,13 +28,14 @@ var runCmd = &cobra.Command{
 			return fmt.Errorf("not authenticated. Please run 'bastion login' first: %w", err)
 		}
 
-		fmt.Print("Enter Admin Password to unlock vault: ")
-		var password string
-		fmt.Scanln(&password)
+		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Admin Password to unlock vault")
+
+		spinner, _ := pterm.DefaultSpinner.Start("Fetching and decrypting secrets...")
 
 		// 1. Fetch Vault Config (Wrapped Master Key and Salt)
 		vaultConfig, err := fetchVaultConfig(serverURL, token)
 		if err != nil {
+			spinner.Fail("Failed to fetch vault config")
 			return err
 		}
 
@@ -45,39 +46,48 @@ var runCmd = &cobra.Command{
 		
 		masterKey, err := crypto.UnwrapKey(adminKEK, wrappedMK)
 		if err != nil {
-			return fmt.Errorf("failed to unlock vault: invalid password or corrupted master key")
+			spinner.Fail("Failed to unlock vault: invalid password")
+			return fmt.Errorf("failed to unlock vault: invalid password")
 		}
 
 		// 3. Fetch Project and its Wrapped Data Key
 		project, err := fetchProject(serverURL, token, projectID)
 		if err != nil {
+			spinner.Fail("Project not found")
 			return err
 		}
 
 		wrappedDK, _ := hex.DecodeString(project.WrappedDataKey)
 		dataKey, err := crypto.UnwrapKey(masterKey, wrappedDK)
 		if err != nil {
+			spinner.Fail("Failed to unwrap project data key")
 			return fmt.Errorf("failed to unwrap project data key: %w", err)
 		}
 
 		// 4. Fetch and Decrypt Secrets
 		encryptedSecrets, err := fetchEncryptedSecrets(serverURL, token, projectID)
 		if err != nil {
+			spinner.Fail("Failed to fetch secrets")
 			return err
 		}
 
 		env := os.Environ()
+		decryptedCount := 0
 		for _, s := range encryptedSecrets {
 			ciphertext, _ := hex.DecodeString(s.Value)
 			plaintext, err := crypto.Decrypt(dataKey, ciphertext)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Warning: failed to decrypt secret %s: %v\n", s.Key, err)
+				pterm.Warning.Printf("Failed to decrypt secret %s: %v\n", s.Key, err)
 				continue
 			}
 			env = append(env, fmt.Sprintf("%s=%s", s.Key, string(plaintext)))
+			decryptedCount++
 		}
 
+		spinner.Success(fmt.Sprintf("Injected %d secrets into environment.", decryptedCount))
+
 		// 5. Execute command
+		pterm.Info.Printf("Executing: %v\n\n", args)
 		externalCmd := exec.Command(args[0], args[1:]...)
 		externalCmd.Env = env
 		externalCmd.Stdout = os.Stdout

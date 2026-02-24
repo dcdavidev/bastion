@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/dcdavidev/bastion/internal/crypto"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )
 
@@ -27,18 +28,20 @@ var setCmd = &cobra.Command{
 			return fmt.Errorf("not authenticated: %w", err)
 		}
 
-		fmt.Print("Enter Admin Password to unlock vault: ")
-		var password string
-		fmt.Scanln(&password)
+		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Admin Password to unlock vault")
+
+		spinner, _ := pterm.DefaultSpinner.Start(fmt.Sprintf("Encrypting and storing secret '%s'...", setKey))
 
 		// 1. Fetch Vault Config and Project Data Key
 		vaultConfig, err := fetchVaultConfig(serverURL, token)
 		if err != nil {
+			spinner.Fail("Failed to fetch vault config")
 			return err
 		}
 
 		project, err := fetchProject(serverURL, token, projectID)
 		if err != nil {
+			spinner.Fail("Project not found")
 			return err
 		}
 
@@ -49,6 +52,7 @@ var setCmd = &cobra.Command{
 		
 		masterKey, err := crypto.UnwrapKey(adminKEK, wrappedMK)
 		if err != nil {
+			spinner.Fail("Failed to unlock vault: invalid password")
 			return fmt.Errorf("failed to unlock vault: invalid password")
 		}
 
@@ -56,14 +60,18 @@ var setCmd = &cobra.Command{
 		wrappedDK, _ := hex.DecodeString(project.WrappedDataKey)
 		dataKey, err := crypto.UnwrapKey(masterKey, wrappedDK)
 		if err != nil {
+			spinner.Fail("Failed to unwrap project data key")
 			return fmt.Errorf("failed to unwrap project data key: %w", err)
 		}
 
 		// 4. Encrypt Secret Value
 		ciphertext, err := crypto.Encrypt(dataKey, []byte(setValue))
 		if err != nil {
+			spinner.Fail("Encryption failed")
 			return fmt.Errorf("encryption failed: %w", err)
 		}
+
+		spinner.UpdateText("Uploading encrypted secret to server...")
 
 		// 5. Upload to Server
 		payload, _ := json.Marshal(map[string]string{
@@ -78,16 +86,17 @@ var setCmd = &cobra.Command{
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
+			spinner.Fail("Connection error")
 			return err
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusCreated {
+			spinner.Fail(fmt.Sprintf("Failed to store secret: %s", resp.Status))
 			return fmt.Errorf("failed to store secret: %s", resp.Status)
 		}
 
-		fmt.Printf("Secret '%s' stored successfully in project %s
-", setKey, projectID)
+		spinner.Success(fmt.Sprintf("Secret '%s' stored successfully in project %s", setKey, projectID))
 		return nil
 	},
 }

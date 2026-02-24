@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/dcdavidev/bastion/internal/crypto"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )
 
@@ -27,13 +28,14 @@ var createProjectCmd = &cobra.Command{
 			return fmt.Errorf("not authenticated: %w", err)
 		}
 
-		fmt.Print("Enter Admin Password to unlock vault: ")
-		var password string
-		fmt.Scanln(&password)
+		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Admin Password to unlock vault")
+
+		spinner, _ := pterm.DefaultSpinner.Start("Unlocking vault and generating data key...")
 
 		// 1. Fetch Vault Config
 		vaultConfig, err := fetchVaultConfig(serverURL, token)
 		if err != nil {
+			spinner.Fail("Failed to fetch vault config")
 			return err
 		}
 
@@ -44,19 +46,24 @@ var createProjectCmd = &cobra.Command{
 		
 		masterKey, err := crypto.UnwrapKey(adminKEK, wrappedMK)
 		if err != nil {
+			spinner.Fail("Failed to unlock vault: invalid password")
 			return fmt.Errorf("failed to unlock vault: invalid password")
 		}
 
 		// 3. Generate and Wrap a new Data Key for the project
 		dataKey, err := crypto.GenerateRandomKey()
 		if err != nil {
+			spinner.Fail("Failed to generate data key")
 			return err
 		}
 
 		wrappedDK, err := crypto.WrapKey(masterKey, dataKey)
 		if err != nil {
+			spinner.Fail("Failed to wrap data key")
 			return err
 		}
+
+		spinner.UpdateText(fmt.Sprintf("Creating project '%s' on server...", createProjectName))
 
 		// 4. Send to server
 		payload, _ := json.Marshal(map[string]string{
@@ -71,16 +78,18 @@ var createProjectCmd = &cobra.Command{
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
+			spinner.Fail("Connection error")
 			return err
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusCreated {
+			spinner.Fail(fmt.Sprintf("Failed to create project: %s", resp.Status))
 			return fmt.Errorf("failed to create project: %s", resp.Status)
 		}
 
-		fmt.Printf("Project '%s' created successfully with its own encrypted data key.
-", createProjectName)
+		spinner.Success(fmt.Sprintf("Project '%s' created successfully!", createProjectName))
+		pterm.Info.Println("This project now has its own unique E2EE data key.")
 		return nil
 	},
 }

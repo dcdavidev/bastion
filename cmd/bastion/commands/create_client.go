@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )
 
@@ -22,6 +23,8 @@ var createClientCmd = &cobra.Command{
 			return fmt.Errorf("not authenticated: %w", err)
 		}
 
+		spinner, _ := pterm.DefaultSpinner.Start(fmt.Sprintf("Creating client '%s'...", createClientName))
+
 		// Send to server
 		payload, _ := json.Marshal(map[string]string{
 			"name": createClientName,
@@ -33,11 +36,13 @@ var createClientCmd = &cobra.Command{
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
+			spinner.Fail("Connection error")
 			return err
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusCreated {
+			spinner.Fail(fmt.Sprintf("Failed to create client: %s", resp.Status))
 			return fmt.Errorf("failed to create client: %s", resp.Status)
 		}
 
@@ -47,8 +52,8 @@ var createClientCmd = &cobra.Command{
 		}
 		json.NewDecoder(resp.Body).Decode(&client)
 
-		fmt.Printf("Client '%s' created successfully (ID: %s)
-", client.Name, client.ID)
+		spinner.Success(fmt.Sprintf("Client '%s' created successfully!", client.Name))
+		pterm.Info.Printf("ID: %s\n", client.ID)
 		return nil
 	},
 }
