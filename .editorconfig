@@ -28,3 +28,8 @@ max_line_length=100
 [Makefile]
 indent_style=tab
 indent_size=4
+
+# Go
+[*.go]
+indent_style=tab
+indent_size=4
