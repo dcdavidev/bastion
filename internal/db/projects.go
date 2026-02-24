@@ -9,18 +9,19 @@ import (
 )
 
 // CreateProject inserts a new project for a specific client.
-func (db *DB) CreateProject(ctx context.Context, clientID uuid.UUID, name string) (*models.Project, error) {
+func (db *DB) CreateProject(ctx context.Context, clientID uuid.UUID, name string, wrappedKey string) (*models.Project, error) {
 	query := `
-		INSERT INTO projects (client_id, name)
-		VALUES ($1, $2)
-		RETURNING id, client_id, name, created_at, updated_at
+		INSERT INTO projects (client_id, name, wrapped_data_key)
+		VALUES ($1, $2, $3)
+		RETURNING id, client_id, name, wrapped_data_key, created_at, updated_at
 	`
 
 	project := &models.Project{}
-	err := db.Pool.QueryRow(ctx, query, clientID, name).Scan(
+	err := db.Pool.QueryRow(ctx, query, clientID, name, wrappedKey).Scan(
 		&project.ID,
 		&project.ClientID,
 		&project.Name,
+		&project.WrappedDataKey,
 		&project.CreatedAt,
 		&project.UpdatedAt,
 	)
@@ -35,7 +36,7 @@ func (db *DB) CreateProject(ctx context.Context, clientID uuid.UUID, name string
 // GetProjectsByClient returns all projects belonging to a specific client.
 func (db *DB) GetProjectsByClient(ctx context.Context, clientID uuid.UUID) ([]models.Project, error) {
 	query := `
-		SELECT id, client_id, name, created_at, updated_at 
+		SELECT id, client_id, name, wrapped_data_key, created_at, updated_at 
 		FROM projects 
 		WHERE client_id = $1 
 		ORDER BY name ASC
@@ -50,7 +51,7 @@ func (db *DB) GetProjectsByClient(ctx context.Context, clientID uuid.UUID) ([]mo
 	var projects []models.Project
 	for rows.Next() {
 		var p models.Project
-		if err := rows.Scan(&p.ID, &p.ClientID, &p.Name, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.ClientID, &p.Name, &p.WrappedDataKey, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("failed to scan project: %w", err)
 		}
 		projects = append(projects, p)
@@ -61,13 +62,14 @@ func (db *DB) GetProjectsByClient(ctx context.Context, clientID uuid.UUID) ([]mo
 
 // GetProjectByID returns a single project by its ID.
 func (db *DB) GetProjectByID(ctx context.Context, id uuid.UUID) (*models.Project, error) {
-	query := `SELECT id, client_id, name, created_at, updated_at FROM projects WHERE id = $1`
+	query := `SELECT id, client_id, name, wrapped_data_key, created_at, updated_at FROM projects WHERE id = $1`
 
 	project := &models.Project{}
 	err := db.Pool.QueryRow(ctx, query, id).Scan(
 		&project.ID,
 		&project.ClientID,
 		&project.Name,
+		&project.WrappedDataKey,
 		&project.CreatedAt,
 		&project.UpdatedAt,
 	)

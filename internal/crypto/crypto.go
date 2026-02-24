@@ -73,3 +73,22 @@ func GenerateSalt() ([]byte, error) {
 	}
 	return salt, nil
 }
+
+// GenerateRandomKey creates a random 32-byte key for AES-256.
+func GenerateRandomKey() ([]byte, error) {
+	key := make([]byte, keyLen)
+	if _, err := io.ReadFull(rand.Reader, key); err != nil {
+		return nil, err
+	}
+	return key, nil
+}
+
+// WrapKey encrypts a target key using a wrapper key.
+func WrapKey(wrapperKey, targetKey []byte) ([]byte, error) {
+	return Encrypt(wrapperKey, targetKey)
+}
+
+// UnwrapKey decrypts a target key using a wrapper key.
+func UnwrapKey(wrapperKey, wrappedKey []byte) ([]byte, error) {
+	return Decrypt(wrapperKey, wrappedKey)
+}

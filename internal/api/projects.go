@@ -9,8 +9,9 @@ import (
 )
 
 type CreateProjectRequest struct {
-	ClientID uuid.UUID `json:"client_id"`
-	Name     string    `json:"name"`
+	ClientID       uuid.UUID `json:"client_id"`
+	Name           string    `json:"name"`
+	WrappedDataKey string    `json:"wrapped_data_key"`
 }
 
 // CreateProject handles the creation of a new project for a client.
@@ -21,12 +22,12 @@ func (h *Handler) CreateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.ClientID == uuid.Nil || req.Name == "" {
-		http.Error(w, "client_id and name are required", http.StatusBadRequest)
+	if req.ClientID == uuid.Nil || req.Name == "" || req.WrappedDataKey == "" {
+		http.Error(w, "client_id, name and wrapped_data_key are required", http.StatusBadRequest)
 		return
 	}
 
-	project, err := h.DB.CreateProject(r.Context(), req.ClientID, req.Name)
+	project, err := h.DB.CreateProject(r.Context(), req.ClientID, req.Name, req.WrappedDataKey)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

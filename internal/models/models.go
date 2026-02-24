@@ -16,11 +16,12 @@ type Client struct {
 
 // Project represents a group of secrets for a specific client.
 type Project struct {
-	ID        uuid.UUID `json:"id"`
-	ClientID  uuid.UUID `json:"client_id"`
-	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID             uuid.UUID `json:"id"`
+	ClientID       uuid.UUID `json:"client_id"`
+	Name           string    `json:"name"`
+	WrappedDataKey string    `json:"wrapped_data_key,omitempty"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
 }
 
 // Secret represents an encrypted secret stored in the vault.

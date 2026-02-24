@@ -38,6 +38,18 @@ To ensure a smooth development experience, please make sure you have the followi
 
 5. VS Code users: Accept the recommended extensions when opening the project.
 
+## 🛡️ Bastion CLI
+The CLI is located in `cmd/bastion/`. You can build it using:
+```bash
+go build -o bastion ./cmd/bastion
+```
+
+### Basic Commands
+- **Login**: `bastion login --url http://localhost:8080`
+  Authenticates and stores the JWT locally in `~/.bastion/token`.
+- **Run**: `bastion run -p <PROJECT_UUID> -- <command>`
+  Injects secrets into the environment of the specified command.
+
 ## 📜 Coding Standards
 - **Go**: Follow standard Go Layout and idiomatic patterns.
 - **TypeScript**: Use ES Modules, strict typing (no `any`).
