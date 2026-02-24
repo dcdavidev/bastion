@@ -52,3 +52,15 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(LoginResponse{Token: tokenString})
 }
+
+// GetVaultConfigHandler returns the public vault configuration needed for client-side decryption.
+func (h *Handler) GetVaultConfigHandler(w http.ResponseWriter, r *http.Request) {
+	config, err := h.DB.GetVaultConfig(r.Context())
+	if err != nil {
+		http.Error(w, "Vault not initialized", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(config)
+}

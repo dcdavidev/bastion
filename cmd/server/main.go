@@ -47,11 +47,13 @@ func main() {
 		r.Group(func(r chi.Router) {
 			r.Use(auth.JWTMiddleware)
 			
+			r.Get("/vault/config", h.GetVaultConfigHandler)
 			r.Get("/clients", h.ListClients)
 			r.Post("/clients", h.CreateClient)
 			r.Delete("/clients/{id}", h.DeleteClient)
 
 			r.Get("/projects", h.ListProjectsByClient)
+			r.Get("/projects/{id}", h.GetProject)
 			r.Post("/projects", h.CreateProject)
 			r.Delete("/projects/{id}", h.DeleteProject)
 

@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -8,6 +9,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/dcdavidev/bastion/internal/crypto"
+	"github.com/dcdavidev/bastion/internal/models"
 	"github.com/spf13/cobra"
 )
 
@@ -25,19 +28,56 @@ var runCmd = &cobra.Command{
 			return fmt.Errorf("not authenticated. Please run 'bastion login' first: %w", err)
 		}
 
-		// 1. Fetch Secrets (for now we just print them, E2EE logic will follow)
-		secrets, err := fetchSecrets(serverURL, token, projectID)
+		fmt.Print("Enter Admin Password to unlock vault: ")
+		var password string
+		fmt.Scanln(&password)
+
+		// 1. Fetch Vault Config (Wrapped Master Key and Salt)
+		vaultConfig, err := fetchVaultConfig(serverURL, token)
 		if err != nil {
 			return err
 		}
 
-		// 2. Prepare environment
-		env := os.Environ()
-		for key, value := range secrets {
-			env = append(env, fmt.Sprintf("%s=%s", key, value))
+		// 2. Derive Admin KEK and Unwrap Master Key
+		salt, _ := hex.DecodeString(vaultConfig.MasterKeySalt)
+		wrappedMK, _ := hex.DecodeString(vaultConfig.WrappedMasterKey)
+		adminKEK := crypto.DeriveKey([]byte(password), salt)
+		
+		masterKey, err := crypto.UnwrapKey(adminKEK, wrappedMK)
+		if err != nil {
+			return fmt.Errorf("failed to unlock vault: invalid password or corrupted master key")
 		}
 
-		// 3. Execute command
+		// 3. Fetch Project and its Wrapped Data Key
+		project, err := fetchProject(serverURL, token, projectID)
+		if err != nil {
+			return err
+		}
+
+		wrappedDK, _ := hex.DecodeString(project.WrappedDataKey)
+		dataKey, err := crypto.UnwrapKey(masterKey, wrappedDK)
+		if err != nil {
+			return fmt.Errorf("failed to unwrap project data key: %w", err)
+		}
+
+		// 4. Fetch and Decrypt Secrets
+		encryptedSecrets, err := fetchEncryptedSecrets(serverURL, token, projectID)
+		if err != nil {
+			return err
+		}
+
+		env := os.Environ()
+		for _, s := range encryptedSecrets {
+			ciphertext, _ := hex.DecodeString(s.Value)
+			plaintext, err := crypto.Decrypt(dataKey, ciphertext)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Warning: failed to decrypt secret %s: %v\n", s.Key, err)
+				continue
+			}
+			env = append(env, fmt.Sprintf("%s=%s", s.Key, string(plaintext)))
+		}
+
+		// 5. Execute command
 		externalCmd := exec.Command(args[0], args[1:]...)
 		externalCmd.Env = env
 		externalCmd.Stdout = os.Stdout
@@ -48,20 +88,51 @@ var runCmd = &cobra.Command{
 	},
 }
 
-func loadToken() (string, error) {
-	home, err := os.UserHomeDir()
+func fetchVaultConfig(url, token string) (*struct {
+	WrappedMasterKey string `json:"wrapped_master_key"`
+	MasterKeySalt    string `json:"master_key_salt"`
+}, error) {
+	req, _ := http.NewRequest("GET", url+"/api/v1/vault/config", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	configPath := filepath.Join(home, ".bastion", "token")
-	data, err := os.ReadFile(configPath)
-	if err != nil {
-		return "", err
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to fetch vault config: %s", resp.Status)
 	}
-	return string(data), nil
+
+	var config struct {
+		WrappedMasterKey string `json:"wrapped_master_key"`
+		MasterKeySalt    string `json:"master_key_salt"`
+	}
+	json.NewDecoder(resp.Body).Decode(&config)
+	return &config, nil
 }
 
-func fetchSecrets(url, token, projectID string) (map[string]string, error) {
+func fetchProject(url, token, id string) (*models.Project, error) {
+	req, _ := http.NewRequest("GET", url+"/api/v1/projects/"+id, nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to fetch project: %s", resp.Status)
+	}
+
+	var project models.Project
+	json.NewDecoder(resp.Body).Decode(&project)
+	return &project, nil
+}
+
+func fetchEncryptedSecrets(url, token, projectID string) ([]models.Secret, error) {
 	req, _ := http.NewRequest("GET", url+"/api/v1/secrets?project_id="+projectID, nil)
 	req.Header.Set("Authorization", "Bearer "+token)
 
@@ -75,18 +146,9 @@ func fetchSecrets(url, token, projectID string) (map[string]string, error) {
 		return nil, fmt.Errorf("failed to fetch secrets: %s", resp.Status)
 	}
 
-	// This is a simplified placeholder. Real E2EE decryption will be added.
-	var secretsData []struct {
-		Key   string `json:"key"`
-		Value string `json:"value"`
-	}
-	json.NewDecoder(resp.Body).Decode(&secretsData)
-
-	results := make(map[string]string)
-	for _, s := range secretsData {
-		results[s.Key] = s.Value
-	}
-	return results, nil
+	var secrets []models.Secret
+	json.NewDecoder(resp.Body).Decode(&secrets)
+	return secrets, nil
 }
 
 func init() {
