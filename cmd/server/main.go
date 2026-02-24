@@ -63,6 +63,8 @@ func main() {
 			r.Post("/projects", h.CreateProject)
 			r.Delete("/projects/{id}", h.DeleteProject)
 
+			r.Post("/collaborators", h.CreateCollaborator)
+
 			r.Get("/secrets", h.ListSecretsByProject)
 			r.Post("/secrets", h.CreateSecret)
 			r.Get("/secrets/history", h.GetSecretHistory)

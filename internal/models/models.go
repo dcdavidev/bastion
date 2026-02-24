@@ -35,6 +35,17 @@ type Secret struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// User represents an administrator or a collaborator.
+type User struct {
+	ID           uuid.UUID `json:"id"`
+	Username     string    `json:"username"`
+	PasswordHash string    `json:"-"`
+	Salt         string    `json:"-"`
+	Role         string    `json:"role"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}
+
 // AuditLog tracks sensitive operations in the vault.
 type AuditLog struct {
 	ID         uuid.UUID              `json:"id"`
