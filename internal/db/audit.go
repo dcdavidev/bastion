@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
+	"github.com/dcdavidev/bastion/internal/models"
 	"github.com/google/uuid"
 )
 
@@ -27,16 +29,53 @@ func (db *DB) LogEvent(ctx context.Context, action, targetType string, targetID 
 	return nil
 }
 
-// GetAuditLogs returns the latest audit events.
-func (db *DB) GetAuditLogs(ctx context.Context, limit int) ([]models.AuditLog, error) {
+// AuditFilter defines the available filters for audit logs.
+type AuditFilter struct {
+	Action     string
+	TargetType string
+	FromDate   *time.Time
+	ToDate     *time.Time
+	Limit      int
+}
+
+// GetAuditLogs returns filtered audit events.
+func (db *DB) GetAuditLogs(ctx context.Context, filter AuditFilter) ([]models.AuditLog, error) {
 	query := `
 		SELECT id, action, target_type, target_id, metadata, created_at
 		FROM audit_logs
-		ORDER BY created_at DESC
-		LIMIT $1
+		WHERE 1=1
 	`
-	
-	rows, err := db.Pool.Query(ctx, query, limit)
+	args := []interface{}{}
+	argIdx := 1
+
+	if filter.Action != "" {
+		query += fmt.Sprintf(" AND action = $%d", argIdx)
+		args = append(args, filter.Action)
+		argIdx++
+	}
+
+	if filter.TargetType != "" {
+		query += fmt.Sprintf(" AND target_type = $%d", argIdx)
+		args = append(args, filter.TargetType)
+		argIdx++
+	}
+
+	if filter.FromDate != nil {
+		query += fmt.Sprintf(" AND created_at >= $%d", argIdx)
+		args = append(args, *filter.FromDate)
+		argIdx++
+	}
+
+	if filter.ToDate != nil {
+		query += fmt.Sprintf(" AND created_at <= $%d", argIdx)
+		args = append(args, *filter.ToDate)
+		argIdx++
+	}
+
+	query += fmt.Sprintf(" ORDER BY created_at DESC LIMIT $%d", argIdx)
+	args = append(args, filter.Limit)
+
+	rows, err := db.Pool.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
