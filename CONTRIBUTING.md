@@ -49,6 +49,10 @@ go build -o bastion ./cmd/bastion
   Authenticates and stores the JWT locally in `~/.bastion/token`.
 - **Create Project**: `bastion create-project -n MyProject -c <CLIENT_UUID>`
   Generates a new data key and creates a project for a client.
+- **List Clients**: `bastion list-clients`
+  Displays a table of all clients in the vault.
+- **List Projects**: `bastion list-projects -c <CLIENT_UUID>`
+  Displays all projects for a specific client.
 - **Run**: `bastion run -p <PROJECT_UUID> -- <command>`
   Injects secrets into the environment of the specified command.
 - **Set**: `bastion set -p <PROJECT_UUID> -k MY_KEY -v my_value`
