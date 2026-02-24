@@ -49,6 +49,8 @@ go build -o bastion ./cmd/bastion
   Authenticates and stores the JWT locally in `~/.bastion/token`.
 - **Run**: `bastion run -p <PROJECT_UUID> -- <command>`
   Injects secrets into the environment of the specified command.
+- **Set**: `bastion set -p <PROJECT_UUID> -k MY_KEY -v my_value`
+  Encrypts and stores a secret in the specified project.
 
 ## 📜 Coding Standards
 - **Go**: Follow standard Go Layout and idiomatic patterns.

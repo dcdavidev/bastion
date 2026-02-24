@@ -88,50 +88,6 @@ var runCmd = &cobra.Command{
 	},
 }
 
-func fetchVaultConfig(url, token string) (*struct {
-	WrappedMasterKey string `json:"wrapped_master_key"`
-	MasterKeySalt    string `json:"master_key_salt"`
-}, error) {
-	req, _ := http.NewRequest("GET", url+"/api/v1/vault/config", nil)
-	req.Header.Set("Authorization", "Bearer "+token)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch vault config: %s", resp.Status)
-	}
-
-	var config struct {
-		WrappedMasterKey string `json:"wrapped_master_key"`
-		MasterKeySalt    string `json:"master_key_salt"`
-	}
-	json.NewDecoder(resp.Body).Decode(&config)
-	return &config, nil
-}
-
-func fetchProject(url, token, id string) (*models.Project, error) {
-	req, _ := http.NewRequest("GET", url+"/api/v1/projects/"+id, nil)
-	req.Header.Set("Authorization", "Bearer "+token)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch project: %s", resp.Status)
-	}
-
-	var project models.Project
-	json.NewDecoder(resp.Body).Decode(&project)
-	return &project, nil
-}
-
 func fetchEncryptedSecrets(url, token, projectID string) ([]models.Secret, error) {
 	req, _ := http.NewRequest("GET", url+"/api/v1/secrets?project_id="+projectID, nil)
 	req.Header.Set("Authorization", "Bearer "+token)
