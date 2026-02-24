@@ -15,6 +15,7 @@ import {
 
 import { PittoricaTheme } from '@pittorica/react';
 import { AuthProvider } from './contexts/auth-context';
+import { ToastProvider } from './contexts/toast-context';
 
 import './app.css';
 
@@ -62,9 +63,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="pittorica-theme" data-appearance="light">
         <PittoricaTheme sourceColor="#cddadd" appearance="light">
-          <AuthProvider>
-            {children}
-          </AuthProvider>
+          <ToastProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </ToastProvider>
           <ScrollRestoration />
         </PittoricaTheme>
         <Scripts />

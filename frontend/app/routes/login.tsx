@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Box, Button, Input, Text, Stack, Card } from "@pittorica/react";
 import { useAuth } from "../contexts/auth-context";
+import { useToast } from "../contexts/toast-context";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -10,6 +11,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { setToken } = useAuth();
+  const { toast } = useToast();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,9 +31,11 @@ export default function Login() {
 
       const data = await response.json();
       setToken(data.token);
+      toast("Access granted. Welcome back!", "success");
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.message || "Something went wrong");
+      toast(err.message || "Authentication failed", "error");
     } finally {
       setLoading(false);
     }

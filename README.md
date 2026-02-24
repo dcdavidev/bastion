@@ -1,71 +1,53 @@
 # Bastion 🏰
 
-Bastion is a single-user, open-source E2EE secrets vault built with Go. It provides a secure, self-hosted fortress to manage multiple client secrets via a powerful CLI and dashboard, ensuring data stays private with blind-backend architecture.
+Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with Go and React. It provides a secure, self-hosted fortress to manage multiple client secrets via a powerful CLI and a modern dashboard, ensuring data stays private with a robust **blind-backend architecture**.
+
+## 🛡️ Security Model
+- **End-to-End Encryption (E2EE):** All secrets are encrypted client-side (CLI or Dashboard) before reaching the server.
+- **Key Wrapping:** Uses a multi-layered key hierarchy (Master Key -> Project Data Key -> Secret).
+- **Blind Backend:** The server never processes or stores plaintext secrets or raw keys.
+- **Multi-User Access:** Admin can delegate project-specific access to Collaborators using secure re-wrapping techniques.
+- **Audit Logging:** Every sensitive operation is cryptographically linked and logged.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
 - **Go** 1.24+
-- **Node.js** 24+
+- **Node.js** 24+ (with `pnpm`)
 - **PostgreSQL**
-- **Docker** (optional, for DB)
 
-### Setup
-
+### Installation
 1. Clone the repository:
    ```bash
    git clone https://github.com/dcdavidev/bastion.git
    cd bastion
    ```
-2. Install backend dependencies:
+2. Build the CLI:
    ```bash
-   go mod download
+   go build -o bastion ./cmd/bastion
    ```
-3. Install frontend dependencies:
+3. Initialize the Vault (First Run):
    ```bash
-   cd frontend
-   npm install
+   ./bastion create-superuser
    ```
+   *Follow the instructions to update your `.env` and initialize the database.*
 
-## 🛡 Tech Stack & Architecture
+## 🛠️ CLI Usage
+Bastion comes with a powerful CLI for secret injection and management.
 
-- **Backend:** Go (Golang) 1.24+ with [chi](https://github.com/go-chi/chi) router.
-- **Frontend:** React + TypeScript (Vite).
-- **Database:** PostgreSQL with [pgx](https://github.com/jackc/pgx) driver.
-- **Security:**
-  - **Argon2id:** For secure admin password hashing and key derivation.
-  - **AES-256-GCM:** For authenticated encryption (Key Wrapping).
-  - **Blind Backend:** Secrets are never processed in plaintext by the server.
+- `bastion login`: Authenticate with the server.
+- `bastion run -p <PROJECT_ID> -- <command>`: Inject secrets into a process (dotenvx style).
+- `bastion set -p <PROJECT_ID> -k KEY -v value`: Encrypt and store a secret.
+- `bastion create-collaborator`: Grant restricted access to a team member.
 
-## ⚙️ Environment Variables
-
-The application requires the following environment variables (see `.env.example`):
-
-| Variable              | Description                                         |
-| --------------------- | --------------------------------------------------- |
-| `PORT`                | Port the server listens on (default: 8080).         |
-| `DATABASE_URL`        | PostgreSQL connection string.                       |
-| `ADMIN_PASSWORD_HASH` | Argon2id hash of the admin password.                |
-| `ADMIN_PASSWORD_SALT` | Hex-encoded salt used for the admin password hash.  |
-| `JWT_SECRET`          | Secret key used to sign session tokens.             |
-| `MASTER_KEY`          | 32-byte hex-encoded key for the Key Wrapping layer. |
-
-### Security Model & Variables
-- **Admin Auth:** Access is granted by verifying a password against the `ADMIN_PASSWORD_HASH` using Argon2id. No user data is stored in the database for the admin.
-- **Key Wrapping:** The `MASTER_KEY` is the root of trust. It is used to encrypt (wrap) per-project or per-client data keys. This ensures that even if the database is compromised, secrets remain encrypted.
-- **Blind Backend:** Plaintext secrets never touch the server. Encryption happens at the edge (CLI or Frontend).
-
-## 🏗 Project Structure
-
-- `cmd/server/`: Backend entrypoint and server configuration.
-- `internal/api/`: REST API handlers (incoming).
-- `internal/auth/`: Admin authentication and authorization.
-- `internal/crypto/`: Cryptographic primitives (encryption/decryption).
-- `internal/db/`: Database connection and pooling.
-- `internal/models/`: Data structures and domain models.
-- `frontend/`: React application.
+## 🌐 Dashboard
+The web interface (built with React + Pittorica) allows for easy management of:
+- **Clients & Projects:** Organize secrets by entity.
+- **Audit Logs:** Monitor access and changes in real-time.
+- **Collaborators:** Manage user permissions and project access.
 
 ## 🤝 Contributing
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development instructions.
 
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our development process.
+---
+Built with ❤️ by [dcdavidev](https://github.com/dcdavidev)

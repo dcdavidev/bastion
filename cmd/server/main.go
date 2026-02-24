@@ -7,7 +7,9 @@ import (
 	"time"
 
 	"github.com/dcdavidev/bastion/internal/api"
+	"github.com/dcdavidev/bastion/internal/auth"
 	"github.com/dcdavidev/bastion/internal/db"
+	"github.com/dcdavidev/bastion/internal/version"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
@@ -76,7 +78,7 @@ func main() {
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"up"}`))
+		w.Write([]byte(`{"status":"up", "version":"` + version.Version + `"}`))
 	})
 
 	port := os.Getenv("PORT")
