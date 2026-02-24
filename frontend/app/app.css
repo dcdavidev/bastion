@@ -1,0 +1,26 @@
+:root {
+  --font-inter-variable:
+    'Inter Variable', Inter, system-ui, -apple-system, sans-serif;
+  --font-momo-trust-display: 'Momo Trust Display', sans-serif;
+  --font-inknut-antiqua: 'Inknut Antiqua', cursive;
+  --font-kode-mono-variable: 'Kode Mono Variable', monospace;
+
+  --pittorica-font-family: var(--font-inter-variable);
+  --pittorica-font-heading: var(--font-inknut-antiqua);
+  --pittorica-font-code: var(--font-kode-mono-variable);
+  --pittorica-font-strong: inherit;
+  --pittorica-font-em: inherit;
+  --pittorica-font-quote: var(--font-inknut-antiqua);
+}
+
+.pittorica-theme {
+  --pittorica-source-color: #29294b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+[id] {
+  scroll-margin-top: 56px;
+}
