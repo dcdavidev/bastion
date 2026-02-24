@@ -29,7 +29,14 @@ To ensure a smooth development experience, please make sure you have the followi
    # You can run this directly if you have psql installed
    psql $DATABASE_URL -f internal/db/migrations/000001_initial_schema.up.sql
    ```
-4. VS Code users: Accept the recommended extensions when opening the project.
+4. Generate required security keys (example using openssl):
+   ```bash
+   # Generate a 32-byte Master Key or Salt (hex)
+   openssl rand -hex 32
+   ```
+   *Note: For the admin password hash, you should use a small Go utility with `internal/crypto` to ensure compatibility with the Argon2id parameters.*
+
+5. VS Code users: Accept the recommended extensions when opening the project.
 
 ## 📜 Coding Standards
 - **Go**: Follow standard Go Layout and idiomatic patterns.
