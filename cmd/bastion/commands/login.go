@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )
 
@@ -22,9 +23,9 @@ var loginCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		serverURL, _ := cmd.Flags().GetString("url")
 		
-		fmt.Print("Enter Admin Password: ")
-		var password string
-		fmt.Scanln(&password)
+		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Admin Password")
+
+		spinner, _ := pterm.DefaultSpinner.Start("Authenticating...")
 
 		payload, _ := json.Marshal(map[string]string{
 			"password": password,
@@ -32,24 +33,28 @@ var loginCmd = &cobra.Command{
 
 		resp, err := http.Post(serverURL+"/api/v1/auth/login", "application/json", bytes.NewBuffer(payload))
 		if err != nil {
+			spinner.Fail("Failed to connect to server")
 			return fmt.Errorf("failed to connect to server: %w", err)
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
+			spinner.Fail("Authentication failed")
 			return fmt.Errorf("authentication failed: %s", resp.Status)
 		}
 
 		var loginResp loginResponse
 		if err := json.NewDecoder(resp.Body).Decode(&loginResp); err != nil {
+			spinner.Fail("Failed to decode response")
 			return fmt.Errorf("failed to decode response: %w", err)
 		}
 
 		if err := saveToken(loginResp.Token); err != nil {
+			spinner.Fail("Failed to save token")
 			return fmt.Errorf("failed to save token: %w", err)
 		}
 
-		fmt.Println("Successfully authenticated!")
+		spinner.Success("Successfully authenticated!")
 		return nil
 	},
 }
