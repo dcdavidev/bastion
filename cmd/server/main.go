@@ -53,6 +53,7 @@ func main() {
 			r.Use(auth.JWTMiddleware)
 			
 			r.Get("/vault/config", h.GetVaultConfigHandler)
+			r.Get("/audit", h.ListAuditLogs)
 			r.Get("/clients", h.ListClients)
 			r.Post("/clients", h.CreateClient)
 			r.Delete("/clients/{id}", h.DeleteClient)
