@@ -26,6 +26,11 @@ func main() {
 	}
 	defer database.Close()
 
+	// Run Migrations
+	if err := database.RunMigrations(); err != nil {
+		log.Fatalf("Could not run migrations: %v", err)
+	}
+
 	// Initialize API Handler
 	h := api.NewHandler(database)
 

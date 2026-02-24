@@ -2,12 +2,17 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	_ "github.com/lib/pq" // Required for golang-migrate postgres driver
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 // DB wrap the pgxpool.Pool to provide database access.
@@ -54,4 +59,35 @@ func (db *DB) Close() {
 	if db.Pool != nil {
 		db.Pool.Close()
 	}
+}
+
+// RunMigrations applies all pending migrations from the internal/db/migrations directory.
+func (db *DB) RunMigrations() error {
+	connStr := os.Getenv("DATABASE_URL")
+	
+	// We need a standard sql.DB for golang-migrate
+	importDB, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return fmt.Errorf("could not open sql.DB for migrations: %w", err)
+	}
+	defer importDB.Close()
+
+	driver, err := postgres.WithInstance(importDB, &postgres.Config{})
+	if err != nil {
+		return fmt.Errorf("could not create migration driver: %w", err)
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://internal/db/migrations",
+		"postgres", driver)
+	if err != nil {
+		return fmt.Errorf("could not create migration instance: %w", err)
+	}
+
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		return fmt.Errorf("failed to apply migrations: %w", err)
+	}
+
+	log.Println("Database migrations applied successfully")
+	return nil
 }
