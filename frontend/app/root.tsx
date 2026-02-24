@@ -14,6 +14,7 @@ import {
 } from 'react-router';
 
 import { PittoricaTheme } from '@pittorica/react';
+import { AuthProvider } from './contexts/auth-context';
 
 import './app.css';
 
@@ -61,7 +62,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="pittorica-theme" data-appearance="light">
         <PittoricaTheme sourceColor="#cddadd" appearance="light">
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
           <ScrollRestoration />
         </PittoricaTheme>
         <Scripts />

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Box, Button, Input, Text, Stack, Card } from "@pittorica/react";
+import { useAuth } from "../contexts/auth-context";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -8,6 +9,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setToken } = useAuth();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,7 +28,7 @@ export default function Login() {
       }
 
       const data = await response.json();
-      localStorage.setItem("bastion_token", data.token);
+      setToken(data.token);
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.message || "Something went wrong");
