@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/dcdavidev/bastion/internal/auth"
 	"github.com/go-chi/chi/v5"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
@@ -79,6 +81,36 @@ func (h *Handler) GetProject(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(project)
+}
+
+// GetProjectKey returns the wrapped data key for the authenticated user.
+func (h *Handler) GetProjectKey(w http.ResponseWriter, r *http.Request) {
+	projectIDStr := chi.URLParam(r, "id")
+	projectID, err := uuid.Parse(projectIDStr)
+	if err != nil {
+		http.Error(w, "Invalid project ID", http.StatusBadRequest)
+		return
+	}
+
+	// Extract claims from context (added by JWTMiddleware)
+	claims, ok := r.Context().Value(auth.AdminContextKey).(jwt.MapClaims)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	userIDStr, _ := claims["user_id"].(string)
+	userID, _ := uuid.Parse(userIDStr)
+	isAdmin, _ := claims["admin"].(bool)
+
+	wrappedKey, err := h.DB.GetProjectKeyForUser(r.Context(), projectID, userID, isAdmin)
+	if err != nil {
+		http.Error(w, "Access denied or project not found", http.StatusForbidden)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"wrapped_data_key": wrappedKey})
 }
 
 // DeleteProject removes a project by ID.

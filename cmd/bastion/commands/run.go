@@ -28,40 +28,49 @@ var runCmd = &cobra.Command{
 			return fmt.Errorf("not authenticated. Please run 'bastion login' first: %w", err)
 		}
 
-		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Admin Password to unlock vault")
+		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Password to unlock secrets")
 
-		spinner, _ := pterm.DefaultSpinner.Start("Fetching and decrypting secrets...")
+		spinner, _ := pterm.DefaultSpinner.Start("Fetching project credentials...")
 
-		// 1. Fetch Vault Config (Wrapped Master Key and Salt)
+		// 1. Fetch Vault Config (Salt)
 		vaultConfig, err := fetchVaultConfig(serverURL, token)
 		if err != nil {
 			spinner.Fail("Failed to fetch vault config")
 			return err
 		}
 
-		// 2. Derive Admin KEK and Unwrap Master Key
-		salt, _ := hex.DecodeString(vaultConfig.MasterKeySalt)
-		wrappedMK, _ := hex.DecodeString(vaultConfig.WrappedMasterKey)
-		adminKEK := crypto.DeriveKey([]byte(password), salt)
-		
-		masterKey, err := crypto.UnwrapKey(adminKEK, wrappedMK)
+		// 2. Fetch User-Specific Wrapped Data Key
+		wrappedDK, err := fetchUserProjectKey(serverURL, token, projectID)
 		if err != nil {
-			spinner.Fail("Failed to unlock vault: invalid password")
-			return fmt.Errorf("failed to unlock vault: invalid password")
-		}
-
-		// 3. Fetch Project and its Wrapped Data Key
-		project, err := fetchProject(serverURL, token, projectID)
-		if err != nil {
-			spinner.Fail("Project not found")
+			spinner.Fail("Access denied or project not found")
 			return err
 		}
 
-		wrappedDK, _ := hex.DecodeString(project.WrappedDataKey)
-		dataKey, err := crypto.UnwrapKey(masterKey, wrappedDK)
+		// 3. Derive KEK and Unwrap Data Key
+		salt, _ := hex.DecodeString(vaultConfig.MasterKeySalt)
+		userKEK := crypto.DeriveKey([]byte(password), salt)
+		
+		// Note: For collaborators, the Data Key is wrapped by their KEK.
+		// For Admins, we need to unwrap Master Key first.
+		// Optimization: The server endpoint should ideally return the key wrapped for the current user.
+		
+		// Attempt direct unwrap (Collaborator flow)
+		wrappedDKBytes, _ := hex.DecodeString(wrappedDK)
+		dataKey, err := crypto.UnwrapKey(userKEK, wrappedDKBytes)
+		
 		if err != nil {
-			spinner.Fail("Failed to unwrap project data key")
-			return fmt.Errorf("failed to unwrap project data key: %w", err)
+			// Try Admin flow: Unwrap Master Key first
+			wrappedMK, _ := hex.DecodeString(vaultConfig.WrappedMasterKey)
+			masterKey, errMK := crypto.UnwrapKey(userKEK, wrappedMK)
+			if errMK != nil {
+				spinner.Fail("Invalid password")
+				return fmt.Errorf("invalid password")
+			}
+			dataKey, err = crypto.UnwrapKey(masterKey, wrappedDKBytes)
+			if err != nil {
+				spinner.Fail("Failed to unwrap project key")
+				return err
+			}
 		}
 
 		// 4. Fetch and Decrypt Secrets
@@ -98,6 +107,27 @@ var runCmd = &cobra.Command{
 	},
 }
 
+func fetchUserProjectKey(url, token, id string) (string, error) {
+	req, _ := http.NewRequest("GET", url+"/api/v1/projects/"+id+"/key", nil)
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to fetch project key: %s", resp.Status)
+	}
+
+	var data struct {
+		WrappedDataKey string `json:"wrapped_data_key"`
+	}
+	json.NewDecoder(resp.Body).Decode(&data)
+	return data.WrappedDataKey, nil
+}
+
 func fetchEncryptedSecrets(url, token, projectID string) ([]models.Secret, error) {
 	req, _ := http.NewRequest("GET", url+"/api/v1/secrets?project_id="+projectID, nil)
 	req.Header.Set("Authorization", "Bearer "+token)
@@ -107,10 +137,6 @@ func fetchEncryptedSecrets(url, token, projectID string) ([]models.Secret, error
 		return nil, err
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch secrets: %s", resp.Status)
-	}
 
 	var secrets []models.Secret
 	json.NewDecoder(resp.Body).Decode(&secrets)

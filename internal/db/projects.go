@@ -8,6 +8,21 @@ import (
 	"github.com/google/uuid"
 )
 
+// GetProjectKeyForUser returns the wrapped data key for a specific user and project.
+func (db *DB) GetProjectKeyForUser(ctx context.Context, projectID, userID uuid.UUID, isAdmin bool) (string, error) {
+	if isAdmin {
+		query := `SELECT wrapped_data_key FROM projects WHERE id = $1`
+		var key string
+		err := db.Pool.QueryRow(ctx, query, projectID).Scan(&key)
+		return key, err
+	}
+
+	query := `SELECT wrapped_data_key FROM user_project_access WHERE project_id = $1 AND user_id = $2`
+	var key string
+	err := db.Pool.QueryRow(ctx, query, projectID, userID).Scan(&key)
+	return key, err
+}
+
 // CreateProject inserts a new project for a specific client.
 func (db *DB) CreateProject(ctx context.Context, clientID uuid.UUID, name string, wrappedKey string) (*models.Project, error) {
 	query := `

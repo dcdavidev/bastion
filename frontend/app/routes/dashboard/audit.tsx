@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { Box, Text, Stack, Card, Button, Table, Input, Select } from "@pittorica/react";
+import { Box, Text, Stack, Card, Button, Table, Input } from "@pittorica/react";
 import { useAuth } from "../../contexts/auth-context";
-import { Search, Filter } from "lucide-react";
+import { Filter, Calendar, Terminal } from "lucide-react";
 
 interface AuditLog {
   id: string;
   action: string;
   target_type: string;
   target_id: string;
-  metadata: any;
+  metadata: Record<string, any>;
   created_at: string;
 }
 
@@ -56,14 +56,14 @@ export default function AuditLogs() {
           <Box display="flex" alignItems="center" gap="2" flex="1">
             <Filter size={16} color="muted" />
             <Input 
-              placeholder="Filter by Action (e.g. READ_SECRET)" 
+              placeholder="Filter by Action" 
               value={actionFilter}
               onChange={(e) => setActionFilter(e.target.value)}
             />
           </Box>
           <Box flex="1">
             <Input 
-              placeholder="Filter by Target (e.g. PROJECT)" 
+              placeholder="Filter by Target" 
               value={targetFilter}
               onChange={(e) => setTargetFilter(e.target.value)}
             />
@@ -84,23 +84,47 @@ export default function AuditLogs() {
           </Table.Header>
           <Table.Body>
             {loading ? (
-              <Table.Row><Table.Cell colSpan={4} textAlign="center"><Box padding="8"><Text color="muted">Loading logs...</Text></Box></Table.Cell></Table.Row>
+              Array.from({ length: 5 }).map((_, i) => (
+                <Table.Row key={i}>
+                  <Table.Cell colSpan={4}><Box padding="4" className="animate-pulse bg-surface-container-highest rounded" /></Table.Cell>
+                </Table.Row>
+              ))
             ) : logs.length === 0 ? (
               <Table.Row><Table.Cell colSpan={4} textAlign="center"><Box padding="8"><Text color="muted">No logs found.</Text></Box></Table.Cell></Table.Row>
             ) : logs.map((log) => (
               <Table.Row key={log.id}>
-                <Table.Cell><Text size="1" color="muted">{new Date(log.created_at).toLocaleString()}</Text></Table.Cell>
-                <Table.Cell><Text weight="bold" size="2">{log.action}</Text></Table.Cell>
                 <Table.Cell>
-                  <Stack gap="0">
-                    <Text size="2">{log.target_type}</Text>
-                    <Text size="1" color="muted" family="mono">{log.target_id}</Text>
+                  <Stack direction="row" gap="2" alignItems="center">
+                    <Calendar size={14} color="muted" />
+                    <Text size="1" color="muted">{new Date(log.created_at).toLocaleString()}</Text>
                   </Stack>
                 </Table.Cell>
                 <Table.Cell>
-                  <Text size="1" family="mono" color="muted">
-                    {JSON.stringify(log.metadata)}
-                  </Text>
+                  <Box background="accent/10" paddingX="2" paddingY="1" borderRadius="sm" display="inline-block">
+                    <Text weight="bold" size="1" color="cyan">{log.action}</Text>
+                  </Box>
+                </Table.Cell>
+                <Table.Cell>
+                  <Stack gap="0">
+                    <Text size="2" weight="medium">{log.target_type}</Text>
+                    <Text size="1" color="muted" family="mono">{log.target_id?.substring(0, 8)}...</Text>
+                  </Stack>
+                </Table.Cell>
+                <Table.Cell>
+                  <Box background="surface-container" padding="2" borderRadius="sm" maxHeight="100px" overflow="auto">
+                    {log.metadata && Object.keys(log.metadata).length > 0 ? (
+                      <Stack gap="1">
+                        {Object.entries(log.metadata).map(([k, v]) => (
+                          <Box key={k} display="flex" gap="2">
+                            <Text size="1" weight="bold" color="muted">{k}:</Text>
+                            <Text size="1" family="mono">{String(v)}</Text>
+                          </Box>
+                        ))}
+                      </Stack>
+                    ) : (
+                      <Text size="1" color="muted">No metadata</Text>
+                    )}
+                  </Box>
                 </Table.Cell>
               </Table.Row>
             ))}
