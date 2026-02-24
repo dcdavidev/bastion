@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/dcdavidev/bastion/internal/api"
 	"github.com/dcdavidev/bastion/internal/db"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -33,6 +34,11 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
+
+	// API Routes
+	r.Route("/api/v1", func(r chi.Router) {
+		r.Post("/auth/login", api.LoginHandler)
+	})
 
 	// Health check
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
