@@ -35,6 +35,13 @@ func (h *Handler) CreateSecret(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(secret)
+
+	// Log audit event
+	h.DB.LogEvent(r.Context(), "CREATE_SECRET", "SECRET", secret.ID, map[string]interface{}{
+		"key":        secret.Key,
+		"project_id": secret.ProjectID,
+		"ip":         r.RemoteAddr,
+	})
 }
 
 // ListSecretsByProject returns the latest versions of secrets for a project.
@@ -59,6 +66,12 @@ func (h *Handler) ListSecretsByProject(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(secrets)
+
+	// Log audit event
+	h.DB.LogEvent(r.Context(), "READ_SECRETS", "PROJECT", projectID, map[string]interface{}{
+		"ip":         r.RemoteAddr,
+		"user_agent": r.UserAgent(),
+	})
 }
 
 // GetSecretHistory returns all versions of a specific secret.

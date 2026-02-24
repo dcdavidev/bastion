@@ -34,3 +34,13 @@ type Secret struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+// AuditLog tracks sensitive operations in the vault.
+type AuditLog struct {
+	ID         uuid.UUID              `json:"id"`
+	Action     string                 `json:"action"`
+	TargetType string                 `json:"target_type"`
+	TargetID   uuid.UUID              `json:"target_id,omitempty"`
+	Metadata   map[string]interface{} `json:"metadata,omitempty"`
+	CreatedAt  time.Time              `json:"created_at"`
+}
