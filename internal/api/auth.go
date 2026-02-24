@@ -1,16 +1,20 @@
 package api
 
 import (
+	"crypto/subtle"
+	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/dcdavidev/bastion/internal/auth"
+	"github.com/dcdavidev/bastion/internal/crypto"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type LoginRequest struct {
+	Username string `json:"username,omitempty"`
 	Password string `json:"password"`
 }
 
@@ -18,17 +22,44 @@ type LoginResponse struct {
 	Token string `json:"token"`
 }
 
-// LoginHandler handles the admin login request.
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
+// LoginHandler handles both admin (env-based) and collaborator (db-based) logins.
+func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	if !auth.VerifyAdmin(req.Password) {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
+	var role string
+	var userID string
+
+	// 1. Check if it's a Collaborator Login (Database)
+	if req.Username != "" {
+		user, storedHashHex, saltHex, err := h.DB.GetUserByUsername(r.Context(), req.Username)
+		if err != nil {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		salt, _ := hex.DecodeString(saltHex)
+		storedHash, _ := hex.DecodeString(storedHashHex)
+		computedHash := crypto.DeriveKey([]byte(req.Password), salt)
+
+		if subtle.ConstantTimeCompare(computedHash, storedHash) != 1 {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		role = user.Role
+		userID = user.ID.String()
+	} else {
+		// 2. Fallback to Admin Login (Environment Variables)
+		if !auth.VerifyAdmin(req.Password) {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+		role = "ADMIN"
+		userID = "00000000-0000-0000-0000-000000000000" // Reserved Admin ID
 	}
 
 	// Generate JWT
@@ -39,8 +70,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"admin": true,
-		"exp":   time.Now().Add(time.Hour * 24).Unix(),
+		"user_id": userID,
+		"role":    role,
+		"admin":   role == "ADMIN",
+		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(secret))

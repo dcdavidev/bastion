@@ -45,7 +45,7 @@ go build -o bastion ./cmd/bastion
 ```
 
 ### Basic Commands
-- **Login**: `bastion login --url http://localhost:8080`
+- **Login**: `bastion login --url http://localhost:8080` (Admin) or `bastion login -n <username>` (Collaborator).
   Authenticates and stores the JWT locally in `~/.bastion/token`.
 - **Create Project**: `bastion create-project -n MyProject -c <CLIENT_UUID>`
   Generates a new data key and creates a project for a client.

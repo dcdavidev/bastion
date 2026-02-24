@@ -17,17 +17,23 @@ type loginResponse struct {
 	Token string `json:"token"`
 }
 
+var loginUsername string
+
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Authenticate with the Bastion server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		serverURL, _ := cmd.Flags().GetString("url")
 		
-		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Admin Password")
+		if loginUsername == "" {
+			loginUsername, _ = pterm.DefaultInteractiveTextInput.Show("Enter Username (leave empty for Admin)")
+		}
+		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Password")
 
 		spinner, _ := pterm.DefaultSpinner.Start("Authenticating...")
 
 		payload, _ := json.Marshal(map[string]string{
+			"username": loginUsername,
 			"password": password,
 		})
 
@@ -75,5 +81,6 @@ func saveToken(token string) error {
 }
 
 func init() {
+	loginCmd.Flags().StringVarP(&loginUsername, "username", "n", "", "Username for login")
 	rootCmd.AddCommand(loginCmd)
 }
