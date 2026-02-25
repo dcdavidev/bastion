@@ -33,7 +33,7 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
 
 #### 🍏 macOS
 
-- **Homebrew**: 
+- **Homebrew**:
   ```bash
   brew install dcdavidev/tap/bastion
   ```
