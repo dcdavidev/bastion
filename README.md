@@ -42,7 +42,6 @@ Bastion is managed as a **Turborepo Monorepo**.
 
 #### 🪟 Windows
 
-- **WinGet**: `winget install dcdavidev.bastion`
 - **Scoop**:
   ```bash
   scoop bucket add dcdavidev https://github.com/dcdavidev/scoop-bucket

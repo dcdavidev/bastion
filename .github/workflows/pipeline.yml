@@ -91,10 +91,3 @@ jobs:
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish to WinGet
-        uses: vedantmgoyal2009/winget-releaser@v2
-        with:
-          identifier: dcdavidev.bastion
-          installers-regex: "Windows_x86_64.zip$"
-          token: ${{ secrets.WINGET_TOKEN }}
