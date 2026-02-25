@@ -4,6 +4,7 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-COPY bastion .
+ARG TARGETPLATFORM
+COPY $TARGETPLATFORM/bastion .
 
 ENTRYPOINT ["./bastion"]
