@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.0](https://github.com/dcdavidev/bastion/compare/v0.0.11...v0.1.0) (2026-02-25)
+
+### Features
+
+* remove choco deploy ([5dd7355](https://github.com/dcdavidev/bastion/commit/5dd73551f34b102b40ad7fb5eba3fbbaa6d7f86c))
+
 ## [0.0.11](https://github.com/dcdavidev/bastion/compare/v0.0.10...v0.0.11) (2026-02-25)
 
 ## [0.0.10](https://github.com/dcdavidev/bastion/compare/v0.0.9...v0.0.10) (2026-02-25)
