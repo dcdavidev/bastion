@@ -13,8 +13,8 @@ builds:
     binary: bastion
     hooks:
       post:
-        - mkdir -p packages/bastion/bin/{{ .Target }}
-        - cp {{ .Path }} packages/bastion/bin/{{ .Target }}/{{ .Binary }}{{ .Ext }}
+        - mkdir -p packages/bastion/bin/{{ .Os }}_{{ .Arch }}
+        - cp {{ .Path }} packages/bastion/bin/{{ .Os }}_{{ .Arch }}/{{ .Name }}
     env:
       - CGO_ENABLED=0
     goos:
@@ -64,6 +64,10 @@ release:
   github:
     owner: dcdavidev
     name: bastion
+  extra_files:
+    - glob: ./bastion.png
+    - glob: ./bastion-banner.png
+  replace_existing_artifacts: true
 
 snapcrafts:
   - id: bastion
