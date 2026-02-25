@@ -112,7 +112,7 @@ aurs:
     description: "Bastion CLI"
     maintainers: ["Davide Di Criscito <dcdavidev@gmail.com>"]
     license: "MIT"
-    private_key: "{{ .Env.AUR_KEY }}"
+    private_key: "{{ .Env.AUR_KEY_FILE }}"
     git_url: "ssh://aur@aur.archlinux.org/bastion-cli-bin.git"
 
 release:
