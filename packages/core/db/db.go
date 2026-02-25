@@ -61,7 +61,7 @@ func (db *DB) Close() {
 	}
 }
 
-// RunMigrations applies all pending migrations from the internal/db/migrations directory.
+// RunMigrations applies all pending migrations.
 func (db *DB) RunMigrations() error {
 	connStr := os.Getenv("DATABASE_URL")
 	
@@ -77,8 +77,16 @@ func (db *DB) RunMigrations() error {
 		return fmt.Errorf("could not create migration driver: %w", err)
 	}
 
+	// Try to find the migrations directory in common locations
+	migrationPath := "file://internal/db/migrations"
+	if _, err := os.Stat("packages/core/db/migrations"); err == nil {
+		migrationPath = "file://packages/core/db/migrations"
+	} else if _, err := os.Stat("../../packages/core/db/migrations"); err == nil {
+		migrationPath = "file://../../packages/core/db/migrations"
+	}
+
 	m, err := migrate.NewWithDatabaseInstance(
-		"file://internal/db/migrations",
+		migrationPath,
 		"postgres", driver)
 	if err != nil {
 		return fmt.Errorf("could not create migration instance: %w", err)

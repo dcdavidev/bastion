@@ -10,8 +10,9 @@ import (
 )
 
 var createSuperuserCmd = &cobra.Command{
-	Use:   "create-superuser",
-	Short: "Generate credentials and master key for the initial admin setup",
+	Use:     "superuser",
+	Aliases: []string{"su"},
+	Short:   "Generate credentials and master key for the initial admin setup",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Admin Password")
 
@@ -27,7 +28,7 @@ var createSuperuserCmd = &cobra.Command{
 			return err
 		}
 
-		// 2. Derive KEK (and also the password hash for .env)
+		// 2. Derive KEK (and also the password hash for config)
 		kek := crypto.DeriveKey([]byte(password), salt)
 
 		// 3. Generate Global Master Key
@@ -44,11 +45,22 @@ var createSuperuserCmd = &cobra.Command{
 
 		spinner.Success("Cryptographic material generated!")
 
-		pterm.DefaultHeader.WithFullWidth().Println("STEP 1: Update your .env file")
-		pterm.Info.Printf("ADMIN_PASSWORD_HASH=%s\n", hex.EncodeToString(kek))
-		pterm.Info.Printf("ADMIN_PASSWORD_SALT=%s\n", hex.EncodeToString(salt))
+		// Save to Config
+		config, err := LoadConfig()
+		if err != nil {
+			return err
+		}
 
-		pterm.DefaultHeader.WithFullWidth().Println("STEP 2: Initialize your Database")
+		config.AdminPasswordHash = hex.EncodeToString(kek)
+		config.AdminPasswordSalt = hex.EncodeToString(salt)
+		
+		if err := SaveConfig(config); err != nil {
+			return fmt.Errorf("failed to save config: %w", err)
+		}
+
+		pterm.Success.Println("Saved credentials to ~/.config/bastion.yml")
+
+		pterm.DefaultHeader.WithFullWidth().Println("DATABASE INITIALIZATION REQUIRED")
 		pterm.Println("Run the following SQL command in your PostgreSQL database:")
 		
 		pterm.DefaultBox.Println(fmt.Sprintf("INSERT INTO vault_config (wrapped_master_key, master_key_salt) VALUES ('%s', '%s');", 
@@ -59,5 +71,5 @@ var createSuperuserCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(createSuperuserCmd)
+	createCmd.AddCommand(createSuperuserCmd)
 }

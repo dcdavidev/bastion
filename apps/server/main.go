@@ -16,8 +16,12 @@ import (
 )
 
 func main() {
-	// Load .env file if it exists
-	if err := godotenv.Load(); err != nil {
+	// Load .env file from root if it exists
+	if _, err := os.Stat(".env"); err == nil {
+		_ = godotenv.Load()
+	} else if _, err := os.Stat("../../.env"); err == nil {
+		_ = godotenv.Load("../../.env")
+	} else {
 		log.Println("No .env file found, using system environment variables")
 	}
 

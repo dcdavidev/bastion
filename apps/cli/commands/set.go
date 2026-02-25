@@ -18,10 +18,27 @@ var (
 )
 
 var setCmd = &cobra.Command{
-	Use:   "set",
+	Use:   "set [KEY] [VALUE]",
 	Short: "Encrypt and store a secret in a project",
+	Args:  cobra.MaximumNArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// Handle positional args if provided
+		if len(args) >= 1 {
+			setKey = args[0]
+		}
+		if len(args) >= 2 {
+			setValue = args[1]
+		}
+
+		if setKey == "" {
+			setKey, _ = pterm.DefaultInteractiveTextInput.Show("Enter Secret Key (e.g. DATABASE_URL)")
+		}
+		if setValue == "" {
+			setValue, _ = pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Secret Value")
+		}
+
 		serverURL, _ := cmd.Flags().GetString("url")
+		projectID, _ := cmd.Flags().GetString("project")
 		
 		token, err := loadToken()
 		if err != nil {
@@ -102,13 +119,11 @@ var setCmd = &cobra.Command{
 }
 
 func init() {
-	setCmd.Flags().StringVarP(&projectID, "project", "p", "", "Project ID")
+	setCmd.Flags().StringP("project", "p", "", "Project ID")
 	setCmd.Flags().StringVarP(&setKey, "key", "k", "", "Secret key name")
 	setCmd.Flags().StringVarP(&setValue, "value", "v", "", "Secret value")
 	
 	setCmd.MarkFlagRequired("project")
-	setCmd.MarkFlagRequired("key")
-	setCmd.MarkFlagRequired("value")
 	
 	rootCmd.AddCommand(setCmd)
 }

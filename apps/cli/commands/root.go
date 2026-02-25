@@ -18,12 +18,27 @@ with blind-backend architecture. For more info: https://github.com/dcdavidev/bas
 	},
 }
 
+// createCmd represents the create command group
+var createCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create resources (superuser, collaborator, project, client, jwtsecret, masterkey)",
+}
+
 // Execute adds all child commands to the root command and sets flags appropriately.
 func Execute() error {
 	return rootCmd.Execute()
 }
 
 func init() {
-	// Global flags can be defined here
-	rootCmd.PersistentFlags().StringP("url", "u", "http://localhost:8080", "Bastion server URL")
+	// Global flags
+	config, _ := LoadConfig()
+	serverURL := "http://localhost:8081"
+	if config != nil && config.ServerURL != "" {
+		serverURL = config.ServerURL
+	}
+
+	rootCmd.PersistentFlags().StringP("url", "u", serverURL, "Bastion server URL")
+
+	// Add create command group
+	rootCmd.AddCommand(createCmd)
 }
