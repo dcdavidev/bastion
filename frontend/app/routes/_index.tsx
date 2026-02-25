@@ -69,7 +69,7 @@ export default function Home() {
             </Button>
             <Button
               size="lg"
-              variant="text"
+              variant="tonal"
               as="a"
               href="https://github.com/dcdavidev/bastion"
               target="_blank"
