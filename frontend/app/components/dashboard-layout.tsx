@@ -1,7 +1,26 @@
-import { useNavigate, Link, Outlet } from "react-router";
-import { Box, Button, Text, Stack, Card } from "@pittorica/react";
-import { useAuth } from "../contexts/auth-context";
-import { LayoutDashboard, Users, ShieldAlert, LogOut } from "lucide-react";
+import type { ReactNode } from 'react';
+
+import { Link, Outlet, useNavigate } from 'react-router';
+
+import {
+  IconLayoutDashboard,
+  IconLogout,
+  IconShieldExclamation,
+  IconUsers,
+} from '@tabler/icons-react';
+
+import { 
+  Flex, 
+  Container, 
+  Button, 
+  Stack, 
+  Text, 
+  Box, 
+  IconButton,
+  Avatar
+} from '@pittorica/react';
+
+import { useAuth } from '../contexts/auth-context';
 
 export default function DashboardLayout() {
   const { logout, isAdmin } = useAuth();
@@ -9,71 +28,109 @@ export default function DashboardLayout() {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate('/login');
   };
 
   return (
-    <Box display="flex" minHeight="100vh" background="surface">
+    <Flex
+      height="100vh"
+      style={{ backgroundColor: 'var(--pittorica-color-surface)' }}
+    >
       {/* Sidebar */}
-      <Box 
-        width="260px" 
-        padding="6" 
-        borderRight="1px solid border" 
-        background="surface-container"
-        display="flex"
-        flexDirection="column"
+      <Flex
+        width="260px"
+        p="6"
+        direction="column"
+        style={{
+          borderRight: '1px solid var(--pittorica-color-border)',
+          backgroundColor: 'var(--pittorica-color-surface-container)',
+        }}
       >
-        <Stack gap="8" flex="1">
-          <Box>
-            <Text size="5" weight="bold" color="cyan">BASTION</Text>
-            <Text size="1" color="muted">Management Console</Text>
-          </Box>
+        <Stack gap="8" style={{ flex: 1 }}>
+          <Flex gap="3" align="center">
+            <Avatar 
+              src="/static/logo/square.png" 
+              fallback="B" 
+              size="md" 
+            />
+            <Box>
+              <Text size="4" weight="bold" color="cyan">
+                BASTION
+              </Text>
+              <Text size="1" color="muted">
+                v1.0.0-alpha
+              </Text>
+            </Box>
+          </Flex>
 
           <Stack gap="2">
-            <NavItem to="/dashboard" icon={<LayoutDashboard size={18} />} label="Overview" />
-            <NavItem to="/dashboard/clients" icon={<Users size={18} />} label="Clients" />
+            <NavItem
+              to="/dashboard"
+              icon={<IconLayoutDashboard size={18} />}
+              label="Overview"
+            />
+            <NavItem
+              to="/dashboard/clients"
+              icon={<IconUsers size={18} />}
+              label="Clients"
+            />
             {isAdmin && (
-              <NavItem to="/dashboard/audit" icon={<ShieldAlert size={18} />} label="Audit Logs" />
+              <NavItem
+                to="/dashboard/audit"
+                icon={<IconShieldExclamation size={18} />}
+                label="Audit Logs"
+              />
             )}
           </Stack>
         </Stack>
 
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="text"
           onClick={handleLogout}
           width="100%"
-          justifyContent="flex-start"
+          style={{ justifyContent: 'flex-start' }}
         >
-          <Stack direction="row" gap="3" alignItems="center">
-            <LogOut size={18} />
+          <Stack direction="row" gap="3" align="center">
+            <IconLogout size={18} />
             <Text>Logout</Text>
           </Stack>
         </Button>
-      </Box>
+      </Flex>
 
-      {/* Main Content */}
-      <Box flex="1" padding="8" overflow="auto">
-        <Outlet />
-      </Box>
-    </Box>
+      {/* Main Content Area */}
+      <Container style={{ flex: 1, overflow: 'auto' }}>
+        <Flex direction="column" p="8">
+          <Outlet />
+        </Flex>
+      </Container>
+    </Flex>
   );
 }
 
-function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+function NavItem({
+  to,
+  icon,
+  label,
+}: {
+  to: string;
+  icon: ReactNode;
+  label: string;
+}) {
   return (
     <Link to={to} style={{ textDecoration: 'none', color: 'inherit' }}>
-      <Box 
-        padding="3" 
-        borderRadius="md" 
+      <Flex
+        p="3"
+        align="center"
         className="hover:bg-accent/10 transition-colors"
-        display="flex"
-        alignItems="center"
+        style={{ borderRadius: 'var(--pittorica-radius-md)' }}
       >
-        <Stack direction="row" gap="3" alignItems="center">
-          <Box color="cyan">{icon}</Box>
+        <Stack direction="row" gap="3" align="center">
+          <IconButton variant="text" color="cyan">
+            {icon}
+          </IconButton>
           <Text weight="medium">{label}</Text>
         </Stack>
-      </Box>
+      </Flex>
     </Link>
   );
 }

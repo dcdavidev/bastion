@@ -4,6 +4,8 @@ import '@fontsource-variable/inter';
 import '@fontsource/momo-trust-display';
 import '@fontsource-variable/kode-mono';
 
+import type { ReactNode } from 'react';
+
 import {
   isRouteErrorResponse,
   Links,
@@ -13,13 +15,12 @@ import {
   ScrollRestoration,
 } from 'react-router';
 
-import { PittoricaTheme } from '@pittorica/react';
-import { AuthProvider } from './contexts/auth-context';
-import { ToastProvider } from './contexts/toast-context';
+import { PittoricaTheme, ToastProvider } from '@pittorica/react';
 
 import './app.css';
 
 import type { Route } from './+types/root';
+import { AuthProvider } from './contexts/auth-context';
 
 export const links: Route.LinksFunction = () => [
   {
@@ -49,7 +50,7 @@ export const meta: Route.MetaFunction = () => [
   { name: 'twitter:image', content: '/og-image.png' },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -63,11 +64,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="pittorica-theme" data-appearance="light">
         <PittoricaTheme sourceColor="#cddadd" appearance="light">
-          <ToastProvider>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
-          </ToastProvider>
+          <AuthProvider>{children}</AuthProvider>
+          <ToastProvider />
           <ScrollRestoration />
         </PittoricaTheme>
         <Scripts />

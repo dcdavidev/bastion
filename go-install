@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# go-install.sh
+# Installs/Updates Go to the latest version
+
+set -e
+
+# Detect architecture
+ARCH=$(uname -m)
+case $ARCH in
+    x86_64) ARCH="amd64" ;;
+    aarch64) ARCH="arm64" ;;
+    armv7l) ARCH="armv6l" ;;
+    *) echo "Unsupported architecture: $ARCH"; exit 1 ;;
+esac
+
+echo "Fetching latest Go version..."
+LATEST_VERSION=$(curl -s https://go.dev/VERSION?m=text | head -n 1)
+FILENAME="${LATEST_VERSION}.linux-${ARCH}.tar.gz"
+DOWNLOAD_URL="https://go.dev/dl/${FILENAME}"
+
+echo "Latest version found: ${LATEST_VERSION}"
+
+# Check for sudo/root
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run with sudo or as root"
+    exit 1
+fi
+
+echo "Downloading ${FILENAME}..."
+curl -L -o "/tmp/${FILENAME}" "${DOWNLOAD_URL}"
+
+echo "Removing previous installation and extracting..."
+rm -rf /usr/local/go
+tar -C /usr/local -xzf "/tmp/${FILENAME}"
+
+# Clean up
+rm "/tmp/${FILENAME}"
+
+echo "----------------------------------------------"
+echo "Go ${LATEST_VERSION} installed successfully in /usr/local/go"
+echo ""
+echo "To configure your PATH, run the following command or add it to your ~/.bashrc or ~/.profile:"
+echo 'export PATH=$PATH:/usr/local/go/bin'
+echo ""
+echo "Then, reload your profile with:"
+echo "source ~/.bashrc  # or ~/.profile"
+echo ""
+echo "Verify with: go version"
+echo "----------------------------------------------"

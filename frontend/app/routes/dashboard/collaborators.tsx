@@ -1,49 +1,74 @@
-import { useState, useEffect } from "react";
-import { Box, Text, Stack, Card, Button, Table, Dialog, Input } from "@pittorica/react";
-import { useAuth } from "../../contexts/auth-context";
-import { Plus, UserPlus, Shield } from "lucide-react";
+import type { ChangeEvent, FormEvent } from 'react';
+import { useState } from 'react';
+
+import { IconShield, IconUserPlus } from '@tabler/icons-react';
+
+import {
+  Box,
+  Button,
+  Card,
+  Dialog,
+  Flex,
+  Stack,
+  Text,
+  TextField,
+  toast,
+} from '@pittorica/react';
+
+import { useAuth } from '../../contexts/auth-context';
 
 export default function Collaborators() {
-  const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newCollab, setNewCollab] = useState({ username: "", password: "", projectId: "" });
+  const [newCollab, setNewCollab] = useState({
+    username: '',
+    password: '',
+    projectId: '',
+  });
   const [creating, setCreating] = useState(false);
   const { token } = useAuth();
 
-  // Note: We'd typically fetch a list of collaborators here.
-  // For the sake of this step, we'll focus on the creation UI.
-
-  async function handleCreateCollaborator(e: React.FormEvent) {
+  async function handleCreateCollaborator(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setCreating(true);
-    
-    // In a real E2EE implementation, the admin would:
-    // 1. Fetch the project data key (already done in projects view logic)
-    // 2. Wrap it with the collaborator's password (derived KEK)
-    const mockWrappedKey = "collab-wrapped-key-" + Math.random().toString(16);
+
+    const mockWrappedKey = 'collab-wrapped-key-' + Math.random().toString(16);
 
     try {
-      const response = await fetch("/api/v1/collaborators", {
-        method: "POST",
+      const response = await fetch('/api/v1/collaborators', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           username: newCollab.username,
-          password_hash: "mock-hash", // Placeholder
-          salt: "mock-salt",         // Placeholder
+          password_hash: 'mock-hash', // Placeholder
+          salt: 'mock-salt', // Placeholder
           project_id: newCollab.projectId,
-          wrapped_data_key: mockWrappedKey
+          wrapped_data_key: mockWrappedKey,
         }),
       });
 
       if (response.ok) {
         setIsModalOpen(false);
-        setNewCollab({ username: "", password: "", projectId: "" });
+        const addedUsername = newCollab.username;
+        setNewCollab({ username: '', password: '', projectId: '' });
+        toast({
+          title: 'Access granted',
+          description: `Collaborator ${addedUsername} has been assigned to the project.`,
+          color: 'teal',
+        });
+      } else {
+        throw new Error('Failed to create collaborator on server');
       }
-    } catch (err) {
-      console.error("Failed to create collaborator", err);
+    } catch (error) {
+      console.error('Failed to create collaborator', error);
+      toast({
+        title: 'Assignment failed',
+        description:
+          error instanceof Error ? error.message : 'An unknown error occurred',
+        color: 'red',
+      });
     } finally {
       setCreating(false);
     }
@@ -51,55 +76,84 @@ export default function Collaborators() {
 
   return (
     <Stack gap="6">
-      <Box display="flex" justifyContent="space-between" alignItems="center">
+      <Flex justify="between" align="center">
         <Box>
-          <Text size="6" weight="bold">Collaborators</Text>
+          <Text size="6" weight="bold">
+            Collaborators
+          </Text>
           <Text color="muted">Manage restricted access for team members.</Text>
         </Box>
-        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-          <Stack direction="row" gap="2" alignItems="center">
-            <UserPlus size={18} />
+        <Button variant="filled" onClick={() => setIsModalOpen(true)}>
+          <Stack direction="row" gap="2" align="center">
+            <IconUserPlus size={18} />
             <Text>New Collaborator</Text>
           </Stack>
         </Button>
-      </Box>
+      </Flex>
 
-      <Card padding="8" textAlign="center">
-        <Stack gap="4" alignItems="center">
-          <Box color="cyan"><Shield size={48} /></Box>
+      <Card p="8">
+        <Stack gap="4" align="center" style={{ textAlign: 'center' }}>
+          <Box color="cyan">
+            <IconShield size={48} />
+          </Box>
           <Box>
-            <Text size="4" weight="bold">Access Control</Text>
-            <Text color="muted">Collaborators can only see and use secrets for projects they are assigned to.</Text>
+            <Text size="4" weight="bold">
+              Access Control
+            </Text>
+            <Text color="muted">
+              Collaborators can only see and use secrets for projects they are
+              assigned to.
+            </Text>
           </Box>
         </Stack>
       </Card>
 
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Collaborator">
+      <Dialog
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Add Collaborator"
+      >
         <form onSubmit={handleCreateCollaborator}>
           <Stack gap="4">
-            <Input 
-              placeholder="Username" 
-              value={newCollab.username} 
-              onChange={(e) => setNewCollab({...newCollab, username: e.target.value})} 
-              required 
-            />
-            <Input 
-              type="password" 
-              placeholder="Assign a Password" 
-              value={newCollab.password} 
-              onChange={(e) => setNewCollab({...newCollab, password: e.target.value})} 
-              required 
-            />
-            <Input 
-              placeholder="Project ID (UUID)" 
-              value={newCollab.projectId} 
-              onChange={(e) => setNewCollab({...newCollab, projectId: e.target.value})} 
-              required 
-            />
-            <Box display="flex" justifyContent="flex-end" gap="3">
-              <Button variant="ghost" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-              <Button type="submit" variant="primary" loading={creating}>Grant Access</Button>
-            </Box>
+            <TextField.Root>
+              <TextField.Input
+                placeholder="Username"
+                value={newCollab.username}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setNewCollab({ ...newCollab, username: e.target.value })
+                }
+                required
+              />
+            </TextField.Root>
+            <TextField.Root>
+              <TextField.Input
+                type="password"
+                placeholder="Assign a Password"
+                value={newCollab.password}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setNewCollab({ ...newCollab, password: e.target.value })
+                }
+                required
+              />
+            </TextField.Root>
+            <TextField.Root>
+              <TextField.Input
+                placeholder="Project ID (UUID)"
+                value={newCollab.projectId}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setNewCollab({ ...newCollab, projectId: e.target.value })
+                }
+                required
+              />
+            </TextField.Root>
+            <Flex justify="end" gap="3">
+              <Button variant="text" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="filled" disabled={creating}>
+                {creating ? 'Granting...' : 'Grant Access'}
+              </Button>
+            </Flex>
           </Stack>
         </form>
       </Dialog>

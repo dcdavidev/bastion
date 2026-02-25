@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import type { ReactNode } from 'react';
+import { createContext, use, useMemo, useState } from 'react';
 
 interface AuthContextType {
   token: string | null;
@@ -10,52 +11,47 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setTokenState] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    const savedToken = localStorage.getItem("bastion_token");
-    if (savedToken) {
-      updateState(savedToken);
+  const [token, setToken] = useState<string | null>(() => {
+    if (globalThis.window !== undefined) {
+      return localStorage.getItem('bastion_token');
     }
-  }, []);
+    return null;
+  });
 
-  const updateState = (newToken: string | null) => {
-    if (newToken) {
-      try {
-        const payload = JSON.parse(atob(newToken.split('.')[1]));
-        setIsAdmin(payload.admin === true);
-      } catch (e) {
-        setIsAdmin(false);
+  const isAdmin = useMemo(() => {
+    if (!token) return false;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.admin === true;
+    } catch {
+      return false;
+    }
+  }, [token]);
+
+  const handleSetToken = (newToken: string | null) => {
+    if (globalThis.window !== undefined) {
+      if (newToken) {
+        localStorage.setItem('bastion_token', newToken);
+      } else {
+        localStorage.removeItem('bastion_token');
       }
-    } else {
-      setIsAdmin(false);
     }
-    setTokenState(newToken);
+    setToken(newToken);
   };
 
-  const setToken = (newToken: string | null) => {
-    if (newToken) {
-      localStorage.setItem("bastion_token", newToken);
-    } else {
-      localStorage.removeItem("bastion_token");
-    }
-    updateState(newToken);
-  };
-
-  const logout = () => setToken(null);
+  const logout = () => handleSetToken(null);
 
   return (
-    <AuthContext.Provider value={{ token, setToken, logout, isAdmin }}>
+    <AuthContext value={{ token, setToken: handleSetToken, logout, isAdmin }}>
       {children}
-    </AuthContext.Provider>
+    </AuthContext>
   );
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
+  const context = use(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 }
