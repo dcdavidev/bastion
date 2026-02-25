@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "bastion-server",
   "version": "0.1.5",
   "private": true,
   "scripts": {

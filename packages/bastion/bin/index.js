@@ -7,16 +7,16 @@ const os = require('os');
 // Mapping OS and architecture to the folders created by GoReleaser
 const platforms = {
   'darwin': {
-    'x64': 'darwin_amd64/bastion',
-    'arm64': 'darwin_arm64/bastion'
+    'x64': 'darwin_amd64/bastion-cli',
+    'arm64': 'darwin_arm64/bastion-cli'
   },
   'linux': {
-    'x64': 'linux_amd64/bastion',
-    'arm64': 'linux_arm64/bastion'
+    'x64': 'linux_amd64/bastion-cli',
+    'arm64': 'linux_arm64/bastion-cli'
   },
   'win32': {
-    'x64': 'windows_amd64/bastion.exe',
-    'arm64': 'windows_arm64/bastion.exe'
+    'x64': 'windows_amd64/bastion-cli.exe',
+    'arm64': 'windows_arm64/bastion-cli.exe'
   }
 };
 

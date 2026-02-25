@@ -7,9 +7,9 @@ before:
     - go generate ./...
 
 builds:
-  - id: bastion
+  - id: bastion-cli
     main: ./apps/cli
-    binary: bastion
+    binary: bastion-cli
     env: [CGO_ENABLED=0]
     goos: [linux, windows, darwin]
     goarch: [amd64, arm64]
@@ -44,23 +44,25 @@ dockers_v2:
       - "v{{ .Major }}"
     dockerfile: docker/server.Dockerfile
     platforms: [linux/amd64, linux/arm64]
+    sbom: false
     extra_files:
       - packages/core/db/migrations
 
   - id: bastion-cli
-    ids: [bastion]
+    ids: [bastion-cli]
     images:
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion"
-      - "dcdavidev/bastion"
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-cli"
+      - "dcdavidev/bastion-cli"
     tags:
       - "latest"
       - "{{ .Tag }}"
     dockerfile: docker/cli.Dockerfile
     platforms: [linux/amd64, linux/arm64]
+    sbom: false
 
 nfpms:
   - id: bastion-nfpm
-    package_name: bastion
+    package_name: bastion-cli
     formats: [deb, rpm, apk]
     vendor: dcdavidev
     homepage: https://github.com/dcdavidev/bastion
@@ -70,7 +72,7 @@ nfpms:
 
 snapcrafts:
   - id: bastion-snap
-    name: bastion
+    name: bastion-cli
     summary: Bastion CLI
     description: Bastion is a tool for managing project secrets.
     grade: stable
@@ -78,11 +80,11 @@ snapcrafts:
     publish: true
     apps:
       bastion:
-        command: bastion
+        command: bastion-cli
         plugs: [network, home]
 
 brews:
-  - name: bastion
+  - name: bastion-cli
     repository:
       owner: dcdavidev
       name: homebrew-tap
@@ -92,10 +94,10 @@ brews:
     description: "Bastion CLI"
     license: "MIT"
     install: |
-      bin.install "bastion"
+      bin.install "bastion-cli" => "bastion"
 
 scoops:
-  - name: bastion
+  - name: bastion-cli
     repository:
       owner: dcdavidev
       name: scoop-bucket
@@ -105,13 +107,13 @@ scoops:
     license: "MIT"
 
 aurs:
-  - name: bastion-bin
+  - name: bastion-cli-bin
     homepage: "https://github.com/dcdavidev/bastion"
     description: "Bastion CLI"
     maintainers: ["Davide Di Criscito <dcdavidev@gmail.com>"]
     license: "MIT"
     private_key: "{{ .Env.AUR_KEY }}"
-    git_url: "ssh://aur@aur.archlinux.org/bastion-bin.git"
+    git_url: "ssh://aur@aur.archlinux.org/bastion-cli-bin.git"
 
 release:
   github:

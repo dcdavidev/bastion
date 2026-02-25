@@ -1,5 +1,5 @@
 {
-  "name": "@dcdavidev/bastion",
+  "name": "@dcdavidev/bastion-cli",
   "version": "0.1.5",
   "description": "Bastion CLI - Secure secret management and execution",
   "repository": {
