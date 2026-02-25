@@ -72,7 +72,9 @@ jobs:
           args: --version
 
       - name: Clean git state
-        run: git checkout -- .
+        run: |
+          git checkout -- .
+          git clean -fd
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
