@@ -69,20 +69,11 @@ jobs:
       - name: Install Snapcraft
         run: sudo snap install snapcraft --classic
 
-      - name: Install Chocolatey
-        uses: crazy-max/ghaction-chocolatey@v3
-        with:
-          args: --version
-
-      - name: Add Chocolatey to PATH
-        run: echo "/opt/chocolatey/bin" >> $GITHUB_PATH
-
       - name: Run GoReleaser
-        run: PATH="/opt/chocolatey/bin:$PATH" goreleaser release --clean --skip=validate
+        run: goreleaser release --clean --skip=validate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
-          CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
 
       - name: Publish to NPM
         run: |

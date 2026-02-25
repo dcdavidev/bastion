@@ -174,13 +174,3 @@ aurs:
     license: "MIT"
     private_key: "{{ .Env.AUR_KEY }}"
     git_url: "ssh://aur@aur.archlinux.org/bastion-bin.git"
-
-chocolateys:
-  - name: bastion
-    ids:
-      - bastion
-    owners: dcdavidev
-    api_key: "{{ .Env.CHOCOLATEY_API_KEY }}"
-    description: "Bastion CLI - Secure secret management and execution"
-    authors: Davide Di Criscito
-    license_url: "https://github.com/dcdavidev/bastion/blob/main/LICENSE"

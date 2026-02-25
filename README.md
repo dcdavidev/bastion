@@ -48,7 +48,6 @@ Bastion is managed as a **Turborepo Monorepo**.
   scoop bucket add dcdavidev https://github.com/dcdavidev/scoop-bucket
   scoop install bastion
   ```
-- **Chocolatey**: `choco install bastion`
 
 #### 📦 Package Managers & Containers
 
