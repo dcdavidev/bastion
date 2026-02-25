@@ -11,10 +11,6 @@ builds:
   - id: bastion
     main: ./apps/cli
     binary: bastion
-    hooks:
-      post:
-        - mkdir -p packages/bastion/bin/{{ .Os }}_{{ .Arch }}
-        - cp {{ .Path }} packages/bastion/bin/{{ .Os }}_{{ .Arch }}/{{ .Name }}
     env:
       - CGO_ENABLED=0
     goos:
@@ -40,6 +36,9 @@ builds:
 
 archives:
   - id: bastion
+    builds:
+      - bastion
+      - bastion-server
     formats:
       - tar.gz
     name_template: >-
@@ -72,7 +71,7 @@ release:
 
 snapcrafts:
   - id: bastion
-    ids:
+    builds:
       - bastion
     name: bastion
     summary: Bastion CLI - Secure secret management and execution
@@ -91,6 +90,8 @@ snapcrafts:
 
 dockers_v2:
   - id: bastion-server
+    ids:
+      - bastion-server
     images:
       - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server"
       - "dcdavidev/bastion-server"
@@ -104,13 +105,15 @@ dockers_v2:
       - linux/arm64
     extra_files:
       - packages/core/db/migrations
-    attestations: false
+    sbom: false
     flags:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
       - "--label=org.opencontainers.image.version={{ .Version }}"
 
   - id: bastion-cli
+    ids:
+      - bastion
     images:
       - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion"
       - "dcdavidev/bastion"
@@ -121,24 +124,24 @@ dockers_v2:
     platforms:
       - linux/amd64
       - linux/arm64
-    attestations: false
+    sbom: false
     flags:
       - "--label=org.opencontainers.image.title={{ .ProjectName }} CLI"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
       - "--label=org.opencontainers.image.version={{ .Version }}"
 
-homebrew_casks:
+brews:
   - name: bastion
     repository:
       owner: dcdavidev
       name: homebrew-tap
       token: "{{ .Env.GITHUB_TOKEN }}"
-    directory: Casks
+    directory: Formula
     homepage: "https://github.com/dcdavidev/bastion"
     description: "Bastion CLI - Secure secret management and execution"
     license: "MIT"
-    binaries:
-      - bastion
+    install: |
+      bin.install "bastion"
 
 scoops:
   - name: bastion
@@ -153,7 +156,7 @@ scoops:
 nfpms:
   - id: bastion
     package_name: bastion
-    ids:
+    builds:
       - bastion
     vendor: dcdavidev
     homepage: https://github.com/dcdavidev/bastion
@@ -167,8 +170,6 @@ nfpms:
 
 aurs:
   - name: bastion-bin
-    ids:
-      - bastion
     homepage: "https://github.com/dcdavidev/bastion"
     description: "Bastion CLI - Secure secret management and execution"
     maintainers:
