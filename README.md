@@ -24,30 +24,40 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
 
 ### Installation
 
-#### Via Snap (Recommended for Linux)
+#### 🐧 Linux
 
-```bash
-sudo snap install bastion
-```
+- **Snap (Recommended)**: `sudo snap install bastion`
+- **AUR (Arch Linux)**: `yay -S bastion-bin`
+- **AppImage**: Download the `.AppImage` from [Releases](https://github.com/dcdavidev/bastion/releases)
+- **Native Packages**: `.deb`, `.rpm`, and `.apk` available in [Releases](https://github.com/dcdavidev/bastion/releases)
 
-#### Via Homebrew (macOS & Linux)
+#### 🍏 macOS
 
-```bash
-brew install dcdavidev/tap/bastion
-```
+- **Homebrew**: 
+  ```bash
+  brew install dcdavidev/tap/bastion
+  ```
 
-#### Via Scoop (Windows)
+#### 🪟 Windows
 
-```bash
-scoop bucket add dcdavidev https://github.com/dcdavidev/scoop-bucket
-scoop install bastion
-```
+- **WinGet**: `winget install dcdavidev.bastion`
+- **Scoop**:
+  ```bash
+  scoop bucket add dcdavidev https://github.com/dcdavidev/scoop-bucket
+  scoop install bastion
+  ```
+- **Chocolatey**: `choco install bastion`
 
-#### Via Go Install
+#### 📦 Package Managers & Containers
 
-```bash
-go install github.com/dcdavidev/bastion/cmd/bastion@latest
-```
+- **NPM**: `npm install -g @dcdavidev/bastion`
+- **Go Install**: `go install github.com/dcdavidev/bastion/cmd/bastion@latest`
+- **Docker**:
+  ```bash
+  docker pull ghcr.io/dcdavidev/bastion:latest
+  # or from Docker Hub
+  docker pull dcdavidev/bastion:latest
+  ```
 
 #### From Source
 
