@@ -63,8 +63,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Set up Snapcraft
-        uses: snapcore/action-snapcraft@v1
+      - name: Install Snapcraft
+        run: sudo snap install snapcraft --classic
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
