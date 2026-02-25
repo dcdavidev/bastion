@@ -91,34 +91,36 @@ snapcrafts:
 
 dockers_v2:
   - id: bastion-server
-    image_templates:
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server:latest"
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server:{{ .Tag }}"
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server:v{{ .Major }}"
-      - "dcdavidev/bastion-server:latest"
-      - "dcdavidev/bastion-server:{{ .Tag }}"
+    images:
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server"
+      - "dcdavidev/bastion-server"
+    tags:
+      - "latest"
+      - "{{ .Tag }}"
+      - "v{{ .Major }}"
     dockerfile: docker/server.Dockerfile
     platforms:
       - linux/amd64
       - linux/arm64
     extra_files:
       - packages/core/db/migrations
-    build_flag_templates:
+    build_flags:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
       - "--label=org.opencontainers.image.version={{ .Version }}"
 
   - id: bastion-cli
-    image_templates:
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion:latest"
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion:{{ .Tag }}"
-      - "dcdavidev/bastion:latest"
-      - "dcdavidev/bastion:{{ .Tag }}"
+    images:
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion"
+      - "dcdavidev/bastion"
+    tags:
+      - "latest"
+      - "{{ .Tag }}"
     dockerfile: docker/cli.Dockerfile
     platforms:
       - linux/amd64
       - linux/arm64
-    build_flag_templates:
+    build_flags:
       - "--label=org.opencontainers.image.title={{ .ProjectName }} CLI"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
       - "--label=org.opencontainers.image.version={{ .Version }}"
