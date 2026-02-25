@@ -1,0 +1,18 @@
+{
+  "name": "@dcdavidev/bastion",
+  "version": "0.1.0",
+  "description": "Bastion CLI - Secure secret management and execution",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dcdavidev/bastion.git"
+  },
+  "license": "MIT",
+  "author": "Davide Di Criscito",
+  "main": "index.js",
+  "bin": {
+    "bastion": "bin/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

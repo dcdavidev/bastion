@@ -14,7 +14,9 @@
   "hooks": {
     "after:bump": [
       "sed -i \"s/const Version = \\\".*\\\"/const Version = \\\"${version}\\\"/\" packages/core/version/version.go",
-      "cd apps/web && pnpm version ${version} --no-git-tag-version --allow-same-version"
-    ]
+      "cd apps/web && pnpm version ${version} --no-git-tag-version --allow-same-version",
+      "cd packages/bastion && pnpm version ${version} --no-git-tag-version --allow-same-version"
+    ],
+    "after:release": "cd packages/bastion && npm publish --access public"
   }
 }

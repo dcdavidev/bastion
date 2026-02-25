@@ -3,10 +3,13 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**", ".react-router/**", "bastion", "bastion-server"]
-    },
-    "lint": {
-      "dependsOn": ["^build"]
+      "outputs": [
+        "dist/**",
+        "build/**",
+        ".react-router/**",
+        "bastion",
+        "bastion-server"
+      ]
     },
     "dev": {
       "cache": false,

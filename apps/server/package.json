@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "go build -o ../../bastion-server main.go"
+    "build": "go build -o ../../bastion-server main.go",
+    "dev": "go run main.go"
   }
 }

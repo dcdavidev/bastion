@@ -3,13 +3,14 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev",
-    "release": "release-it"
+    "dev": "pnpm docker:db:up && turbo dev",
+    "docker:db:up": "docker compose up -d db",
+    "fmt": "pnpm dlx prettier --ignore-unknown --write .",
+    "lint": "pnpm dlx eslint --no-warn-ignored --fix .",
+    "lint:fmt": "pnpm run lint && pnpm run fmt",
+    "prepare": "lefthook install",
+    "release": "LEFTHOOK=\"0\" release-it"
   },
-  "engines": {
-    "node": ">=24"
-  },
-  "packageManager": "pnpm@10.0.0",
   "config": {
     "commitizen": {
       "path": "cz-git"
@@ -42,5 +43,9 @@
     "prettier-plugin-toml": "^2.0.6",
     "release-it": "^19.2.4",
     "turbo": "^2.8.10"
+  },
+  "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": ">=24"
   }
 }
