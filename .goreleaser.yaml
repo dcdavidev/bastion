@@ -62,7 +62,7 @@ dockers_v2:
 
 nfpms:
   - id: bastion-nfpm
-    package_name: bastion
+    package_name: bastion-cli
     formats: [deb, rpm, apk]
     vendor: dcdavidev
     homepage: https://github.com/dcdavidev/bastion
@@ -72,7 +72,7 @@ nfpms:
 
 snapcrafts:
   - id: bastion-snap
-    name: bastion
+    name: bastion-cli
     summary: Bastion CLI
     description: Bastion is a tool for managing project secrets.
     grade: stable
@@ -84,11 +84,11 @@ snapcrafts:
         plugs: [network, home]
 
 brews:
-  - name: bastion
+  - name: bastion-cli
     repository:
       owner: dcdavidev
       name: homebrew-tap
-      token: "{{ .Env.GITHUB_TOKEN }}"
+      token: "{{ .Env.GH_PAT }}"
     directory: Formula
     homepage: "https://github.com/dcdavidev/bastion"
     description: "Bastion CLI"
@@ -97,23 +97,23 @@ brews:
       bin.install "bastion-cli" => "bastion"
 
 scoops:
-  - name: bastion
+  - name: bastion-cli
     repository:
       owner: dcdavidev
       name: scoop-bucket
-      token: "{{ .Env.GITHUB_TOKEN }}"
+      token: "{{ .Env.GH_PAT }}"
     homepage: "https://github.com/dcdavidev/bastion"
     description: "Bastion CLI"
     license: "MIT"
 
 aurs:
-  - name: bastion-bin
+  - name: bastion-cli-bin
     homepage: "https://github.com/dcdavidev/bastion"
     description: "Bastion CLI"
     maintainers: ["Davide Di Criscito <dcdavidev@gmail.com>"]
     license: "MIT"
     private_key: "{{ .Env.AUR_KEY }}"
-    git_url: "ssh://aur@aur.archlinux.org/bastion-bin.git"
+    git_url: "ssh://aur@aur.archlinux.org/bastion-cli-bin.git"
 
 release:
   github:

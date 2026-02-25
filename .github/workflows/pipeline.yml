@@ -81,6 +81,7 @@ jobs:
         run: goreleaser release --clean --skip=validate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
           AUR_KEY: ${{ secrets.AUR_KEY }}
