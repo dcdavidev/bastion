@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.6](https://github.com/dcdavidev/bastion/compare/v0.1.5...v0.1.6) (2026-02-25)
+
+### Bug Fixes
+
+* **release:** specify archive id for aur ([062510d](https://github.com/dcdavidev/bastion/commit/062510d7085268dcab687a95b994152108becd97))
+
 ## [0.1.5](https://github.com/dcdavidev/bastion/compare/v0.1.4...v0.1.5) (2026-02-25)
 
 ## [0.1.4](https://github.com/dcdavidev/bastion/compare/v0.1.3...v0.1.4) (2026-02-25)
