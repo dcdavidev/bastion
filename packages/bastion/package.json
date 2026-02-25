@@ -1,6 +1,6 @@
 {
   "name": "@dcdavidev/bastion",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Bastion CLI - Secure secret management and execution",
   "repository": {
     "type": "git",
