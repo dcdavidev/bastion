@@ -10,102 +10,77 @@ builds:
   - id: bastion
     main: ./apps/cli
     binary: bastion
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - linux
-      - windows
-      - darwin
-    goarch:
-      - amd64
-      - arm64
+    env: [CGO_ENABLED=0]
+    goos: [linux, windows, darwin]
+    goarch: [amd64, arm64]
 
   - id: bastion-server
     main: ./apps/server
     binary: bastion-server
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - linux
-      - windows
-      - darwin
-    goarch:
-      - amd64
-      - arm64
+    env: [CGO_ENABLED=0]
+    goos: [linux, windows, darwin]
+    goarch: [amd64, arm64]
 
 archives:
   - id: bastion-archive
-    formats:
-      - tar.gz
-    name_template: >-
-      {{ .ProjectName }}_
-      {{- .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
+    formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
-        formats:
-          - zip
+        formats: [zip]
+
+# Nota: NON aggiungere una sezione 'sboms:' qui, poiché attiverebbe le attestazioni Docker.
+
+dockers_v2:
+  - id: bastion-server
+    ids: [bastion-server]
+    images:
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server"
+      - "dcdavidev/bastion-server"
+    tags:
+      - "latest"
+      - "{{ .Tag }}"
+      - "v{{ .Major }}"
+    dockerfile: docker/server.Dockerfile
+    platforms: [linux/amd64, linux/arm64]
+    extra_files:
+      - packages/core/db/migrations
+    # Rimosse le chiavi 'attest' e 'sbom' che il tuo linter non accetta.
+    # GoReleaser non dovrebbe provare ad attestare se non vede una config SBOM globale.
+
+  - id: bastion-cli
+    ids: [bastion]
+    images:
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion"
+      - "dcdavidev/bastion"
+    tags:
+      - "latest"
+      - "{{ .Tag }}"
+    dockerfile: docker/cli.Dockerfile
+    platforms: [linux/amd64, linux/arm64]
 
 nfpms:
   - id: bastion-nfpm
     package_name: bastion
-    formats:
-      - deb
-      - rpm
-      - apk
+    formats: [deb, rpm, apk]
     vendor: dcdavidev
     homepage: https://github.com/dcdavidev/bastion
     maintainer: Davide Di Criscito <dcdavidev@gmail.com>
-    description: Bastion CLI - Secure secret management and execution
+    description: Bastion CLI
     license: MIT
 
 snapcrafts:
   - id: bastion-snap
     name: bastion
-    summary: Bastion CLI - Secure secret management and execution
-    description: |
-      Bastion is a tool for managing project secrets and running commands
-      with those secrets injected into the environment securely.
+    summary: Bastion CLI
+    description: Bastion is a tool for managing project secrets.
     grade: stable
     confinement: strict
     publish: true
     apps:
       bastion:
         command: bastion
-        plugs:
-          - network
-          - home
-
-dockers_v2:
-  - id: bastion-server
-    ids:
-      - bastion-server
-    images:
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server:latest"
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server:{{ .Tag }}"
-      - "dcdavidev/bastion-server:latest"
-      - "dcdavidev/bastion-server:{{ .Tag }}"
-    dockerfile: docker/server.Dockerfile
-    platforms:
-      - linux/amd64
-      - linux/arm64
-    extra_files:
-      - packages/core/db/migrations
-
-  - id: bastion-cli
-    ids:
-      - bastion
-    images:
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion:latest"
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion:{{ .Tag }}"
-      - "dcdavidev/bastion:latest"
-      - "dcdavidev/bastion:{{ .Tag }}"
-    dockerfile: docker/cli.Dockerfile
-    platforms:
-      - linux/amd64
-      - linux/arm64
+        plugs: [network, home]
 
 brews:
   - name: bastion
@@ -115,7 +90,7 @@ brews:
       token: "{{ .Env.GITHUB_TOKEN }}"
     directory: Formula
     homepage: "https://github.com/dcdavidev/bastion"
-    description: "Bastion CLI - Secure secret management and execution"
+    description: "Bastion CLI"
     license: "MIT"
     install: |
       bin.install "bastion"
@@ -127,15 +102,14 @@ scoops:
       name: scoop-bucket
       token: "{{ .Env.GITHUB_TOKEN }}"
     homepage: "https://github.com/dcdavidev/bastion"
-    description: "Bastion CLI - Secure secret management and execution"
+    description: "Bastion CLI"
     license: "MIT"
 
 aurs:
   - name: bastion-bin
     homepage: "https://github.com/dcdavidev/bastion"
-    description: "Bastion CLI - Secure secret management and execution"
-    maintainers:
-      - "Davide Di Criscito <dcdavidev@gmail.com>"
+    description: "Bastion CLI"
+    maintainers: ["Davide Di Criscito <dcdavidev@gmail.com>"]
     license: "MIT"
     private_key: "{{ .Env.AUR_KEY }}"
     git_url: "ssh://aur@aur.archlinux.org/bastion-bin.git"
@@ -152,6 +126,4 @@ release:
 changelog:
   sort: asc
   filters:
-    exclude:
-      - "^docs:"
-      - "^test:"
+    exclude: ["^docs:", "^test:"]
