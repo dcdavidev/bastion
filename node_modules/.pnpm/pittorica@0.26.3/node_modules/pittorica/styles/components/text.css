@@ -1,0 +1,234 @@
+@layer pittorica-components {
+  .pittorica-text {
+    font-family: var(--pittorica-font-family);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .pittorica-text--truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+  }
+
+  /* Weights mapped via data-attributes */
+  .pittorica-text[data-weight='light'] {
+    font-weight: 300;
+  }
+  .pittorica-text[data-weight='regular'] {
+    font-weight: 400;
+  }
+  .pittorica-text[data-weight='medium'] {
+    font-weight: 500;
+  }
+  .pittorica-text[data-weight='bold'] {
+    font-weight: 700;
+  }
+
+  .pittorica-em {
+    font-style: italic;
+    font-family: var(--pittorica-font-em);
+  }
+
+  .pittorica-strong {
+    font-weight: 700;
+    font-family: var(--pittorica-font-strong);
+  }
+
+  /* --- Initial / Base Sizes --- */
+  .pittorica-text--size-1 {
+    font-size: var(--pittorica-font-size-1);
+    line-height: var(--pittorica-line-height-1);
+  }
+  .pittorica-text--size-2 {
+    font-size: var(--pittorica-font-size-2);
+    line-height: var(--pittorica-line-height-2);
+  }
+  .pittorica-text--size-3 {
+    font-size: var(--pittorica-font-size-3);
+    line-height: var(--pittorica-line-height-3);
+  }
+  .pittorica-text--size-4 {
+    font-size: var(--pittorica-font-size-4);
+    line-height: var(--pittorica-line-height-4);
+  }
+  .pittorica-text--size-5 {
+    font-size: var(--pittorica-font-size-5);
+    line-height: var(--pittorica-line-height-5);
+  }
+  .pittorica-text--size-6 {
+    font-size: var(--pittorica-font-size-6);
+    line-height: var(--pittorica-line-height-6);
+  }
+  .pittorica-text--size-7 {
+    font-size: var(--pittorica-font-size-7);
+    line-height: var(--pittorica-line-height-7);
+  }
+  .pittorica-text--size-8 {
+    font-size: var(--pittorica-font-size-8);
+    line-height: var(--pittorica-line-height-8);
+  }
+  .pittorica-text--size-9 {
+    font-size: var(--pittorica-font-size-9);
+    line-height: var(--pittorica-line-height-9);
+  }
+
+  /* --- Responsive Breakpoints --- */
+
+  @media (min-width: 520px) {
+    /* XS */
+    .pittorica-text--xs-size-1 {
+      font-size: var(--pittorica-font-size-1);
+    }
+    .pittorica-text--xs-size-2 {
+      font-size: var(--pittorica-font-size-2);
+    }
+    .pittorica-text--xs-size-3 {
+      font-size: var(--pittorica-font-size-3);
+    }
+    .pittorica-text--xs-size-4 {
+      font-size: var(--pittorica-font-size-4);
+    }
+    .pittorica-text--xs-size-5 {
+      font-size: var(--pittorica-font-size-5);
+    }
+    .pittorica-text--xs-size-6 {
+      font-size: var(--pittorica-font-size-6);
+    }
+    .pittorica-text--xs-size-7 {
+      font-size: var(--pittorica-font-size-7);
+    }
+    .pittorica-text--xs-size-8 {
+      font-size: var(--pittorica-font-size-8);
+    }
+    .pittorica-text--xs-size-9 {
+      font-size: var(--pittorica-font-size-9);
+    }
+  }
+
+  @media (min-width: 768px) {
+    /* SM */
+    .pittorica-text--sm-size-1 {
+      font-size: var(--pittorica-font-size-1);
+    }
+    .pittorica-text--sm-size-2 {
+      font-size: var(--pittorica-font-size-2);
+    }
+    .pittorica-text--sm-size-3 {
+      font-size: var(--pittorica-font-size-3);
+    }
+    .pittorica-text--sm-size-4 {
+      font-size: var(--pittorica-font-size-4);
+    }
+    .pittorica-text--sm-size-5 {
+      font-size: var(--pittorica-font-size-5);
+    }
+    .pittorica-text--sm-size-6 {
+      font-size: var(--pittorica-font-size-6);
+    }
+    .pittorica-text--sm-size-7 {
+      font-size: var(--pittorica-font-size-7);
+    }
+    .pittorica-text--sm-size-8 {
+      font-size: var(--pittorica-font-size-8);
+    }
+    .pittorica-text--sm-size-9 {
+      font-size: var(--pittorica-font-size-9);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    /* MD */
+    .pittorica-text--md-size-1 {
+      font-size: var(--pittorica-font-size-1);
+    }
+    .pittorica-text--md-size-2 {
+      font-size: var(--pittorica-font-size-2);
+    }
+    .pittorica-text--md-size-3 {
+      font-size: var(--pittorica-font-size-3);
+    }
+    .pittorica-text--md-size-4 {
+      font-size: var(--pittorica-font-size-4);
+    }
+    .pittorica-text--md-size-5 {
+      font-size: var(--pittorica-font-size-5);
+    }
+    .pittorica-text--md-size-6 {
+      font-size: var(--pittorica-font-size-6);
+    }
+    .pittorica-text--md-size-7 {
+      font-size: var(--pittorica-font-size-7);
+    }
+    .pittorica-text--md-size-8 {
+      font-size: var(--pittorica-font-size-8);
+    }
+    .pittorica-text--md-size-9 {
+      font-size: var(--pittorica-font-size-9);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    /* LG */
+    .pittorica-text--lg-size-1 {
+      font-size: var(--pittorica-font-size-1);
+    }
+    .pittorica-text--lg-size-2 {
+      font-size: var(--pittorica-font-size-2);
+    }
+    .pittorica-text--lg-size-3 {
+      font-size: var(--pittorica-font-size-3);
+    }
+    .pittorica-text--lg-size-4 {
+      font-size: var(--pittorica-font-size-4);
+    }
+    .pittorica-text--lg-size-5 {
+      font-size: var(--pittorica-font-size-5);
+    }
+    .pittorica-text--lg-size-6 {
+      font-size: var(--pittorica-font-size-6);
+    }
+    .pittorica-text--lg-size-7 {
+      font-size: var(--pittorica-font-size-7);
+    }
+    .pittorica-text--lg-size-8 {
+      font-size: var(--pittorica-font-size-8);
+    }
+    .pittorica-text--lg-size-9 {
+      font-size: var(--pittorica-font-size-9);
+    }
+  }
+
+  @media (min-width: 1640px) {
+    /* XL */
+    .pittorica-text--xl-size-1 {
+      font-size: var(--pittorica-font-size-1);
+    }
+    .pittorica-text--xl-size-2 {
+      font-size: var(--pittorica-font-size-2);
+    }
+    .pittorica-text--xl-size-3 {
+      font-size: var(--pittorica-font-size-3);
+    }
+    .pittorica-text--xl-size-4 {
+      font-size: var(--pittorica-font-size-4);
+    }
+    .pittorica-text--xl-size-5 {
+      font-size: var(--pittorica-font-size-5);
+    }
+    .pittorica-text--xl-size-6 {
+      font-size: var(--pittorica-font-size-6);
+    }
+    .pittorica-text--xl-size-7 {
+      font-size: var(--pittorica-font-size-7);
+    }
+    .pittorica-text--xl-size-8 {
+      font-size: var(--pittorica-font-size-8);
+    }
+    .pittorica-text--xl-size-9 {
+      font-size: var(--pittorica-font-size-9);
+    }
+  }
+}

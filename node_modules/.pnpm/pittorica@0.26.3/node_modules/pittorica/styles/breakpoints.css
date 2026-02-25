@@ -1,0 +1,9 @@
+@layer pittorica-tokens {
+  :root {
+    --pittorica-bp-xs: 520px;
+    --pittorica-bp-sm: 768px;
+    --pittorica-bp-md: 1024px;
+    --pittorica-bp-lg: 1280px;
+    --pittorica-bp-xl: 1640px;
+  }
+}

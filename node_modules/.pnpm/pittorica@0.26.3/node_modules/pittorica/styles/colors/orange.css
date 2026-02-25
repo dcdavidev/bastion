@@ -1,0 +1,126 @@
+@layer pittorica-tokens {
+  .pittorica-theme {
+    /* --- Orange Base (Step 9) --- */
+    --pittorica-orange-9: #ff9800;
+
+    /* --- LIGHT MODE --- */
+    --pittorica-orange-1: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 2%,
+      var(--pittorica-white)
+    );
+    --pittorica-orange-2: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 6%,
+      var(--pittorica-white)
+    );
+    --pittorica-orange-3: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 12%,
+      var(--pittorica-white)
+    );
+    --pittorica-orange-4: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 18%,
+      var(--pittorica-white)
+    );
+    --pittorica-orange-5: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 24%,
+      var(--pittorica-white)
+    );
+    --pittorica-orange-6: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 35%,
+      var(--pittorica-white)
+    );
+    --pittorica-orange-7: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 50%,
+      var(--pittorica-white)
+    );
+    --pittorica-orange-8: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 70%,
+      var(--pittorica-white)
+    );
+
+    --pittorica-orange-11: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 85%,
+      var(--pittorica-black)
+    );
+
+    /* Contrasti Light */
+    --pittorica-on-orange-1: var(--pittorica-black);
+    --pittorica-on-orange-2: var(--pittorica-black);
+    --pittorica-on-orange-3: var(--pittorica-black);
+    --pittorica-on-orange-4: var(--pittorica-black);
+    --pittorica-on-orange-5: var(--pittorica-black);
+    --pittorica-on-orange-6: var(--pittorica-black);
+    --pittorica-on-orange-7: var(--pittorica-black);
+    --pittorica-on-orange-8: var(--pittorica-white);
+    --pittorica-on-orange-9: var(--pittorica-white);
+  }
+
+  .pittorica-theme[data-appearance='dark'] {
+    /* --- DARK MODE --- */
+    --pittorica-orange-1: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 4%,
+      var(--pittorica-black)
+    );
+    --pittorica-orange-2: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 8%,
+      var(--pittorica-black)
+    );
+    --pittorica-orange-3: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 15%,
+      var(--pittorica-black)
+    );
+    --pittorica-orange-4: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 25%,
+      var(--pittorica-black)
+    );
+    --pittorica-orange-5: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 40%,
+      var(--pittorica-black)
+    );
+    --pittorica-orange-6: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 55%,
+      var(--pittorica-black)
+    );
+    --pittorica-orange-7: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 70%,
+      var(--pittorica-black)
+    );
+    --pittorica-orange-8: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 85%,
+      var(--pittorica-black)
+    );
+
+    --pittorica-orange-11: color-mix(
+      in srgb,
+      var(--pittorica-orange-9) 60%,
+      var(--pittorica-white)
+    );
+
+    /* Contrasti Dark */
+    --pittorica-on-orange-1: var(--pittorica-white);
+    --pittorica-on-orange-2: var(--pittorica-white);
+    --pittorica-on-orange-3: var(--pittorica-white);
+    --pittorica-on-orange-4: var(--pittorica-white);
+    --pittorica-on-orange-5: var(--pittorica-white);
+    --pittorica-on-orange-6: var(--pittorica-black);
+    --pittorica-on-orange-7: var(--pittorica-black);
+    --pittorica-on-orange-8: var(--pittorica-black);
+    --pittorica-on-orange-9: var(--pittorica-black);
+  }
+}

@@ -1,0 +1,20 @@
+/* Explicit declaration of layer priority (from least specific to most specific) */
+@layer pittorica-reset, pittorica-tokens, pittorica-base, pittorica-components;
+
+@import './reset.css' layer(pittorica-reset);
+
+/* Colors */
+@import './colors.css' layer(pittorica-tokens);
+
+@import './fonts.css' layer(pittorica-tokens);
+@import './breakpoints.css' layer(pittorica-tokens);
+@import './space.css' layer(pittorica-tokens);
+@import './radius.css' layer(pittorica-tokens);
+@import './shadows.css' layer(pittorica-tokens);
+
+/* Global styling foundations */
+/* Base styles assigned to a layer to prevent specificity conflicts with components */
+@import './base.css' layer(pittorica-base);
+
+/* Components */
+@import './components.css' layer(pittorica-components);

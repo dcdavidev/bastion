@@ -1,0 +1,5 @@
+
+
+> cli@0.1.0 build /home/dcdavidev/bastion/apps/cli
+> go build -o ../../bastion main.go
+

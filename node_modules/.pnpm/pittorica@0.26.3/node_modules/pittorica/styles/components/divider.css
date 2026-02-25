@@ -1,0 +1,39 @@
+@layer pittorica-components {
+  .pittorica-divider {
+    display: flex;
+    clear: both;
+    width: 100%;
+    margin: var(--pittorica-space-4) 0;
+    border: none;
+    background-color: transparent;
+  }
+
+  .pittorica-divider:not(.pittorica-divider--solid) {
+    height: auto;
+    line-height: 0;
+  }
+
+  .pittorica-divider--solid {
+    align-items: center;
+  }
+
+  .pittorica-divider--solid:not(.pittorica-divider--with-children) {
+    height: var(--divider-thickness, 1px);
+    background-color: var(--divider-color, var(--pittorica-slate-3));
+  }
+
+  .pittorica-divider--with-children::before,
+  .pittorica-divider--with-children::after {
+    content: '';
+    flex: 1;
+    height: var(--divider-thickness, 1px);
+    background-color: var(--divider-color, var(--pittorica-slate-3));
+  }
+
+  .pittorica-divider__content {
+    padding: 0 var(--pittorica-space-3);
+    color: var(--divider-color, var(--pittorica-slate-9));
+    font-size: var(--pittorica-font-size-2);
+    white-space: nowrap;
+  }
+}

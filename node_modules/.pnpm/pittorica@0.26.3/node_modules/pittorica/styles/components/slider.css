@@ -1,0 +1,52 @@
+@layer pittorica-components {
+  .pittorica-slider-root {
+    position: relative;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    touch-action: none;
+    width: 100%;
+    height: 20px;
+  }
+
+  .pittorica-slider-track {
+    background-color: var(--pittorica-slate-4);
+    position: relative;
+    flex-grow: 1;
+    border-radius: var(--pittorica-radius-full);
+    height: 4px;
+  }
+
+  .pittorica-slider-range {
+    position: absolute;
+    background-color: var(--pittorica-source-color);
+    border-radius: var(--pittorica-radius-full);
+    height: 100%;
+  }
+
+  .pittorica-slider-thumb {
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    box-shadow: var(--pittorica-shadow-2);
+    border: 2px solid var(--pittorica-source-color);
+    border-radius: var(--pittorica-radius-full);
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    outline: none;
+  }
+
+  .pittorica-slider-thumb:focus-visible {
+    box-shadow: 0 0 0 4px var(--pittorica-slate-3);
+  }
+
+  .pittorica-slider-thumb:active {
+    transform: scale(1.2);
+  }
+
+  .pittorica-slider-root[data-disabled='true'] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}

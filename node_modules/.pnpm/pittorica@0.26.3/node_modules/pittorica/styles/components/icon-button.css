@@ -1,0 +1,75 @@
+@layer pittorica-components {
+  .pittorica-icon-button {
+    /* Resets and base from .pittorica-button */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--pittorica-radius-full);
+    cursor: pointer;
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    padding: 0;
+    flex-shrink: 0;
+
+    --_btn-color: var(--pittorica-button-color, var(--pittorica-source-color));
+    --_btn-on-color: var(
+      --pittorica-button-on-color,
+      var(--pittorica-on-source-color)
+    );
+  }
+
+  /* Size Variations */
+  .pittorica-icon-button--1 {
+    height: 24px;
+    width: 24px;
+  }
+  .pittorica-icon-button--2 {
+    height: 32px;
+    width: 32px;
+  }
+  .pittorica-icon-button--3 {
+    height: 40px;
+    width: 40px;
+  }
+  .pittorica-icon-button--4 {
+    height: 48px;
+    width: 48px;
+  }
+
+  /* Re-use Button logic for hover/active */
+  .pittorica-icon-button:hover {
+    box-shadow: var(--pittorica-shadow-4);
+  }
+  .pittorica-icon-button:active {
+    transform: translateY(1px);
+    filter: brightness(1.15);
+  }
+
+  /* Re-use Button Variants */
+  .pittorica-icon-button--filled {
+    background-color: var(--_btn-color);
+    color: var(--_btn-on-color);
+  }
+  .pittorica-icon-button--filled:hover {
+    filter: brightness(0.9);
+  }
+
+  .pittorica-icon-button--tonal {
+    background-color: color-mix(in srgb, var(--_btn-color) 12%, transparent);
+    color: var(--_btn-color);
+  }
+
+  .pittorica-icon-button--outlined {
+    background-color: transparent;
+    border: 1px solid var(--pittorica-slate-6);
+    color: var(--_btn-color);
+  }
+
+  .pittorica-icon-button--text {
+    background-color: transparent;
+    color: var(--_btn-color);
+  }
+  .pittorica-icon-button--text:hover {
+    background-color: color-mix(in srgb, var(--_btn-color) 8%, transparent);
+  }
+}

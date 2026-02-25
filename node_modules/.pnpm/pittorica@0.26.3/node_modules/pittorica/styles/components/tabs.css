@@ -1,0 +1,52 @@
+@layer pittorica-components {
+  .pittorica-tabs-root {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pittorica-tabs-list {
+    display: flex;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--pittorica-slate-4);
+    gap: var(--pittorica-space-4);
+  }
+
+  .pittorica-tabs-trigger {
+    all: unset;
+    cursor: pointer;
+    padding: var(--pittorica-space-2) 0;
+    font-size: var(--pittorica-font-size-2);
+    font-weight: var(--pittorica-font-weight-medium);
+    color: var(--pittorica-slate-11);
+    position: relative;
+    transition: color 0.2s ease;
+  }
+
+  .pittorica-tabs-trigger:hover {
+    color: var(--pittorica-slate-12);
+  }
+
+  .pittorica-tabs-trigger[data-state='active'] {
+    color: var(--pittorica-source-color);
+  }
+
+  .pittorica-tabs-trigger[data-state='active']::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--pittorica-source-color);
+  }
+
+  .pittorica-tabs-content {
+    flex-grow: 1;
+    padding: var(--pittorica-space-4) 0;
+    outline: none;
+  }
+
+  .pittorica-tabs-content[data-state='inactive'] {
+    display: none;
+  }
+}

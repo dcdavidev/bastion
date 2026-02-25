@@ -1,0 +1,26 @@
+@layer pittorica-components {
+  .pittorica-kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pittorica-font-mono);
+    background-color: var(--pittorica-slate-3);
+    color: var(--pittorica-on-slate-3);
+    padding: 0.1em 0.4em;
+    border-radius: var(--pittorica-radius-1);
+    border: 1px solid var(--pittorica-slate-6);
+    box-shadow: 0 1px 0 var(--pittorica-slate-6);
+    font-size: 0.85em;
+    min-width: 1.5em;
+    line-height: 1.2;
+    vertical-align: baseline;
+  }
+
+  /* Dark Mode Adjustments */
+  .pittorica-theme[data-appearance='dark'] .pittorica-kbd {
+    background-color: var(--pittorica-slate-4);
+    border-color: var(--pittorica-slate-7);
+    box-shadow: 0 1px 0 var(--pittorica-slate-7);
+    color: var(--pittorica-white);
+  }
+}

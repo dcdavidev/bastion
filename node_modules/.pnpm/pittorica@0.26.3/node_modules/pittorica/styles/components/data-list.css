@@ -1,0 +1,42 @@
+@layer pittorica-components {
+  .pittorica-data-list-root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pittorica-space-2);
+  }
+
+  .pittorica-data-list-root--orientation-horizontal {
+    gap: var(--pittorica-space-4);
+  }
+
+  .pittorica-data-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--pittorica-space-3);
+  }
+
+  .pittorica-data-list-root--orientation-horizontal .pittorica-data-list-item {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .pittorica-data-list-root--orientation-vertical .pittorica-data-list-item {
+    flex-direction: column;
+    gap: var(--pittorica-space-1);
+  }
+
+  .pittorica-data-list-label {
+    min-width: 120px;
+    color: var(--pittorica-slate-10);
+    font-size: var(--pittorica-font-size-2);
+  }
+
+  .pittorica-data-list-value {
+    flex: 1;
+    color: var(--pittorica-slate-12);
+    font-size: var(--pittorica-font-size-2);
+    display: flex;
+    align-items: center;
+    gap: var(--pittorica-space-2);
+  }
+}

@@ -1,0 +1,127 @@
+@layer pittorica-components {
+  /**
+   * Chip component for tags and compact labels.
+   * Features a fully outlined or soft design inspired by modern UI kits.
+   */
+  .pittorica-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    text-decoration: none;
+    font-family: inherit;
+    font-weight: var(--pittorica-font-weight-medium);
+    gap: var(--pittorica-space-1);
+    border-radius: var(--pittorica-radius-full);
+    border: 1px solid transparent;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    cursor: default;
+  }
+
+  /* Interaction cursor for clickable chips */
+  .pittorica-chip--clickable,
+  .pittorica-chip[as='button'] {
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* --- Sizing Scale --- */
+  .pittorica-chip--size-1 {
+    height: 20px;
+    font-size: 10px;
+    padding: 0 6px;
+  }
+  .pittorica-chip--size-2 {
+    height: 24px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+  .pittorica-chip--size-3 {
+    height: 32px;
+    font-size: 14px;
+    padding: 0 12px;
+  }
+
+  /* --- Persistent Color Variants --- */
+
+  /* Solid Variant: High emphasis with dynamic contrast color */
+  .pittorica-chip[data-variant='solid'] {
+    background-color: var(--chip-base);
+    color: var(--chip-on-base);
+    border-color: var(--chip-base);
+  }
+  .pittorica-chip[data-variant='solid']:hover:not([disabled]) {
+    filter: brightness(1.08);
+  }
+
+  /* Soft Variant: Medium emphasis with pastel backgrounds */
+  .pittorica-chip[data-variant='soft'] {
+    background-color: var(--chip-soft-bg);
+    color: var(--chip-soft-text);
+    border-color: transparent;
+  }
+  .pittorica-chip[data-variant='soft']:hover:not([disabled]) {
+    background-color: var(--chip-base);
+    color: var(--chip-on-base) !important;
+  }
+
+  /* Outline Variant: Low emphasis with colored borders */
+  .pittorica-chip[data-variant='outline'] {
+    background-color: transparent;
+    border: 1px solid var(--chip-base);
+    color: var(--chip-soft-text);
+  }
+  .pittorica-chip[data-variant='outline']:hover:not([disabled]) {
+    background-color: var(--chip-base);
+    color: var(--chip-on-base) !important;
+  }
+
+  /* --- Internal Elements --- */
+  .pittorica-chip-decorator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .pittorica-chip-content {
+    line-height: 1;
+  }
+
+  /* Delete Action Styling */
+  .pittorica-chip-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: var(--pittorica-radius-full);
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    margin-right: -4px;
+    margin-left: 2px;
+    color: inherit;
+    opacity: 0.6;
+    transition: all 0.2s;
+  }
+
+  .pittorica-chip-delete:hover {
+    opacity: 1;
+    background-color: color-mix(in srgb, currentColor 15%, transparent);
+  }
+
+  /* Accessibility focus ring */
+  .pittorica-chip:focus-visible {
+    box-shadow: 0 0 0 2px var(--pittorica-source-9);
+  }
+
+  /* Dark mode specific adjustments for variants if needed */
+  .pittorica-theme[data-appearance='dark']
+    .pittorica-chip[data-variant='soft'] {
+    background-color: color-mix(in srgb, var(--chip-base) 15%, transparent);
+  }
+}

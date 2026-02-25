@@ -1,0 +1,122 @@
+@layer pittorica-tokens {
+  .pittorica-theme {
+    /* --- Error Base (Step 9) --- */
+    --pittorica-error-9: var(--pittorica-error);
+
+    /* --- LIGHT MODE --- */
+    --pittorica-error-1: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 2%,
+      var(--pittorica-white)
+    );
+    --pittorica-error-2: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 6%,
+      var(--pittorica-white)
+    );
+    --pittorica-error-3: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 12%,
+      var(--pittorica-white)
+    );
+    --pittorica-error-4: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 18%,
+      var(--pittorica-white)
+    );
+    --pittorica-error-5: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 24%,
+      var(--pittorica-white)
+    );
+    --pittorica-error-6: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 35%,
+      var(--pittorica-white)
+    );
+    --pittorica-error-7: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 50%,
+      var(--pittorica-white)
+    );
+    --pittorica-error-8: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 70%,
+      var(--pittorica-white)
+    );
+    --pittorica-error-11: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 85%,
+      var(--pittorica-black)
+    );
+
+    --pittorica-on-error-1: var(--pittorica-black);
+    --pittorica-on-error-2: var(--pittorica-black);
+    --pittorica-on-error-3: var(--pittorica-black);
+    --pittorica-on-error-4: var(--pittorica-black);
+    --pittorica-on-error-5: var(--pittorica-black);
+    --pittorica-on-error-6: var(--pittorica-white);
+    --pittorica-on-error-7: var(--pittorica-white);
+    --pittorica-on-error-8: var(--pittorica-white);
+    --pittorica-on-error-9: var(--pittorica-white);
+  }
+
+  .pittorica-theme[data-appearance='dark'] {
+    /* --- DARK MODE --- */
+    --pittorica-error-1: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 4%,
+      var(--pittorica-black)
+    );
+    --pittorica-error-2: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 8%,
+      var(--pittorica-black)
+    );
+    --pittorica-error-3: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 15%,
+      var(--pittorica-black)
+    );
+    --pittorica-error-4: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 25%,
+      var(--pittorica-black)
+    );
+    --pittorica-error-5: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 40%,
+      var(--pittorica-black)
+    );
+    --pittorica-error-6: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 55%,
+      var(--pittorica-black)
+    );
+    --pittorica-error-7: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 70%,
+      var(--pittorica-black)
+    );
+    --pittorica-error-8: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 85%,
+      var(--pittorica-black)
+    );
+    --pittorica-error-11: color-mix(
+      in srgb,
+      var(--pittorica-error-9) 40%,
+      var(--pittorica-white)
+    );
+
+    --pittorica-on-error-1: var(--pittorica-white);
+    --pittorica-on-error-2: var(--pittorica-white);
+    --pittorica-on-error-3: var(--pittorica-white);
+    --pittorica-on-error-4: var(--pittorica-white);
+    --pittorica-on-error-5: var(--pittorica-white);
+    --pittorica-on-error-6: var(--pittorica-black);
+    --pittorica-on-error-7: var(--pittorica-black);
+    --pittorica-on-error-8: var(--pittorica-black);
+    --pittorica-on-error-9: var(--pittorica-black);
+  }
+}

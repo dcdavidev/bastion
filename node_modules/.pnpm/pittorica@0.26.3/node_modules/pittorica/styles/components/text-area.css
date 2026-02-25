@@ -1,0 +1,111 @@
+@layer pittorica-components {
+  .pittorica-textarea-root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pittorica-space-1);
+    width: 100%;
+  }
+
+  .pittorica-textarea-wrapper {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+
+    /* Radix-like Outlined Shape */
+    background-color: var(--pittorica-slate-2);
+    border: 3px solid var(--pittorica-source-6);
+    border-radius: var(--pittorica-radius-2);
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* --- Sizes Implementation --- */
+
+  .pittorica-textarea--xs .pittorica-textarea-input {
+    min-height: 48px;
+    padding: var(--pittorica-space-1) var(--pittorica-space-2);
+    font-size: var(--pittorica-font-size-1);
+  }
+  .pittorica-textarea--sm .pittorica-textarea-input {
+    min-height: 64px;
+    padding: var(--pittorica-space-2);
+    font-size: var(--pittorica-font-size-2);
+  }
+  .pittorica-textarea--md .pittorica-textarea-input {
+    min-height: 80px;
+    padding: var(--pittorica-space-2);
+    font-size: var(--pittorica-font-size-2);
+  }
+  .pittorica-textarea--lg .pittorica-textarea-input {
+    min-height: 112px;
+    padding: var(--pittorica-space-3);
+    font-size: var(--pittorica-font-size-3);
+  }
+  .pittorica-textarea--xl .pittorica-textarea-input {
+    min-height: 160px;
+    padding: var(--pittorica-space-4);
+    font-size: var(--pittorica-font-size-4);
+  }
+
+  /* Interaction States */
+  .pittorica-textarea-wrapper:hover:not([data-disabled='true']) {
+    border-color: var(--pittorica-slate-8);
+  }
+
+  .pittorica-textarea-wrapper:focus-within {
+    border-color: var(--pittorica-source-color);
+    box-shadow: 0 0 0 1px var(--pittorica-source-color);
+  }
+
+  /* Disabled State */
+  .pittorica-textarea-wrapper[data-disabled='true'] {
+    background-color: var(--pittorica-slate-3);
+    border-color: var(--pittorica-slate-5);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .pittorica-textarea-wrapper[data-disabled='true'] .pittorica-textarea-input {
+    cursor: not-allowed;
+    color: var(--pittorica-slate-9);
+  }
+
+  /* Input Styling */
+  .pittorica-textarea-input {
+    appearance: none;
+    background: transparent;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    width: 100%;
+    font-family: inherit;
+    color: var(--pittorica-slate-12);
+    margin: 0;
+    box-sizing: border-box;
+    resize: vertical;
+  }
+
+  .pittorica-textarea-input::placeholder {
+    color: var(--pittorica-slate-8);
+  }
+
+  /* Error State Logic */
+  .pittorica-textarea-root[data-error='true'] .pittorica-textarea-wrapper {
+    border-color: var(--pittorica-red-8);
+  }
+
+  .pittorica-textarea-root[data-error='true']
+    .pittorica-textarea-wrapper:focus-within {
+    box-shadow: 0 0 0 1px var(--pittorica-red-8);
+  }
+
+  .pittorica-textarea-helper {
+    padding-left: var(--pittorica-space-1);
+    color: var(--pittorica-slate-10);
+    font-size: var(--pittorica-font-size-1);
+  }
+
+  .pittorica-textarea-root[data-error='true'] .pittorica-textarea-helper {
+    color: var(--pittorica-red-9);
+  }
+}

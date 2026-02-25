@@ -1,0 +1,15 @@
+@layer pittorica-components {
+  .pittorica-checkbox-group-root {
+    display: flex;
+    gap: var(--pittorica-space-2);
+  }
+
+  .pittorica-checkbox-group-root[data-orientation='vertical'] {
+    flex-direction: column;
+  }
+
+  .pittorica-checkbox-group-root[data-orientation='horizontal'] {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

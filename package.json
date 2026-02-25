@@ -1,0 +1,20 @@
+{
+  "name": "bastion-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "release": "release-it"
+  },
+  "devDependencies": {
+    "turbo": "latest",
+    "release-it": "latest",
+    "prettier": "latest"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@10.0.0"
+}

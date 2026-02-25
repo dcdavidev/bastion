@@ -1,0 +1,122 @@
+@layer pittorica-tokens {
+  .pittorica-theme {
+    /* --- Danger Base (Step 9) --- */
+    --pittorica-danger-9: var(--pittorica-danger);
+
+    /* --- LIGHT MODE --- */
+    --pittorica-danger-1: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 2%,
+      var(--pittorica-white)
+    );
+    --pittorica-danger-2: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 6%,
+      var(--pittorica-white)
+    );
+    --pittorica-danger-3: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 12%,
+      var(--pittorica-white)
+    );
+    --pittorica-danger-4: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 18%,
+      var(--pittorica-white)
+    );
+    --pittorica-danger-5: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 24%,
+      var(--pittorica-white)
+    );
+    --pittorica-danger-6: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 35%,
+      var(--pittorica-white)
+    );
+    --pittorica-danger-7: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 50%,
+      var(--pittorica-white)
+    );
+    --pittorica-danger-8: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 70%,
+      var(--pittorica-white)
+    );
+    --pittorica-danger-11: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 85%,
+      var(--pittorica-black)
+    );
+
+    --pittorica-on-danger-1: var(--pittorica-black);
+    --pittorica-on-danger-2: var(--pittorica-black);
+    --pittorica-on-danger-3: var(--pittorica-black);
+    --pittorica-on-danger-4: var(--pittorica-black);
+    --pittorica-on-danger-5: var(--pittorica-black);
+    --pittorica-on-danger-6: var(--pittorica-white);
+    --pittorica-on-danger-7: var(--pittorica-white);
+    --pittorica-on-danger-8: var(--pittorica-white);
+    --pittorica-on-danger-9: var(--pittorica-white);
+  }
+
+  .pittorica-theme[data-appearance='dark'] {
+    /* --- DARK MODE --- */
+    --pittorica-danger-1: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 4%,
+      var(--pittorica-black)
+    );
+    --pittorica-danger-2: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 8%,
+      var(--pittorica-black)
+    );
+    --pittorica-danger-3: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 15%,
+      var(--pittorica-black)
+    );
+    --pittorica-danger-4: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 25%,
+      var(--pittorica-black)
+    );
+    --pittorica-danger-5: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 40%,
+      var(--pittorica-black)
+    );
+    --pittorica-danger-6: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 55%,
+      var(--pittorica-black)
+    );
+    --pittorica-danger-7: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 70%,
+      var(--pittorica-black)
+    );
+    --pittorica-danger-8: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 85%,
+      var(--pittorica-black)
+    );
+    --pittorica-danger-11: color-mix(
+      in srgb,
+      var(--pittorica-danger-9) 40%,
+      var(--pittorica-white)
+    );
+
+    --pittorica-on-danger-1: var(--pittorica-white);
+    --pittorica-on-danger-2: var(--pittorica-white);
+    --pittorica-on-danger-3: var(--pittorica-white);
+    --pittorica-on-danger-4: var(--pittorica-white);
+    --pittorica-on-danger-5: var(--pittorica-white);
+    --pittorica-on-danger-6: var(--pittorica-black);
+    --pittorica-on-danger-7: var(--pittorica-black);
+    --pittorica-on-danger-8: var(--pittorica-black);
+    --pittorica-on-danger-9: var(--pittorica-black);
+  }
+}

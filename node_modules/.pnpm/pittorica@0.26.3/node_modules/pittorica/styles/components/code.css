@@ -1,0 +1,53 @@
+@layer pittorica-components {
+  .pittorica-code-inline {
+    background-color: var(--pittorica-slate-3);
+    color: var(--pittorica-indigo-11);
+    padding: 0.2em 0.4em;
+    border-radius: var(--pittorica-radius-1);
+    font-family: var(--pittorica-font-mono);
+    font-size: 0.85em;
+    white-space: break-spaces;
+  }
+
+  .pittorica-code-container {
+    background-color: #1e1e1e; /* Standard VSCode Dark background */
+    color: var(--pittorica-white);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--pittorica-radius-3);
+    overflow: hidden;
+    box-shadow: var(--pittorica-shadow-4);
+    width: 100%;
+  }
+
+  .pittorica-code-header {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: var(--pittorica-space-2) var(--pittorica-space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .pittorica-code-copy-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: rgba(255, 255, 255, 0.5);
+    border-radius: var(--pittorica-radius-1);
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+  }
+
+  .pittorica-code-copy-button:hover {
+    color: var(--pittorica-white);
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Keep consistent regardless of theme appearance */
+  .pittorica-theme[data-appearance='dark'] .pittorica-code-inline {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--pittorica-white);
+  }
+}

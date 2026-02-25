@@ -1,0 +1,5 @@
+@layer pittorica-components {
+  .pittorica-box {
+    box-sizing: border-box;
+  }
+}

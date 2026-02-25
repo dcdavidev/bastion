@@ -1,0 +1,49 @@
+@layer pittorica-components {
+  .pittorica-switch-root {
+    all: unset;
+    width: 40px;
+    height: 22px;
+    background-color: var(--pittorica-slate-6);
+    border-radius: var(--pittorica-radius-full);
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    outline: none;
+  }
+
+  .pittorica-switch-root[data-state='checked'] {
+    background-color: var(--pittorica-source-color);
+  }
+
+  .pittorica-switch-root:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--pittorica-slate-1),
+      0 0 0 4px var(--pittorica-source-color);
+  }
+
+  .pittorica-switch-root:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .pittorica-switch-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: var(--pittorica-radius-full);
+    box-shadow: var(--pittorica-shadow-2);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(2px);
+    color: var(--pittorica-slate-8);
+  }
+
+  .pittorica-switch-root[data-state='checked'] .pittorica-switch-thumb {
+    transform: translateX(20px);
+    color: var(--pittorica-source-color);
+  }
+}

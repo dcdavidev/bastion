@@ -1,0 +1,31 @@
+@layer pittorica-components {
+  .pittorica-link {
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--pittorica-source-9);
+  }
+
+  .pittorica-link:hover {
+    color: var(--pittorica-source-11);
+  }
+
+  .pittorica-link--underline-always {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .pittorica-link--underline-hover:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .pittorica-link--underline-none {
+    text-decoration: none !important;
+  }
+
+  /* Dark mode specific adjustments if needed */
+  .pittorica-theme[data-appearance='dark'] .pittorica-link:hover {
+    color: var(--pittorica-white);
+  }
+}

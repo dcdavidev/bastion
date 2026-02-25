@@ -24,6 +24,8 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
 
 ### Installation
 
+Bastion is managed as a **Turborepo Monorepo**.
+
 #### 🐧 Linux
 
 - **Snap (Recommended)**: `sudo snap install bastion`
@@ -51,7 +53,7 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
 #### 📦 Package Managers & Containers
 
 - **NPM**: `npm install -g @dcdavidev/bastion`
-- **Go Install**: `go install github.com/dcdavidev/bastion/cmd/bastion@latest`
+- **Go Install**: `go install github.com/dcdavidev/bastion/apps/cli@latest`
 - **Docker**:
   ```bash
   docker pull ghcr.io/dcdavidev/bastion:latest
@@ -66,11 +68,19 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
    git clone https://github.com/dcdavidev/bastion.git
    cd bastion
    ```
-2. Build the CLI:
+2. Install dependencies:
    ```bash
-   go build -o bastion ./cmd/bastion
+   pnpm install
    ```
-3. Initialize the Vault (First Run):
+3. Build everything (CLI, Server, Web):
+   ```bash
+   pnpm build
+   ```
+4. Development mode (starts DB, Server, and Web):
+   ```bash
+   pnpm dev
+   ```
+5. Initialize the Vault (First Run):
    ```bash
    ./bastion create-superuser
    ```

@@ -1,0 +1,14 @@
+@layer pittorica-tokens {
+  :root {
+    --pittorica-space-0: 0px;
+    --pittorica-space-1: 4px;
+    --pittorica-space-2: 8px;
+    --pittorica-space-3: 12px;
+    --pittorica-space-4: 16px;
+    --pittorica-space-5: 24px;
+    --pittorica-space-6: 32px;
+    --pittorica-space-7: 48px;
+    --pittorica-space-8: 64px;
+    --pittorica-space-9: 96px;
+  }
+}

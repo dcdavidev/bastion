@@ -1,0 +1,44 @@
+@layer pittorica-components {
+  .pittorica-inset {
+    box-sizing: border-box;
+    /* Default assumes parent padding is space-4 */
+    --_inset-margin: calc(var(--pittorica-space-4) * -1);
+  }
+
+  .pittorica-inset--all {
+    margin: var(--_inset-margin);
+  }
+  .pittorica-inset--x {
+    margin-left: var(--_inset-margin);
+    margin-right: var(--_inset-margin);
+  }
+  .pittorica-inset--y {
+    margin-top: var(--_inset-margin);
+    margin-bottom: var(--_inset-margin);
+  }
+  .pittorica-inset--top {
+    margin-top: var(--_inset-margin);
+    margin-left: var(--_inset-margin);
+    margin-right: var(--_inset-margin);
+    margin-bottom: 0;
+  }
+  .pittorica-inset--bottom {
+    margin-bottom: var(--_inset-margin);
+    margin-left: var(--_inset-margin);
+    margin-right: var(--_inset-margin);
+    margin-top: 0;
+  }
+
+  .pittorica-inset > img,
+  .pittorica-inset > video {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* Ensure border radius consistency if clipped */
+  .pittorica-inset[style*='overflow: hidden'] {
+    border-radius: inherit;
+  }
+}

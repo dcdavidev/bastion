@@ -1,0 +1,33 @@
+@layer pittorica-components {
+  .pittorica-hover-card-content {
+    position: fixed;
+    z-index: var(--pittorica-z-index-popover, 1000);
+    width: 300px;
+    background-color: color-mix(
+      in srgb,
+      var(--pittorica-surface-1) 70%,
+      transparent
+    );
+    backdrop-filter: blur(12px) saturate(180%);
+    border-radius: var(--pittorica-radius-4);
+    padding: var(--pittorica-space-4);
+    border: 1px solid
+      color-mix(in srgb, var(--pittorica-surface-9) 10%, transparent);
+    box-shadow: var(--pittorica-shadow-5);
+    outline: none;
+    /* Entry animation */
+    animation: pittorica-hover-card-fade 0.2s ease-out;
+    pointer-events: auto;
+  }
+
+  @keyframes pittorica-hover-card-fade {
+    from {
+      opacity: 0;
+      transform: translateY(4px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}

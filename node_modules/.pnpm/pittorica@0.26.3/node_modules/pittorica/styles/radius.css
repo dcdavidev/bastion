@@ -1,0 +1,9 @@
+@layer pittorica-tokens {
+  :root {
+    --pittorica-radius-1: 4px;
+    --pittorica-radius-2: 8px;
+    --pittorica-radius-3: 12px;
+    --pittorica-radius-4: 16px;
+    --pittorica-radius-full: 9999px;
+  }
+}

@@ -1,0 +1,5 @@
+
+
+> server@0.1.0 build /home/dcdavidev/bastion/apps/server
+> go build -o ../../bastion-server main.go
+

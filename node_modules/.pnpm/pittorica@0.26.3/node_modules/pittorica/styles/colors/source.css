@@ -1,0 +1,114 @@
+@layer pittorica-tokens {
+  .pittorica-theme {
+    /* --- Source Color Base (Step 9) --- */
+    --pittorica-source-9: var(--pittorica-source-color);
+
+    /* --- LIGHT MODE CALCULATION (Mix with White) --- */
+    --pittorica-source-1: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 2%,
+      var(--pittorica-white)
+    );
+    --pittorica-source-2: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 6%,
+      var(--pittorica-white)
+    );
+    --pittorica-source-3: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 12%,
+      var(--pittorica-white)
+    );
+    --pittorica-source-4: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 18%,
+      var(--pittorica-white)
+    );
+    --pittorica-source-5: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 24%,
+      var(--pittorica-white)
+    );
+    --pittorica-source-6: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 35%,
+      var(--pittorica-white)
+    );
+    --pittorica-source-7: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 50%,
+      var(--pittorica-white)
+    );
+    --pittorica-source-8: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 70%,
+      var(--pittorica-white)
+    );
+
+    /* Contrast Logic Light */
+    --pittorica-on-source-1: var(--pittorica-black);
+    --pittorica-on-source-2: var(--pittorica-black);
+    --pittorica-on-source-3: var(--pittorica-black);
+    --pittorica-on-source-4: var(--pittorica-black);
+    --pittorica-on-source-5: var(--pittorica-black);
+    --pittorica-on-source-6: var(--pittorica-white);
+    --pittorica-on-source-7: var(--pittorica-white);
+    --pittorica-on-source-8: var(--pittorica-white);
+    --pittorica-on-source-9: var(--pittorica-white);
+  }
+
+  /* --- DARK MODE CALCULATION (Mix with Black) --- */
+  .pittorica-theme[data-appearance='dark'] {
+    --pittorica-source-1: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 4%,
+      var(--pittorica-black)
+    );
+    --pittorica-source-2: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 8%,
+      var(--pittorica-black)
+    );
+    --pittorica-source-3: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 15%,
+      var(--pittorica-black)
+    );
+    --pittorica-source-4: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 25%,
+      var(--pittorica-black)
+    );
+    --pittorica-source-5: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 40%,
+      var(--pittorica-black)
+    );
+    --pittorica-source-6: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 55%,
+      var(--pittorica-black)
+    );
+    --pittorica-source-7: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 70%,
+      var(--pittorica-black)
+    );
+    --pittorica-source-8: color-mix(
+      in srgb,
+      var(--pittorica-source-9) 85%,
+      var(--pittorica-black)
+    );
+
+    /* Contrast Logic Dark */
+    --pittorica-on-source-1: var(--pittorica-white);
+    --pittorica-on-source-2: var(--pittorica-white);
+    --pittorica-on-source-3: var(--pittorica-white);
+    --pittorica-on-source-4: var(--pittorica-white);
+    --pittorica-on-source-5: var(--pittorica-white);
+    --pittorica-on-source-6: var(--pittorica-black);
+    --pittorica-on-source-7: var(--pittorica-black);
+    --pittorica-on-source-8: var(--pittorica-black);
+    --pittorica-on-source-9: var(--pittorica-black);
+  }
+}

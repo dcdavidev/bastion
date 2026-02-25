@@ -1,0 +1,54 @@
+@layer pittorica-components {
+  .pittorica-card {
+    display: block;
+    overflow: hidden;
+    box-sizing: border-box;
+    position: relative;
+    border-radius: var(--pittorica-radius-4);
+    background-color: var(--pittorica-surface-1);
+    border: 1px solid var(--pittorica-slate-3);
+    color: var(--pittorica-on-surface-1);
+    box-shadow: var(--pittorica-shadow-2);
+  }
+
+  .pittorica-card--translucent {
+    background-color: color-mix(
+      in srgb,
+      var(--pittorica-surface-2) 75%,
+      transparent
+    );
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid
+      color-mix(in srgb, var(--pittorica-source-9) 15%, transparent);
+    box-shadow: var(--pittorica-shadow-3);
+  }
+
+  .pittorica-card--variant-outlined {
+    background-color: transparent;
+    border: 1px solid var(--pittorica-slate-4);
+    box-shadow: none;
+  }
+
+  /*  Ghost */
+  .pittorica-card--variant-ghost {
+    background-color: transparent;
+    border: 1px solid transparent;
+    box-shadow: none;
+  }
+
+  /* --- Interaction States --- */
+  .pittorica-card:not(.pittorica-card--variant-ghost):hover {
+    box-shadow: var(--pittorica-shadow-4);
+    background-color: var(--pittorica-surface-2);
+  }
+
+  .pittorica-theme[data-appearance='dark'] .pittorica-card--translucent {
+    background-color: color-mix(
+      in srgb,
+      var(--pittorica-surface-1) 85%,
+      transparent
+    );
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}

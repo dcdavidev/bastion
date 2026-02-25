@@ -1,0 +1,47 @@
+@layer pittorica-tokens {
+  .pittorica-theme {
+    /* Base shadow color: Nero per Light Mode */
+    --_shadow-color: var(--pittorica-black);
+
+    --pittorica-shadow-1: 0 1px 2px 0 rgb(var(--_shadow-color) / 0.1);
+    --pittorica-shadow-2:
+      0 2px 4px -1px rgb(var(--_shadow-color) / 0.1),
+      0 1px 2px -1px rgb(var(--_shadow-color) / 0.1);
+    --pittorica-shadow-3:
+      0 4px 6px -1px rgb(var(--_shadow-color) / 0.12),
+      0 2px 4px -2px rgb(var(--_shadow-color) / 0.12);
+    --pittorica-shadow-4:
+      0 8px 10px -2px rgb(var(--_shadow-color) / 0.12),
+      0 4px 6px -2px rgb(var(--_shadow-color) / 0.12);
+    --pittorica-shadow-5:
+      0 10px 15px -3px rgb(var(--_shadow-color) / 0.14),
+      0 6px 8px -3px rgb(var(--_shadow-color) / 0.14);
+    --pittorica-shadow-6: 0 12px 20px -4px rgb(var(--_shadow-color) / 0.15);
+    --pittorica-shadow-7: 0 16px 28px -4px rgb(var(--_shadow-color) / 0.16);
+    --pittorica-shadow-8: 0 20px 36px -5px rgb(var(--_shadow-color) / 0.18);
+    --pittorica-shadow-9: 0 24px 48px -6px rgb(var(--_shadow-color) / 0.2);
+  }
+
+  .pittorica-theme[data-appearance='dark'] {
+    /* Override shadow color: Bianco per Dark Mode */
+    --_shadow-color: var(--pittorica-white);
+
+    --pittorica-shadow-1: 0 1px 2px 0 rgb(var(--_shadow-color) / 0.05);
+    --pittorica-shadow-2:
+      0 2px 4px -1px rgb(var(--_shadow-color) / 0.06),
+      0 1px 2px -1px rgb(var(--_shadow-color) / 0.06);
+    --pittorica-shadow-3:
+      0 4px 6px -1px rgb(var(--_shadow-color) / 0.08),
+      0 2px 4px -2px rgb(var(--_shadow-color) / 0.08);
+    --pittorica-shadow-4:
+      0 8px 10px -2px rgb(var(--_shadow-color) / 0.08),
+      0 4px 6px -2px rgb(var(--_shadow-color) / 0.08);
+    --pittorica-shadow-5:
+      0 10px 15px -3px rgb(var(--_shadow-color) / 0.1),
+      0 6px 8px -3px rgb(var(--_shadow-color) / 0.1);
+    --pittorica-shadow-6: 0 12px 20px -4px rgb(var(--_shadow-color) / 0.12);
+    --pittorica-shadow-7: 0 16px 28px -4px rgb(var(--_shadow-color) / 0.14);
+    --pittorica-shadow-8: 0 20px 36px -5px rgb(var(--_shadow-color) / 0.16);
+    --pittorica-shadow-9: 0 24px 48px -6px rgb(var(--_shadow-color) / 0.18);
+  }
+}

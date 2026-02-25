@@ -1,0 +1,84 @@
+@layer pittorica-components {
+  .pittorica-blockquote {
+    display: block;
+    margin: var(--pittorica-space-5) 0;
+    padding: var(--pittorica-space-3) var(--pittorica-space-4);
+    font-style: italic;
+    border-radius: var(--pittorica-radius-2);
+    border-left: 4px solid var(--_bq-accent);
+    --_bq-accent: var(--pittorica-source-color);
+    --_bq-bg: transparent;
+    --_bq-text: inherit;
+    background-color: var(--_bq-bg);
+    color: var(--_bq-text);
+  }
+
+  /* --- Variants --- */
+
+  /* Classic: Minimal border-left only */
+  .pittorica-blockquote[data-variant='classic'] {
+    border-radius: 0;
+  }
+
+  /* Soft: Pastel background with border-left */
+  .pittorica-blockquote[data-variant='soft'] {
+    --_bq-bg: var(--pittorica-source-3);
+    --_bq-text: var(--pittorica-source-11);
+  }
+
+  /* Solid: Full background with high contrast text */
+  .pittorica-blockquote[data-variant='solid'] {
+    --_bq-bg: var(--pittorica-source-9);
+    --_bq-text: var(--pittorica-on-source-9);
+    border-left-width: 0;
+    font-style: normal;
+    font-weight: var(--pittorica-font-weight-medium);
+  }
+
+  /* Outline: Colored border with transparent background */
+  .pittorica-blockquote[data-variant='outline'] {
+    border: 1px solid var(--pittorica-source-6);
+    border-left-width: 4px;
+    border-left-color: var(--pittorica-source-9);
+  }
+
+  /* Fancy: Large background quote */
+  .pittorica-blockquote[data-variant='fancy'] {
+    position: relative;
+    border-left: none;
+    padding: var(--pittorica-space-8) var(--pittorica-space-4);
+    z-index: 1;
+  }
+
+  .pittorica-blockquote[data-variant='fancy']::before {
+    content: '“';
+    position: absolute;
+    top: -2rem;
+    left: -1rem;
+    font-size: 12rem;
+    font-family: var(--pittorica-font-heading);
+    color: var(--_bq-accent);
+    opacity: 0.15;
+    z-index: -1;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  /* Dark Mode specific overrides for Soft */
+  .pittorica-theme[data-appearance='dark']
+    .pittorica-blockquote[data-variant='soft'] {
+    --_bq-bg: color-mix(in srgb, var(--pittorica-source-9) 15%, transparent);
+    --_bq-text: var(--pittorica-white);
+  }
+
+  /* Dark Mode specific overrides for Fancy */
+  .pittorica-theme[data-appearance='dark']
+    .pittorica-blockquote[data-variant='fancy'] {
+    color: var(--pittorica-white);
+  }
+
+  .pittorica-theme[data-appearance='dark']
+    .pittorica-blockquote[data-variant='fancy']::before {
+    opacity: 0.2;
+  }
+}

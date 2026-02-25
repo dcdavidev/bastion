@@ -1,0 +1,126 @@
+@layer pittorica-tokens {
+  .pittorica-theme {
+    /* --- Pink Base (Step 9) --- */
+    --pittorica-pink-9: #e91e63;
+
+    /* --- LIGHT MODE --- */
+    --pittorica-pink-1: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 2%,
+      var(--pittorica-white)
+    );
+    --pittorica-pink-2: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 6%,
+      var(--pittorica-white)
+    );
+    --pittorica-pink-3: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 12%,
+      var(--pittorica-white)
+    );
+    --pittorica-pink-4: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 18%,
+      var(--pittorica-white)
+    );
+    --pittorica-pink-5: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 24%,
+      var(--pittorica-white)
+    );
+    --pittorica-pink-6: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 35%,
+      var(--pittorica-white)
+    );
+    --pittorica-pink-7: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 50%,
+      var(--pittorica-white)
+    );
+    --pittorica-pink-8: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 70%,
+      var(--pittorica-white)
+    );
+
+    --pittorica-pink-11: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 85%,
+      var(--pittorica-black)
+    );
+
+    /* Contrasti Light */
+    --pittorica-on-pink-1: var(--pittorica-black);
+    --pittorica-on-pink-2: var(--pittorica-black);
+    --pittorica-on-pink-3: var(--pittorica-black);
+    --pittorica-on-pink-4: var(--pittorica-black);
+    --pittorica-on-pink-5: var(--pittorica-black);
+    --pittorica-on-pink-6: var(--pittorica-white);
+    --pittorica-on-pink-7: var(--pittorica-white);
+    --pittorica-on-pink-8: var(--pittorica-white);
+    --pittorica-on-pink-9: var(--pittorica-white);
+  }
+
+  .pittorica-theme[data-appearance='dark'] {
+    /* --- DARK MODE --- */
+    --pittorica-pink-1: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 4%,
+      var(--pittorica-black)
+    );
+    --pittorica-pink-2: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 8%,
+      var(--pittorica-black)
+    );
+    --pittorica-pink-3: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 15%,
+      var(--pittorica-black)
+    );
+    --pittorica-pink-4: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 25%,
+      var(--pittorica-black)
+    );
+    --pittorica-pink-5: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 40%,
+      var(--pittorica-black)
+    );
+    --pittorica-pink-6: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 55%,
+      var(--pittorica-black)
+    );
+    --pittorica-pink-7: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 70%,
+      var(--pittorica-black)
+    );
+    --pittorica-pink-8: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 85%,
+      var(--pittorica-black)
+    );
+
+    --pittorica-pink-11: color-mix(
+      in srgb,
+      var(--pittorica-pink-9) 40%,
+      var(--pittorica-white)
+    );
+
+    /* Contrasti Dark */
+    --pittorica-on-pink-1: var(--pittorica-white);
+    --pittorica-on-pink-2: var(--pittorica-white);
+    --pittorica-on-pink-3: var(--pittorica-white);
+    --pittorica-on-pink-4: var(--pittorica-white);
+    --pittorica-on-pink-5: var(--pittorica-white);
+    --pittorica-on-pink-6: var(--pittorica-black);
+    --pittorica-on-pink-7: var(--pittorica-black);
+    --pittorica-on-pink-8: var(--pittorica-black);
+    --pittorica-on-pink-9: var(--pittorica-black);
+  }
+}

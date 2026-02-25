@@ -1,0 +1,90 @@
+@layer pittorica-components {
+  .pittorica-skeleton {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--pittorica-slate-3);
+    border-radius: var(--pittorica-radius-2);
+    width: 100%;
+    height: 1.2em;
+    min-height: 12px;
+  }
+
+  .pittorica-skeleton--loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent
+    );
+    animation: pittorica-skeleton-shimmer 2s infinite linear;
+  }
+
+  /* Dark mode specific visibility improvements */
+  .pittorica-theme[data-appearance='dark'] .pittorica-skeleton {
+    background-color: var(--pittorica-slate-4);
+  }
+
+  .pittorica-theme[data-appearance='dark'] .pittorica-skeleton--loading::after {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+  }
+
+  .pittorica-theme[data-appearance='dark'] .pittorica-skeleton--loading {
+    animation: pittorica-skeleton-pulse-dark 2s cubic-bezier(0.4, 0, 0.6, 1)
+      infinite;
+  }
+
+  @keyframes pittorica-skeleton-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .pittorica-skeleton--loading {
+    animation: pittorica-skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pittorica-skeleton-pulse {
+    0%,
+    100% {
+      background-color: var(--pittorica-slate-3);
+    }
+    50% {
+      background-color: var(--pittorica-slate-4);
+    }
+  }
+
+  @keyframes pittorica-skeleton-pulse-dark {
+    0%,
+    100% {
+      background-color: var(--pittorica-slate-4);
+    }
+    50% {
+      background-color: var(--pittorica-slate-5);
+    }
+  }
+
+  .pittorica-skeleton--hiding-children {
+    color: transparent !important;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .pittorica-skeleton--hiding-children * {
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  .pittorica-skeleton--circle {
+    border-radius: var(--pittorica-radius-full);
+  }
+}

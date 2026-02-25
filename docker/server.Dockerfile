@@ -5,7 +5,7 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 
 COPY bastion-server .
-COPY internal/db/migrations ./internal/db/migrations
+COPY packages/core/db/migrations ./packages/core/db/migrations
 
 EXPOSE 8080
 

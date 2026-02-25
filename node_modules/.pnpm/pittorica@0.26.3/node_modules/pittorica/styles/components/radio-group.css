@@ -1,0 +1,7 @@
+@layer pittorica-components {
+  .pittorica-radio-group-root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pittorica-space-2);
+  }
+}

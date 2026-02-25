@@ -1,0 +1,83 @@
+@layer pittorica-components {
+  .pittorica-alert-dialog-portal {
+    position: fixed;
+    inset: 0;
+    z-index: var(--pittorica-z-index-modal, 1000);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    /* Force typography and colors to inherit correctly */
+    font-family: var(--pittorica-font-family);
+    color: var(--pittorica-on-surface-0);
+  }
+
+  .pittorica-alert-dialog-portal > * {
+    pointer-events: auto;
+  }
+
+  .pittorica-alert-dialog-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 0;
+  }
+
+  .pittorica-alert-dialog-content {
+    position: relative;
+    z-index: 1;
+    width: 90%;
+    max-width: 500px;
+    background-color: var(--pittorica-surface-1);
+    color: var(--pittorica-on-surface-1);
+    border-radius: var(--pittorica-radius-4);
+    box-shadow: var(--pittorica-shadow-6);
+    padding: var(--pittorica-space-6);
+    outline: none;
+
+    /* Robust background fallback */
+    background-color: var(--pittorica-surface-1, #ffffff);
+  }
+
+  /* Light Mode Specifics */
+  .pittorica-theme:not([data-appearance='dark'])
+    .pittorica-alert-dialog-content {
+    background-color: var(--pittorica-white, #ffffff);
+    color: var(--pittorica-black, #000000);
+    border: 1px solid var(--pittorica-slate-3);
+  }
+
+  /* Dark Mode Specifics: Ensure high contrast against the dark overlay */
+  .pittorica-theme[data-appearance='dark'] .pittorica-alert-dialog-content {
+    background-color: var(--pittorica-surface-2, #1c1c1e);
+    color: var(--pittorica-white, #ffffff);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.5),
+      0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  }
+
+  .pittorica-alert-dialog-title {
+    margin: 0;
+    font-size: var(--pittorica-font-size-5);
+    line-height: var(--pittorica-line-height-5);
+    font-weight: 700;
+    color: var(--_alert-dialog-title-color, var(--pittorica-on-surface-1));
+  }
+
+  .pittorica-alert-dialog-description {
+    margin: 0;
+    color: var(--pittorica-on-surface-1);
+    opacity: 0.8;
+    font-size: var(--pittorica-font-size-3);
+    line-height: var(--pittorica-line-height-3);
+  }
+
+  .pittorica-alert-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--pittorica-space-3);
+  }
+}

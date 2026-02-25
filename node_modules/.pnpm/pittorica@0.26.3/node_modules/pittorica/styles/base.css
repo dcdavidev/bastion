@@ -1,0 +1,11 @@
+.pittorica-theme {
+  background-color: var(--pittorica-surface-0);
+  color: var(--pittorica-on-surface-0);
+}
+
+body.pittorica-theme {
+  margin: 0;
+
+  font-family: var(--pittorica-font-family);
+  -webkit-font-smoothing: antialiased;
+}

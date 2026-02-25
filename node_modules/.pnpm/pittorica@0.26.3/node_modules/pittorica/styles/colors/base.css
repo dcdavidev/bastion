@@ -1,0 +1,14 @@
+@layer pittorica-tokens {
+  .pittorica-theme {
+    --pittorica-white: #edede9;
+    --pittorica-black: #000814;
+
+    --pittorica-source-color: #29294b;
+
+    --pittorica-info: #0f8b8d;
+    --pittorica-success: #4f772d;
+    --pittorica-danger: #c1121f;
+    --pittorica-warning: #fb8500;
+    --pittorica-error: #b00020;
+  }
+}
