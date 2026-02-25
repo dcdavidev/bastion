@@ -14,7 +14,7 @@
   "hooks": {
     "after:bump": [
       "sed -i \"s/const Version = \\\".*\\\"/const Version = \\\"${version}\\\"/\" internal/version/version.go",
-      "cd frontend && pnpm version ${version} --no-git-tag-version"
+      "cd frontend && pnpm version ${version} --no-git-tag-version --allow-same-version"
     ]
   }
 }
