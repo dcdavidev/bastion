@@ -14,110 +14,151 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
 - **Multi-User Access:** Admin can delegate project-specific access to Collaborators using secure re-wrapping techniques.
 - **Audit Logging:** Every sensitive operation is cryptographically linked and logged.
 
-## 🚀 Quick Start
+## 🚀 Getting Started (Step-by-Step)
 
-### Prerequisites
+Follow these steps to set up and start using Bastion locally.
 
-- **Go** 1.24+
-- **Node.js** 24+ (with `pnpm`)
-- **PostgreSQL**
+### 1. Prerequisites
 
-### Installation
+Ensure you have the following installed:
 
-Bastion is managed as a **Turborepo Monorepo**.
+- **Go** (1.24+)
+- **Node.js** (24+) and **pnpm**
+- **Docker** (to run the database)
 
-#### 🐧 Linux
+### 2. Initial Setup
 
-- **Snap (Recommended)**: `sudo snap install bastion`
-- **AUR (Arch Linux)**: `yay -S bastion-bin`
-- **AppImage**: Download the `.AppImage` from [Releases](https://github.com/dcdavidev/bastion/releases)
-- **Native Packages**: `.deb`, `.rpm`, and `.apk` available in [Releases](https://github.com/dcdavidev/bastion/releases)
+1. **Clone the repository:**
 
-#### 🍏 macOS
-
-- **Homebrew**:
-  ```bash
-  brew install dcdavidev/tap/bastion
-  ```
-
-#### 🪟 Windows
-
-- **Scoop**:
-  ```bash
-  scoop bucket add dcdavidev https://github.com/dcdavidev/scoop-bucket
-  scoop install bastion
-  ```
-
-#### 📦 Package Managers & Containers
-
-- **NPM**: `npm install -g @dcdavidev/bastion`
-- **Go Install**: `go install github.com/dcdavidev/bastion/apps/cli@latest`
-- **Docker**:
-  ```bash
-  docker pull ghcr.io/dcdavidev/bastion:latest
-  # or from Docker Hub
-  docker pull dcdavidev/bastion:latest
-  ```
-
-#### From Source
-
-1. Clone the repository:
    ```bash
    git clone https://github.com/dcdavidev/bastion.git
    cd bastion
    ```
-2. Install dependencies:
+
+2. **Install dependencies:**
+
    ```bash
    pnpm install
    ```
-3. Build everything (CLI, Server, Web):
+
+3. **Configure Environment:**
+   Create your local `.env` file from the example:
+   ```bash
+   cp .env.example .env
+   ```
+
+### 3. Start the Database
+
+Bastion uses PostgreSQL. You can start a local instance using Docker:
+
+```bash
+pnpm docker:db:up
+```
+
+### 4. Initialize the Vault (First Time Only)
+
+Before running the server, you must create a Superuser and initialize the encryption keys:
+
+1. **Build the CLI:**
+
    ```bash
    pnpm build
    ```
-4. Development mode (starts DB, Server, and Web):
-   ```bash
-   pnpm dev
-   ```
-5. Initialize the Vault (First Run):
+
+2. **Run Initialization:**
+
    ```bash
    ./bastion create-superuser
    ```
-   _Follow the instructions to update your `.env` and initialize the database._
+
+   Follow the prompts to set your **Username** and **Master Password**.
+
+   > Save your Master Password securely. It is the only way to decrypt your secrets.
+
+3. **Verify `.env`:**
+   The command will generate a `VAULT_ID`. Ensure it is correctly reflected in your `.env` file if prompted.
+
+### 5. Run the Services (Server & Dashboard)
+
+You can start both the backend server and the web dashboard in development mode with a single command:
+
+```bash
+pnpm dev
+```
+
+- **Backend Server:** Runs on `http://localhost:8080`
+- **Web Dashboard:** Runs on `http://localhost:5173`
+
+### 6. Using the CLI
+
+Open a new terminal to interact with Bastion via the CLI.
+
+1. **Login:**
+
+   ```bash
+   ./bastion login
+   ```
+
+   Enter the server URL (`http://localhost:8080`) and your superuser credentials.
+
+2. **Organize Secrets:**
+   Secrets are organized by **Clients** and **Projects**.
+
+   ```bash
+   # Create a Client
+   ./bastion create-client --name "MyClient"
+
+   # Create a Project for that Client
+   ./bastion create-project --name "ProductionApp" --client-id <CLIENT_ID>
+   ```
+
+3. **Store a Secret:**
+
+   ```bash
+   ./bastion set -p DATABASE_URL -v "postgres://user:pass@host:5432/db" < PROJECT_ID > -k
+   ```
+
+4. **Inject Secrets (Runtime):**
+   Execute any command with your project's secrets injected as environment variables:
+   ```bash
+   ./bastion run -p npm run start < PROJECT_ID > --
+   ```
+
+## 📦 Installation Options
+
+Bastion can be installed via several package managers for production use.
+
+### 🐧 Linux
+
+- **Snap**: `sudo snap install bastion-cli`
+- **Native Packages**: `.deb`, `.rpm`, and `.apk` available in [Releases](https://github.com/dcdavidev/bastion/releases)
+
+### 🍏 macOS
+
+- **Homebrew**:
+  ```bash
+  brew install dcdavidev/tap/bastion-cli
+  ```
+
+### 🪟 Windows
+
+- **Scoop**:
+  ```bash
+  scoop bucket add dcdavidev https://github.com/dcdavidev/scoop-bucket
+  scoop install bastion-cli
+  ```
+
+### 📦 NPM & Docker
+
+- **NPM**: `npm install -g @dcdavidev/bastion-cli`
+- **Docker**: `docker pull ghcr.io/dcdavidev/bastion-server:latest`
 
 ## 🚀 CI/CD & Releases
 
-Bastion uses **GitHub Actions** and **GoReleaser** for automated multi-platform builds and deployments.
-
-### Release Process
-
-To trigger a new release (including Binaries and Snap package):
+Bastion uses **GitHub Actions** and **GoReleaser** for automated multi-platform builds. To trigger a new release:
 
 1. Tag your commit: `git tag -a v0.1.0 -m "Release v0.1.0"`
 2. Push the tag: `git push origin v0.1.0`
-
-The `pipeline` workflow will:
-
-- Run build checks on every push/PR.
-- Automatically publish to GitHub Releases and Snap Store on valid version tags.
-
-_Note: Ensure `SNAPCRAFT_STORE_CREDENTIALS` is configured in your repository secrets for Snap publishing._
-
-## 🛠️ CLI Usage
-
-Bastion comes with a powerful CLI for secret injection and management.
-
-- `bastion login`: Authenticate with the server.
-- `bastion run -p <PROJECT_ID> -- <command>`: Inject secrets into a process (dotenvx style).
-- `bastion set -p <PROJECT_ID> -k KEY -v value`: Encrypt and store a secret.
-- `bastion create-collaborator`: Grant restricted access to a team member.
-
-## 🌐 Dashboard
-
-The web interface (built with React + Pittorica) allows for easy management of:
-
-- **Clients & Projects:** Organize secrets by entity.
-- **Audit Logs:** Monitor access and changes in real-time.
-- **Collaborators:** Manage user permissions and project access.
 
 ## 🤝 Contributing
 
