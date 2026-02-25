@@ -1,5 +1,4 @@
 # .goreleaser.yaml
-# Documentation at https://goreleaser.com
 version: 2
 
 before:
@@ -35,10 +34,7 @@ builds:
       - arm64
 
 archives:
-  - id: bastion
-    builds:
-      - bastion
-      - bastion-server
+  - id: bastion-archive
     formats:
       - tar.gz
     name_template: >-
@@ -47,32 +43,26 @@ archives:
       {{- if eq .Arch "amd64" }}x86_64
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
     format_overrides:
       - goos: windows
         formats:
           - zip
 
-changelog:
-  sort: asc
-  filters:
-    exclude:
-      - "^docs:"
-      - "^test:"
-
-release:
-  github:
-    owner: dcdavidev
-    name: bastion
-  extra_files:
-    - glob: ./bastion.png
-    - glob: ./bastion-banner.png
-  replace_existing_artifacts: true
+nfpms:
+  - id: bastion-nfpm
+    package_name: bastion
+    formats:
+      - deb
+      - rpm
+      - apk
+    vendor: dcdavidev
+    homepage: https://github.com/dcdavidev/bastion
+    maintainer: Davide Di Criscito <dcdavidev@gmail.com>
+    description: Bastion CLI - Secure secret management and execution
+    license: MIT
 
 snapcrafts:
-  - id: bastion
-    builds:
-      - bastion
+  - id: bastion-snap
     name: bastion
     summary: Bastion CLI - Secure secret management and execution
     description: |
@@ -93,42 +83,29 @@ dockers_v2:
     ids:
       - bastion-server
     images:
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server"
-      - "dcdavidev/bastion-server"
-    tags:
-      - "latest"
-      - "{{ .Tag }}"
-      - "v{{ .Major }}"
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server:latest"
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server:{{ .Tag }}"
+      - "dcdavidev/bastion-server:latest"
+      - "dcdavidev/bastion-server:{{ .Tag }}"
     dockerfile: docker/server.Dockerfile
     platforms:
       - linux/amd64
       - linux/arm64
     extra_files:
       - packages/core/db/migrations
-    sbom: false
-    flags:
-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
-      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
-      - "--label=org.opencontainers.image.version={{ .Version }}"
 
   - id: bastion-cli
     ids:
       - bastion
     images:
-      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion"
-      - "dcdavidev/bastion"
-    tags:
-      - "latest"
-      - "{{ .Tag }}"
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion:latest"
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion:{{ .Tag }}"
+      - "dcdavidev/bastion:latest"
+      - "dcdavidev/bastion:{{ .Tag }}"
     dockerfile: docker/cli.Dockerfile
     platforms:
       - linux/amd64
       - linux/arm64
-    sbom: false
-    flags:
-      - "--label=org.opencontainers.image.title={{ .ProjectName }} CLI"
-      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
-      - "--label=org.opencontainers.image.version={{ .Version }}"
 
 brews:
   - name: bastion
@@ -153,21 +130,6 @@ scoops:
     description: "Bastion CLI - Secure secret management and execution"
     license: "MIT"
 
-nfpms:
-  - id: bastion
-    package_name: bastion
-    builds:
-      - bastion
-    vendor: dcdavidev
-    homepage: https://github.com/dcdavidev/bastion
-    maintainer: Davide Di Criscito <dcdavidev@gmail.com>
-    description: Bastion CLI - Secure secret management and execution
-    license: MIT
-    formats:
-      - deb
-      - rpm
-      - apk
-
 aurs:
   - name: bastion-bin
     homepage: "https://github.com/dcdavidev/bastion"
@@ -177,3 +139,19 @@ aurs:
     license: "MIT"
     private_key: "{{ .Env.AUR_KEY }}"
     git_url: "ssh://aur@aur.archlinux.org/bastion-bin.git"
+
+release:
+  github:
+    owner: dcdavidev
+    name: bastion
+  extra_files:
+    - glob: ./bastion.png
+    - glob: ./bastion-banner.png
+  replace_existing_artifacts: true
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
