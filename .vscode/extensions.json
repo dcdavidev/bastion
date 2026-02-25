@@ -2,8 +2,10 @@
   "recommendations": [
     "bierner.emojisense",
     "formulahendry.auto-rename-tag",
+    "streetsidesoftware.code-spell-checker",
     "joshbolduc.commitlint",
     "vivaxy.vscode-conventional-commits",
+    "streetsidesoftware.code-spell-checker-cspell-bundled-dictionaries",
     "editorconfig.editorconfig",
     "dbaeumer.vscode-eslint",
     "tamasfe.even-better-toml",

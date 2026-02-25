@@ -1,0 +1,33 @@
+remotes:
+  - git_url: https://github.com/spellbookx/lefthook
+    ref: main
+    refetch: true
+    refetch_frequency: 24h
+    # configs:
+    #  Chose one of the following for linting commit messages
+    #  - "@commit-msg/npx-commitlint.yml"
+    #  - "@commit-msg/pnpx-commitlint.yml"
+    #  - "@commit-msg/yarndlx-commitlint.yml"
+    #  - "@commit-msg/bunx-commitlint.yml"
+
+    #  Chose one, or more, of the following for linting and formatting workspace
+    #  - "@pre-commit/npx-eslint.yml"
+    #  - "@pre-commit/pnpx-eslint.yml"
+    #  - "@pre-commit/yarndlx-eslint.yml"
+    #  - "@pre-commit/bunx-eslint.yml"
+    #  - "@pre-commit/npx-prettier.yml"
+    #  - "@pre-commit/pnpx-prettier.yml"
+    #  - "@pre-commit/yarndlx-prettier.yml"
+    #  - "@pre-commit/bunx-prettier.yml"
+    #  - "@pre-commit/npx-eslint-prettier.yml"
+    #  - "@pre-commit/pnpx-eslint-prettier.yml"
+    #  - "@pre-commit/yarndlx-eslint-prettier.yml"
+    #  - "@pre-commit/bunx-eslint-prettier.yml"
+    #  - "@pre-commit/npx-tsc.yml"
+    #  - "@pre-commit/pnpx-tsc.yml"
+    #  - "@pre-commit/yarndlx-tsc.yml"
+    #  - "@pre-commit/bunx-tsc.yml"
+    #  - "@pre-commit/npx-eslint-prettier-tsc.yml"
+    #  - "@pre-commit/pnpx-eslint-prettier-tsc.yml"
+    #  - "@pre-commit/yarndlx-eslint-prettier-tsc.yml"
+    #  - "@pre-commit/bunx-eslint-prettier-tsc.yml"

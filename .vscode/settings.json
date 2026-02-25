@@ -178,22 +178,9 @@
     }
   ],
   "yaml.schemas": {
-    "https://json.schemastore.org/github-workflow.json": [
-      ".github/workflows/*.yml",
-      ".github/workflows/*.yaml"
-    ],
-    "https://json.schemastore.org/pnpm-workspace.json": ["pnpm-workspace.yaml"],
-    "https://raw.githubusercontent.com/evilmartians/lefthook/refs/heads/master/schema.json": [
-      "lefthook.yml",
-      ".lefthook.yml",
-      ".config/lefthook.yml",
-      "lefthook.yaml",
-      ".lefthook.yaml",
-      ".config/lefthook.yaml",
-      "lefthook.toml",
-      ".lefthook.toml",
-      ".config/lefthook.toml"
-    ]
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.{yml,yaml}",
+    "https://json.schemastore.org/pnpm-workspace.json": "pnpm-workspace.yaml",
+    "https://raw.githubusercontent.com/evilmartians/lefthook/refs/heads/master/schema.json": "{lefthook,.lefthook,.config/lefthook}.{yml,yaml,toml}"
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }
