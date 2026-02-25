@@ -93,6 +93,8 @@ dockers:
       - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server:latest"
       - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server:{{ .Tag }}"
       - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion-server:v{{ .Major }}"
+      - "dcdavidev/bastion-server:latest"
+      - "dcdavidev/bastion-server:{{ .Tag }}"
     dockerfile: docker/server.Dockerfile
     goos: linux
     goarch: amd64
@@ -109,6 +111,8 @@ dockers:
     image_templates:
       - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion:latest"
       - "ghcr.io/{{ .Env.GITHUB_REPOSITORY_OWNER }}/bastion:{{ .Tag }}"
+      - "dcdavidev/bastion:latest"
+      - "dcdavidev/bastion:{{ .Tag }}"
     dockerfile: docker/cli.Dockerfile
     goos: linux
     goarch: amd64
@@ -153,3 +157,47 @@ nfpms:
     formats:
       - deb
       - rpm
+      - apk
+
+appimages:
+  - id: bastion
+    builds:
+      - bastion
+    name: bastion
+    description: "Bastion CLI - Secure secret management and execution"
+    homepage: "https://github.com/dcdavidev/bastion"
+
+aurs:
+  - name: bastion-bin
+    package_name: bastion-bin
+    ids:
+      - bastion
+    homepage: "https://github.com/dcdavidev/bastion"
+    description: "Bastion CLI - Secure secret management and execution"
+    maintainers:
+      - "Davide Di Criscito <dcdavidev@gmail.com>"
+    license: "MIT"
+    private_key: "{{ .Env.AUR_KEY }}"
+    git_url: "ssh://aur@aur.archlinux.org/bastion-bin.git"
+
+chocolateys:
+  - name: bastion
+    ids:
+      - bastion
+    owners: dcdavidev
+    api_key: "{{ .Env.CHOCOLATEY_API_KEY }}"
+    homepage: "https://github.com/dcdavidev/bastion"
+    description: "Bastion CLI - Secure secret management and execution"
+    authors: Davide Di Criscito
+    license_url: "https://github.com/dcdavidev/bastion/blob/main/LICENSE"
+
+npms:
+  - name: "@dcdavidev/bastion"
+    ids:
+      - bastion
+    tag: "{{ .Tag }}"
+    description: "Bastion CLI - Secure secret management and execution"
+    author: Davide Di Criscito
+    homepage: "https://github.com/dcdavidev/bastion"
+    license: "MIT"
+    token: "{{ .Env.NPM_TOKEN }}"
