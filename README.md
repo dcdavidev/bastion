@@ -30,6 +30,19 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
 sudo snap install bastion
 ```
 
+#### Via Homebrew (macOS & Linux)
+
+```bash
+brew install dcdavidev/tap/bastion
+```
+
+#### Via Scoop (Windows)
+
+```bash
+scoop bucket add dcdavidev https://github.com/dcdavidev/scoop-bucket
+scoop install bastion
+```
+
 #### Via Go Install
 
 ```bash
