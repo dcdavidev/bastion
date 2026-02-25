@@ -29,7 +29,8 @@ archives:
       - goos: windows
         formats: [zip]
 
-# Nota: NON aggiungere una sezione 'sboms:' qui, poiché attiverebbe le attestazioni Docker.
+sboms:
+  - disable: true
 
 dockers_v2:
   - id: bastion-server
@@ -45,8 +46,6 @@ dockers_v2:
     platforms: [linux/amd64, linux/arm64]
     extra_files:
       - packages/core/db/migrations
-    # Rimosse le chiavi 'attest' e 'sbom' che il tuo linter non accetta.
-    # GoReleaser non dovrebbe provare ad attestare se non vede una config SBOM globale.
 
   - id: bastion-cli
     ids: [bastion]
