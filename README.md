@@ -1,4 +1,8 @@
-# Bastion 🏰
+<p align="center">
+  <img src="https://github.com/dcdavidev/bastion/blob/main/bastion-banner.png?raw=true" alt="bastion banner">
+</p>
+
+# Bastion
 
 Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with Go and React. It provides a secure, self-hosted fortress to manage multiple client secrets via a powerful CLI and a modern dashboard, ensuring data stays private with a robust **blind-backend architecture**.
 
