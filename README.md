@@ -3,6 +3,7 @@
 Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with Go and React. It provides a secure, self-hosted fortress to manage multiple client secrets via a powerful CLI and a modern dashboard, ensuring data stays private with a robust **blind-backend architecture**.
 
 ## 🛡️ Security Model
+
 - **End-to-End Encryption (E2EE):** All secrets are encrypted client-side (CLI or Dashboard) before reaching the server.
 - **Key Wrapping:** Uses a multi-layered key hierarchy (Master Key -> Project Data Key -> Secret).
 - **Blind Backend:** The server never processes or stores plaintext secrets or raw keys.
@@ -12,6 +13,7 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Go** 1.24+
 - **Node.js** 24+ (with `pnpm`)
 - **PostgreSQL**
@@ -19,11 +21,19 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
 ### Installation
 
 #### Via Snap (Recommended for Linux)
+
 ```bash
 sudo snap install bastion
 ```
 
+#### Via Go Install
+
+```bash
+go install github.com/dcdavidev/bastion/cmd/bastion@latest
+```
+
 #### From Source
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/dcdavidev/bastion.git
@@ -37,23 +47,28 @@ sudo snap install bastion
    ```bash
    ./bastion create-superuser
    ```
-   *Follow the instructions to update your `.env` and initialize the database.*
+   _Follow the instructions to update your `.env` and initialize the database._
 
 ## 🚀 CI/CD & Releases
+
 Bastion uses **GitHub Actions** and **GoReleaser** for automated multi-platform builds and deployments.
 
 ### Release Process
+
 To trigger a new release (including Binaries and Snap package):
+
 1. Tag your commit: `git tag -a v0.1.0 -m "Release v0.1.0"`
 2. Push the tag: `git push origin v0.1.0`
 
 The `pipeline` workflow will:
+
 - Run build checks on every push/PR.
 - Automatically publish to GitHub Releases and Snap Store on valid version tags.
 
-*Note: Ensure `SNAPCRAFT_STORE_CREDENTIALS` is configured in your repository secrets for Snap publishing.*
+_Note: Ensure `SNAPCRAFT_STORE_CREDENTIALS` is configured in your repository secrets for Snap publishing._
 
 ## 🛠️ CLI Usage
+
 Bastion comes with a powerful CLI for secret injection and management.
 
 - `bastion login`: Authenticate with the server.
@@ -62,13 +77,17 @@ Bastion comes with a powerful CLI for secret injection and management.
 - `bastion create-collaborator`: Grant restricted access to a team member.
 
 ## 🌐 Dashboard
+
 The web interface (built with React + Pittorica) allows for easy management of:
+
 - **Clients & Projects:** Organize secrets by entity.
 - **Audit Logs:** Monitor access and changes in real-time.
 - **Collaborators:** Manage user permissions and project access.
 
 ## 🤝 Contributing
+
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development instructions.
 
 ---
+
 Built with ❤️ by [dcdavidev](https://github.com/dcdavidev)
