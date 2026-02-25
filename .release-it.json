@@ -1,4 +1,10 @@
 {
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "conventionalcommits",
+      "infile": "CHANGELOG.md"
+    }
+  },
   "github": {
     "release": true,
     "releaseName": "v${version}"
@@ -6,7 +12,8 @@
   "git": {
     "tagName": "v${version}",
     "commitMessage": "chore: release v${version}",
-    "requireCleanWorkingDir": true
+    "requireCleanWorkingDir": true,
+    "push": true
   },
   "npm": {
     "publish": false
@@ -14,8 +21,7 @@
   "hooks": {
     "after:bump": [
       "sed -i \"s/const Version = \\\".*\\\"/const Version = \\\"${version}\\\"/\" packages/core/version/version.go",
-      "cd apps/web && pnpm version ${version} --no-git-tag-version --allow-same-version",
-      "cd packages/bastion && pnpm version ${version} --no-git-tag-version --allow-same-version"
+      "pnpm recursive exec -- pnpm version ${version} --allow-same-version --no-git-tag-version"
     ],
     "after:release": "cd packages/bastion && npm publish --access public"
   }
