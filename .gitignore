@@ -2,6 +2,9 @@
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
 # Binaries for programs and plugins
+bastion
+bastion-server
+snapcraft.login
 *.exe
 *.exe~
 *.dll

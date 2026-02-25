@@ -10,11 +10,9 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number of Bastion",
 	Run: func(cmd *cobra.Command, args []string) {
-		pterm.Info.Printf("Bastion CLI version: %s
-", version.Version)
+		pterm.Info.Printf("Bastion CLI version: %s\n", version.Version)
 	},
 }
-
 func init() {
 	rootCmd.AddCommand(versionCmd)
 }

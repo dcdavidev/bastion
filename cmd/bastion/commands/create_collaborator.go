@@ -116,8 +116,7 @@ var createCollaboratorCmd = &cobra.Command{
 		}
 
 		spinner.Success(fmt.Sprintf("Collaborator '%s' created successfully!", collabUsername))
-		pterm.Info.Printf("Project ID: %s
-", collabProject)
+		pterm.Info.Printf("Project ID: %s\n", collabProject)
 		pterm.Info.Println("The collaborator can now use 'bastion run' to access secrets.")
 		return nil
 	},

@@ -17,6 +17,13 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
 - **PostgreSQL**
 
 ### Installation
+
+#### Via Snap (Recommended for Linux)
+```bash
+sudo snap install bastion
+```
+
+#### From Source
 1. Clone the repository:
    ```bash
    git clone https://github.com/dcdavidev/bastion.git
@@ -31,6 +38,20 @@ Bastion is a single-user controlled, multi-tenant E2EE secrets vault built with 
    ./bastion create-superuser
    ```
    *Follow the instructions to update your `.env` and initialize the database.*
+
+## 🚀 CI/CD & Releases
+Bastion uses **GitHub Actions** and **GoReleaser** for automated multi-platform builds and deployments.
+
+### Release Process
+To trigger a new release (including Binaries and Snap package):
+1. Tag your commit: `git tag -a v0.1.0 -m "Release v0.1.0"`
+2. Push the tag: `git push origin v0.1.0`
+
+The `pipeline` workflow will:
+- Run build checks on every push/PR.
+- Automatically publish to GitHub Releases and Snap Store on valid version tags.
+
+*Note: Ensure `SNAPCRAFT_STORE_CREDENTIALS` is configured in your repository secrets for Snap publishing.*
 
 ## 🛠️ CLI Usage
 Bastion comes with a powerful CLI for secret injection and management.

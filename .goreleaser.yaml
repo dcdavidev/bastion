@@ -1,0 +1,85 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+version: 2
+
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+    # you may remove this if you don't need generate
+    - go generate ./...
+
+builds:
+  - id: bastion
+    main: ./cmd/bastion
+    binary: bastion
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+  - id: bastion-server
+    main: ./cmd/server
+    binary: bastion-server
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - formats:
+      - tar.gz
+    # this name template makes the search and replace of the binary name
+    # easier in shell scripts.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+release:
+  github:
+    owner: dcdavidev
+    name: bastion
+
+snapcrafts:
+  - id: bastion
+    ids:
+      - bastion
+    name: bastion
+    summary: Bastion CLI - Secure secret management and execution
+    description: |
+      Bastion is a tool for managing project secrets and running commands
+      with those secrets injected into the environment securely.
+    grade: stable
+    confinement: strict
+    publish: true
+    apps:
+      bastion:
+        plugs:
+          - network
+          - home

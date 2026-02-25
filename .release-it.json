@@ -1,0 +1,20 @@
+{
+  "github": {
+    "release": true,
+    "releaseName": "v${version}"
+  },
+  "git": {
+    "tagName": "v${version}",
+    "commitMessage": "chore: release v${version}",
+    "requireCleanWorkingDir": true
+  },
+  "npm": {
+    "publish": false
+  },
+  "hooks": {
+    "after:bump": [
+      "sed -i \"s/const Version = \\\".*\\\"/const Version = \\\"${version}\\\"/\" internal/version/version.go",
+      "cd frontend && pnpm version ${version} --no-git-tag-version"
+    ]
+  }
+}

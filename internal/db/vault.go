@@ -2,10 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
-
-	"github.com/dcdavidev/bastion/internal/models"
-	"github.com/google/uuid"
 )
 
 // VaultConfig represents the global vault settings
