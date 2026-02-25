@@ -104,7 +104,7 @@ dockers_v2:
       - linux/arm64
     extra_files:
       - packages/core/db/migrations
-    build_flags:
+    flags:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
       - "--label=org.opencontainers.image.version={{ .Version }}"
@@ -120,7 +120,7 @@ dockers_v2:
     platforms:
       - linux/amd64
       - linux/arm64
-    build_flags:
+    flags:
       - "--label=org.opencontainers.image.title={{ .ProjectName }} CLI"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
       - "--label=org.opencontainers.image.version={{ .Version }}"
