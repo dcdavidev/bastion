@@ -48,7 +48,7 @@ profile.cov
 .vercel
 
 # Chocolatey on Linux
-opt/
+opt
 
 # Debug
 npm-debug.log*
