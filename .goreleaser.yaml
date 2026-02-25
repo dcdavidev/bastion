@@ -104,6 +104,7 @@ dockers_v2:
       - linux/arm64
     extra_files:
       - packages/core/db/migrations
+    attestations: false
     flags:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
@@ -120,6 +121,7 @@ dockers_v2:
     platforms:
       - linux/amd64
       - linux/arm64
+    attestations: false
     flags:
       - "--label=org.opencontainers.image.title={{ .ProjectName }} CLI"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
