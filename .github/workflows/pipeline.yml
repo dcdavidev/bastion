@@ -77,11 +77,6 @@ jobs:
       - name: Install Snapcraft
         run: sudo snap install snapcraft --classic
 
-      - name: Setup AUR Key
-        run: |
-          echo "${{ secrets.AUR_KEY }}" > /tmp/aur_key
-          chmod 600 /tmp/aur_key
-
       - name: Run GoReleaser
         run: goreleaser release --clean --skip=validate
         env:
@@ -89,7 +84,6 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          AUR_KEY_FILE: /tmp/aur_key
 
       - name: Publish to NPM
         run: |
