@@ -122,7 +122,7 @@ func CheckForUpdates() {
 			WithTitleTopCenter().
 			WithBoxStyle(pterm.NewStyle(pterm.FgYellow)).
 			Printf("A new version of Bastion CLI is available: %s (current: %s)\n\nPlease install it using: npm install -g @dcdavidev/bastion-cli", 
-				pterm.Bold.Sprint(latest), pterm.Gray.Sprint(current))
+				pterm.Bold.Sprint(latest), pterm.FgGray.Sprint(current))
 		fmt.Println()
 	}
 }
