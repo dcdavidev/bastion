@@ -87,9 +87,15 @@ func main() {
 	uiDir := os.Getenv("BASTION_UI_DIR")
 	if uiDir == "" {
 		workDir, _ := os.Getwd()
-		uiDir = workDir + "/apps/web/build/client"
+		// If running from apps/server, we need to go up to the monorepo root
+		if strings.HasSuffix(workDir, "/apps/server") {
+			uiDir = workDir + "/../web/build/client"
+		} else {
+			uiDir = workDir + "/apps/web/build/client"
+		}
 	}
 	
+	log.Printf("Serving UI from: %s", uiDir)
 	staticDir := http.Dir(uiDir)
 	fileServer := http.FileServer(staticDir)
 
