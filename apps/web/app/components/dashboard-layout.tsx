@@ -1,12 +1,11 @@
 import type { ReactNode } from 'react';
 
-import { NavLink, Outlet, useNavigate } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 
 import {
   IconLayoutDashboard,
   IconLock,
   IconLogout,
-  IconPlus,
   IconShieldExclamation,
   IconUsers,
   IconUserShield,
@@ -44,7 +43,7 @@ export default function DashboardLayout() {
         gridTemplateColumns: '280px 1fr',
         height: '100vh',
         width: '100vw',
-        backgroundColor: 'var(--pittorica-color-surface)',
+        backgroundColor: 'var(--pittorica-source-color)',
         overflow: 'hidden',
       }}
     >
@@ -52,8 +51,8 @@ export default function DashboardLayout() {
       <Flex
         style={{
           gridColumn: '1 / span 2',
-          borderBottom: '1px solid var(--pittorica-source)',
-          backgroundColor: 'var(--pittorica-source)',
+          borderBottom: '1px solid var(--pittorica-source-color)',
+          backgroundColor: 'var(--pittorica-source-color)',
           zIndex: 10,
         }}
         px="4"
@@ -64,7 +63,7 @@ export default function DashboardLayout() {
           <Avatar src="/static/logo/square.png" fallback="B" size="3" />
           <Text
             weight="bold"
-            color="source"
+            color="white"
             size="4"
             style={{ letterSpacing: '0.5px' }}
           >
@@ -79,22 +78,9 @@ export default function DashboardLayout() {
         direction="column"
         style={{
           backgroundColor: 'var(--pittorica-color-surface)',
-          borderRight: '1px solid transparent', // Drive feel uses whitespace
+          borderRight: '1px solid transparent',
         }}
       >
-        <Box mb="6" px="2">
-          <Button
-            variant="elevated"
-            size="lg"
-            onClick={() => navigate('/dashboard/clients')}
-          >
-            <Flex gap="3" align="center">
-              <IconPlus size={24} color="white" />
-              <Text weight="medium">New Client</Text>
-            </Flex>
-          </Button>
-        </Box>
-
         <Stack gap="1" style={{ flex: 1 }}>
           <NavItem
             to="/dashboard"
@@ -140,22 +126,20 @@ export default function DashboardLayout() {
         >
           <Stack gap="2" px="2">
             <Flex align="center" gap="3" p="2">
-              <IconLock size={16} color="var(--pittorica-color-muted)" />
+              <IconLock size={16} />
               <Text size="1" color="muted">
                 E2EE Active
               </Text>
             </Flex>
             <Button
-              variant="text"
+              variant="filled"
               onClick={handleLogout}
               color="red"
               size="sm"
               style={{ width: '100%', justifyContent: 'flex-start' }}
             >
-              <Flex gap="3" align="center">
-                <IconLogout size={18} />
-                <Text>Sign out</Text>
-              </Flex>
+              <IconLogout size={18} />
+              <Text>Sign out</Text>
             </Button>
             <Flex justify="center" mt="2">
               <Chip variant="soft" color="source">
@@ -207,43 +191,43 @@ function NavItem({
   label: string;
   end?: boolean;
 }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = end
+    ? location.pathname === to
+    : location.pathname.startsWith(to);
+
   return (
-    <NavLink to={to} end={end} style={{ textDecoration: 'none' }}>
-      {({ isActive }) => (
-        <Flex
-          p="3"
-          px="4"
-          align="center"
+    <Button
+      variant={isActive ? 'tonal' : 'text'}
+      onClick={() => navigate(to)}
+      style={{
+        justifyContent: 'flex-start',
+        borderRadius: '0 100px 100px 0',
+        paddingLeft: '24px',
+        marginRight: '8px',
+        height: '48px',
+        backgroundColor: isActive
+          ? 'rgba(var(--pittorica-color-source-rgb), 0.15)'
+          : 'transparent',
+        color: 'var(--pittorica-color-source)',
+      }}
+    >
+      <Flex gap="4" align="center">
+        <Box
           style={{
-            borderRadius: '0 100px 100px 0', // Google Drive style selection
-            backgroundColor: isActive
-              ? 'rgba(var(--pittorica-color-source-rgb), 0.15)'
-              : 'transparent',
-            color: isActive
-              ? 'var(--pittorica-color-source)'
-              : 'var(--pittorica-color-source)',
-            transition: 'all 0.2s ease',
-            cursor: 'pointer',
-            marginRight: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
-          className={isActive ? '' : 'hover:bg-surface-container'}
         >
-          <Flex gap="4" align="center">
-            <Box
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              {icon}
-            </Box>
-            <Text weight={isActive ? 'bold' : 'medium'} size="2">
-              {label}
-            </Text>
-          </Flex>
-        </Flex>
-      )}
-    </NavLink>
+          {icon}
+        </Box>
+        <Text weight={isActive ? 'bold' : 'medium'} size="2">
+          {label}
+        </Text>
+      </Flex>
+    </Button>
   );
 }
