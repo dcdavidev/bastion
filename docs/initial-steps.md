@@ -47,19 +47,20 @@ The wizard will ask for:
 
 ---
 
-## 🏗️ 3. Run the Services
+## 🏗️ 3. Run the Unified Service
 
-You can start the backend server and the web dashboard simultaneously:
+Starting the backend server also starts the web dashboard, as they are now served by the same process:
 
 ```bash
-pnpm dev
+# From the monorepo root
+pnpm dev:server
 ```
 
 ### 📍 Access Points
 | Service | URL | Description |
 | :--- | :--- | :--- |
-| **Backend API** | `http://localhost:8080` | Core logic and secret management. |
-| **Web Dashboard** | `http://localhost:5173` | Visual interface for managing secrets. |
+| **Unified Portal** | `http://localhost:8287` | API and Web Dashboard combined. |
+| **Status Check** | `http://localhost:8287/api/v1/status` | Real-time health and migration check. |
 
 ---
 
@@ -69,13 +70,13 @@ Confirm the system state:
 
 ### Check Health Endpoint
 ```bash
-curl http://localhost:8080/health
+curl http://localhost:8287/health
 ```
 
 ### Login via CLI
 Try to authenticate using the email and password you set during `init`:
 ```bash
-./bastion login --username your@email.com
+./bastion login --email your@email.com
 ```
 
 ---

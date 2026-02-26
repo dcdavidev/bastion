@@ -10,7 +10,7 @@ To ensure a smooth development experience, please make sure you have the followi
 
 - **Go 1.24+**: The core backend language.
 - **Node.js 24+**: For the React frontend.
-- **pnpm** (preferred) or **npm**: Package manager for the frontend.
+- **pnpm** (preferred): Package manager for the monorepo.
 - **PostgreSQL 15+**: A running instance (local or managed) with an empty database created.
 - **VS Code**: Recommended editor with extensions.
 
@@ -23,30 +23,22 @@ To ensure a smooth development experience, please make sure you have the followi
 ### Setup Environment
 
 1. Follow the installation steps in the [README.md](README.md).
-2. **Database Setup**: Ensure you have a running PostgreSQL instance. Create a new, empty database (e.g., `bastion`).
-3. **Environment Variables**: Bastion uses environment variables for configuration.
-   Example environment setup:
+2. **Interactive Setup**: The easiest way to get started is by building the CLI and running the wizard:
    ```bash
-   export BASTION_DATABASE_URL='postgres://user:password@localhost:5432/bastion?sslmode=disable'
-   export BASTION_JWT_SECRET='your-secure-jwt-secret'
-   export BASTION_PORT='8287'
+   pnpm build
+   ./bastion init
    ```
-4. **Initialize Schema**: Apply the migrations to your database:
+3. **Environment Variables**: Alternatively, set them manually in a `.env` file:
    ```bash
-   # Using psql (replace with your connection string if necessary)
-   psql $BASTION_DATABASE_URL -f packages/core/db/migrations/000001_initial_schema.up.sql
+   BASTION_DATABASE_URL='postgres://user:password@localhost:5432/bastion?sslmode=disable'
+   BASTION_JWT_SECRET='your-secure-jwt-secret'
+   BASTION_PORT='8287'
    ```
-   *Note: Alternatively, the `bastion init` command can also run migrations for you.*
-4. Generate required security keys (example using openssl):
-
+4. **Run Services**:
    ```bash
-   # Generate a 32-byte Master Key or Salt (hex)
-   openssl rand -hex 32
+   # Start the unified server (Backend + Frontend)
+   pnpm dev:server
    ```
-
-   _Note: For the admin password hash, you should use a small Go utility with `packages/core/crypto` to ensure compatibility with the Argon2id parameters._
-
-5. VS Code users: Accept the recommended extensions when opening the project.
 
 ## 🛡️ Bastion CLI
 
@@ -58,17 +50,14 @@ go build -o bastion ./apps/cli/main.go
 
 ### Basic Commands
 
-- **Login**: `bastion login --url http://localhost:8287` (Admin) or `bastion login -n <username>` (Collaborator).
+- **Login**: `bastion login --email your@email.com`
   Authenticates and stores the JWT locally in `~/.bastion/token`.
-- **Create Project**: `bastion create project -n MyProject -c <CLIENT_UUID>`
+- **Create Project**: `bastion create project`
   Generates a new data key and creates a project for a client.
 - **List Clients**: `bastion list clients`
-  Displays a table of all clients in the vault.
-- **List Projects**: `bastion list projects -c <CLIENT_UUID>`
-  Displays all projects for a specific client.
 - **Run**: `bastion run -p <PROJECT_ID> -- <command>`
   Injects secrets into the environment of the specified command.
-- **Set**: `bastion set -p <PROJECT_UUID> -k MY_KEY -v my_value`
+- **Set**: `bastion set <KEY> <VALUE> -p <PROJECT_UUID>`
   Encrypts and stores a secret in the specified project.
 
 ## 📜 Coding Standards
@@ -79,5 +68,6 @@ go build -o bastion ./apps/cli/main.go
 
 ## 🧪 Testing
 
-- Backend: `go test ./...`
-- Frontend: `npm test` (when implemented)
+- **Full Workspace**: `pnpm test`
+- **Backend**: `go test ./...`
+- **Frontend**: `pnpm run typecheck`

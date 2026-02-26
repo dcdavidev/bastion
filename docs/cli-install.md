@@ -25,4 +25,4 @@ Bastion can be installed via several package managers for production use.
 ## 📦 NPM & Docker
 
 - **NPM**: `npm install -g @dcdavidev/bastion-cli`
-- **Docker**: `docker pull ghcr.io/dcdavidev/bastion-server:latest`
+- **Docker**: `docker pull ghcr.io/dcdavidev/bastion:latest`

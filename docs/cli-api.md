@@ -4,10 +4,11 @@ Bastion CLI provides a powerful interface for all vault operations.
 
 ## Authentication & Setup
 
+- **`bastion init`**: The smart interactive wizard to initialize the database, migrations, and admin account.
 - **`bastion login`**: Authenticate with the server.
   - `--url, -u`: Server URL (default: from BASTION_HOST env).
-  - `--username, -n`: Username (interactive prompt if omitted).
-- **`bastion create superuser`**: Initialize the vault with admin credentials and master keys.
+  - `--email, -e`: Email address (interactive prompt if omitted).
+- **`bastion create superuser`**: Initialize the vault with admin credentials and master keys manually.
 - **`bastion create jwtsecret`**: Generate and save a new random JWT secret.
 - **`bastion create masterkey`**: Generate a new 32-byte random master key (hex).
 
@@ -21,8 +22,7 @@ Bastion CLI provides a powerful interface for all vault operations.
 
 ## Secret Operations
 
-- **`bastion set --project <ID> --key <KEY> --value <VALUE>`**: Encrypt and store a secret.
-  - Can be used positionally: `bastion set <KEY> <VALUE> --project <ID>`.
+- **`bastion set <KEY> <VALUE> --project <ID>`**: Encrypt and store a secret.
 - **`bastion run --project <ID> -- <command>`**: Inject all decrypted secrets from a project as environment variables into the specified command.
   - `--project, -p`: Project ID to fetch secrets from.
 

@@ -14,8 +14,8 @@ Before performing any operation, you must authenticate with the Bastion server. 
 ./bastion login
 ```
 
-- **Server URL**: Usually `http://localhost:8080` for local development.
-- **Username**: Your admin username or collaborator name.
+- **Server URL**: Usually `http://localhost:8287` for local development.
+- **Email**: Your admin email or collaborator email address.
 - **Password**: Your login password.
 
 ---
@@ -93,13 +93,10 @@ The most powerful feature of Bastion is the ability to inject secrets directly i
 
 ```bash
 # Run a Node.js application
-./bastion run -p npm start < PROJECT_ID > --
+./bastion run -p <PROJECT_ID> -- npm start
 
 # Run a Go binary
-./bastion run -p ./my-app < PROJECT_ID > --
-
-# Use a custom configuration file
-./bastion run -p ./custom-config.yml -- python main.py < PROJECT_ID > -c
+./bastion run -p <PROJECT_ID> -- ./my-app
 ```
 
 ### Why use `run`?
