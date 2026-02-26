@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.1](https://github.com/dcdavidev/bastion/compare/v0.3.0...v0.3.1) (2026-02-26)
+
+### Bug Fixes
+
+* **cli:** correct pterm styling method call to fix compilation error ([8957d55](https://github.com/dcdavidev/bastion/commit/8957d5547f990406e74af3e2b7f7cfa831545524))
+
 ## [0.3.0](https://github.com/dcdavidev/bastion/compare/v0.2.0...v0.3.0) (2026-02-26)
 
 ### Features

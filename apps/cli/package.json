@@ -1,6 +1,6 @@
 {
   "name": "@dcdavidev/bastion-cli",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Bastion CLI - Secure secret management and execution",
   "keywords": [
     "secrets",
