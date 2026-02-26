@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/dcdavidev/bastion/packages/core/api"
@@ -82,7 +83,28 @@ func main() {
 		})
 	})
 
-	// Health check
+	// Serve Frontend Static Files
+	uiDir := os.Getenv("BASTION_UI_DIR")
+	if uiDir == "" {
+		workDir, _ := os.Getwd()
+		uiDir = workDir + "/apps/web/build/client"
+	}
+	
+	staticDir := http.Dir(uiDir)
+	fileServer := http.FileServer(staticDir)
+
+	// SPA Fallback: Serve index.html for any route not starting with /api
+	r.Get("/*", func(w http.ResponseWriter, r *http.Request) {
+		// If it's a file request (has extension), try to serve it
+		if strings.Contains(r.URL.Path, ".") {
+			fileServer.ServeHTTP(w, r)
+			return
+		}
+		// Otherwise, serve index.html for SPA routing
+		http.ServeFile(w, r, uiDir+"/index.html")
+	})
+
+	// Health check (moved to /api or kept as is)
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
