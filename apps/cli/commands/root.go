@@ -13,6 +13,7 @@ var rootCmd = &cobra.Command{
 	Long: `A secure, self-hosted fortress to manage multiple client secrets 
 with blind-backend architecture. For more info: https://github.com/dcdavidev/bastion`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		CheckForUpdates()
 		pterm.DefaultBigText.WithLetters(
 			pterm.NewLettersFromStringWithStyle("Bastion", pterm.NewStyle(pterm.FgCyan)),
 		).Render()

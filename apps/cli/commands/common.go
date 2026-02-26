@@ -6,8 +6,12 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/dcdavidev/bastion/packages/core/models"
+	"github.com/dcdavidev/bastion/packages/core/version"
+	"github.com/pterm/pterm"
 )
 
 func loadToken() (string, error) {
@@ -64,4 +68,82 @@ func fetchProject(url, token, id string) (*models.Project, error) {
 	var project models.Project
 	json.NewDecoder(resp.Body).Decode(&project)
 	return &project, nil
+}
+
+// CheckForUpdates checks GitHub for the latest release and displays a warning if a new version is available.
+// It caches the last check time to avoid frequent API calls.
+func CheckForUpdates() {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return
+	}
+
+	cachePath := filepath.Join(home, ".bastion", "last_update_check")
+	
+	// 1. Check if we checked recently (last 24 hours)
+	if info, err := os.Stat(cachePath); err == nil {
+		if time.Since(info.ModTime()) < 24*time.Hour {
+			return
+		}
+	}
+
+	// Create config dir if missing
+	_ = os.MkdirAll(filepath.Dir(cachePath), 0700)
+
+	// Update cache timestamp regardless of success to avoid spamming on network failure
+	_ = os.WriteFile(cachePath, []byte(time.Now().String()), 0600)
+
+	// 2. Fetch latest version from GitHub
+	client := &http.Client{Timeout: 2 * time.Second}
+	resp, err := client.Get("https://api.github.com/repos/dcdavidev/bastion/releases/latest")
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return
+	}
+
+	var release struct {
+		TagName string `json:"tag_name"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
+		return
+	}
+
+	// 3. Compare versions
+	latest := strings.TrimPrefix(release.TagName, "v")
+	current := strings.TrimPrefix(version.Version, "v")
+
+	if isNewer(latest, current) {
+		pterm.DefaultBox.
+			WithTitle("Update Available").
+			WithTitleTopCenter().
+			WithBoxStyle(pterm.NewStyle(pterm.FgYellow)).
+			Printf("A new version of Bastion CLI is available: %s (current: %s)\n\nPlease install it using: npm install -g @dcdavidev/bastion-cli", 
+				pterm.Bold.Sprint(latest), pterm.Gray.Sprint(current))
+		fmt.Println()
+	}
+}
+
+// isNewer performs a simple semver comparison.
+func isNewer(latest, current string) bool {
+	if latest == current {
+		return false
+	}
+	
+	lParts := strings.Split(latest, ".")
+	cParts := strings.Split(current, ".")
+	
+	for i := 0; i < len(lParts) && i < len(cParts); i++ {
+		if lParts[i] > cParts[i] {
+			return true
+		}
+		if lParts[i] < cParts[i] {
+			return false
+		}
+	}
+	
+	return len(lParts) > len(cParts)
 }
