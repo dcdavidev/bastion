@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.4.0](https://github.com/dcdavidev/bastion/compare/v0.3.1...v0.4.0) (2026-02-26)
+
+### Features
+
+* **cli:** refactor with multi-profile support, improved init wizard, and automated tests ([fb086dc](https://github.com/dcdavidev/bastion/commit/fb086dc2775affe5429cdbb13bc13f10ce87d50d))
+
+### Bug Fixes
+
+* **cli:** fix compilation error and set executable permissions for published binaries ([adb2cf1](https://github.com/dcdavidev/bastion/commit/adb2cf18844d3b70614b6286b35cbd88b63bc438))
+
 ## [0.3.1](https://github.com/dcdavidev/bastion/compare/v0.3.0...v0.3.1) (2026-02-26)
 
 ### Bug Fixes
