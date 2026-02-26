@@ -8,6 +8,7 @@
   },
   "license": "MIT",
   "author": "Davide Di Criscito",
+  "type": "module",
   "main": "index.js",
   "bin": {
     "bastion": "bin/index.js"

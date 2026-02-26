@@ -1,23 +1,27 @@
 #!/usr/bin/env node
 
-const { spawn } = require('child_process');
-const path = require('path');
-const os = require('os');
+import { spawn } from 'node:child_process';
+import path from 'node:path';
+import os from 'node:os';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Mapping OS and architecture to the folders created by GoReleaser
 const platforms = {
-  'darwin': {
-    'x64': 'darwin_amd64/bastion-cli',
-    'arm64': 'darwin_arm64/bastion-cli'
+  darwin: {
+    x64: 'darwin_amd64/bastion-cli',
+    arm64: 'darwin_arm64/bastion-cli',
   },
-  'linux': {
-    'x64': 'linux_amd64/bastion-cli',
-    'arm64': 'linux_arm64/bastion-cli'
+  linux: {
+    x64: 'linux_amd64/bastion-cli',
+    arm64: 'linux_arm64/bastion-cli',
   },
-  'win32': {
-    'x64': 'windows_amd64/bastion-cli.exe',
-    'arm64': 'windows_arm64/bastion-cli.exe'
-  }
+  win32: {
+    x64: 'windows_amd64/bastion-cli.exe',
+    arm64: 'windows_arm64/bastion-cli.exe',
+  },
 };
 
 const platform = os.platform();
