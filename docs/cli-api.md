@@ -36,6 +36,7 @@ Bastion CLI provides a powerful interface for all vault operations.
 ## Global Flags
 
 - `--url, -u`: Override the Bastion server URL for any command.
+- `--version, -v`: Print the version number of Bastion.
 - `--help, -h`: Help for any command.
 
 ## Environment Variables

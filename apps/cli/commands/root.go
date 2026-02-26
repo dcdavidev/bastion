@@ -1,13 +1,15 @@
 package commands
 
 import (
+	"github.com/dcdavidev/bastion/packages/core/version"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "bastion",
-	Short: "Bastion is a secure E2EE secrets vault CLI",
+	Use:     "bastion",
+	Version: version.Version,
+	Short:   "Bastion is a secure E2EE secrets vault CLI",
 	Long: `A secure, self-hosted fortress to manage multiple client secrets 
 with blind-backend architecture. For more info: https://github.com/dcdavidev/bastion`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
