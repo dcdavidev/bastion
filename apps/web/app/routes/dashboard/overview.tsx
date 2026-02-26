@@ -5,6 +5,8 @@ import {
   IconHistory,
   IconShieldCheck,
   IconUsers,
+  IconAlertTriangle,
+  IconDownload,
 } from '@tabler/icons-react';
 
 import {
@@ -17,6 +19,7 @@ import {
   Stack,
   Table,
   Text,
+  Button,
 } from '@pittorica/react';
 
 import { useAuth } from '../../contexts/auth-context';
@@ -29,9 +32,16 @@ interface AuditLog {
   created_at: string;
 }
 
+interface VersionInfo {
+  current_version: string;
+  latest_version: string;
+  needs_update: boolean;
+}
+
 export default function Overview() {
   const [stats, setStats] = useState({ clients: 0, logs: 0 });
   const [latestLogs, setLatestLogs] = useState<AuditLog[]>([]);
+  const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const { token, isAdmin } = useAuth();
 
@@ -39,23 +49,26 @@ export default function Overview() {
     async function fetchStats() {
       setLoading(true);
       try {
-        const [cResp, lResp] = await Promise.all([
+        const [cResp, lResp, vResp] = await Promise.all([
           fetch('/api/v1/clients', {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetch('/api/v1/audit?limit=5', {
             headers: { Authorization: `Bearer ${token}` },
           }),
+          fetch('/api/v1/version/check'),
         ]);
 
         const clients = await cResp.json();
         const logs = await lResp.json();
+        const versionData = await vResp.json();
 
         setStats({
           clients: clients?.length || 0,
           logs: logs?.length || 0,
         });
         setLatestLogs(logs || []);
+        setVersionInfo(versionData);
       } catch (error) {
         console.error('Failed to fetch dashboard stats', error);
       } finally {
@@ -156,6 +169,46 @@ export default function Overview() {
             </Table.Root>
           </Card>
         </Stack>
+      )}
+
+      {versionInfo?.needs_update && (
+        <Card
+          p="4"
+          style={{
+            backgroundColor: 'rgba(var(--pittorica-color-amber-rgb, 255, 193, 7), 0.1)',
+            border: '1px solid var(--pittorica-color-amber, #ffc107)',
+          }}
+        >
+          <Flex align="center" justify="between">
+            <Flex align="center" gap="4">
+              <Box color="amber">
+                <IconAlertTriangle size={32} color="#ffc107" />
+              </Box>
+              <Stack gap="0">
+                <Text weight="bold" size="3">
+                  Update Available
+                </Text>
+                <Text size="2" color="muted">
+                  A new version of Bastion is available (v{versionInfo.latest_version}). 
+                  Your current version is v{versionInfo.current_version}.
+                </Text>
+              </Stack>
+            </Flex>
+            <Button
+              as="a"
+              href="https://github.com/dcdavidev/bastion/releases/latest"
+              target="_blank"
+              variant="filled"
+              size="md"
+              style={{ backgroundColor: '#ffc107', color: '#000' }}
+            >
+              <Flex gap="2" align="center">
+                <IconDownload size={18} />
+                Get Latest
+              </Flex>
+            </Button>
+          </Flex>
+        </Card>
       )}
     </Stack>
   );

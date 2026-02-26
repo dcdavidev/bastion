@@ -57,6 +57,7 @@ func main() {
 	r.Route("/api/v1", func(r chi.Router) {
 		// Public routes
 		r.Get("/status", h.StatusHandler)
+		r.Get("/version/check", h.VersionCheckHandler)
 		r.Post("/auth/login", h.LoginHandler)
 
 		// Protected routes
