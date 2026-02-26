@@ -61,6 +61,8 @@ jobs:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
+      - uses: pnpm/action-setup@v4
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -87,7 +89,18 @@ jobs:
 
       - name: Publish to NPM
         run: |
-          cd packages/bastion
-          npm publish --access public
+          cd apps/cli
+          # Create directories for each platform matching the wrapper expectation
+          mkdir -p bin/darwin_amd64 bin/darwin_arm64 bin/linux_amd64 bin/linux_arm64 bin/windows_amd64 bin/windows_arm64
+          
+          # Copy binaries from GoReleaser dist folder (handling potential variations in folder names)
+          cp ../../dist/bastion-cli_darwin_amd64*/bastion-cli bin/darwin_amd64/ 2>/dev/null || :
+          cp ../../dist/bastion-cli_darwin_arm64*/bastion-cli bin/darwin_arm64/ 2>/dev/null || :
+          cp ../../dist/bastion-cli_linux_amd64*/bastion-cli bin/linux_amd64/ 2>/dev/null || :
+          cp ../../dist/bastion-cli_linux_arm64*/bastion-cli bin/linux_arm64/ 2>/dev/null || :
+          cp ../../dist/bastion-cli_windows_amd64*/bastion-cli.exe bin/windows_amd64/ 2>/dev/null || :
+          cp ../../dist/bastion-cli_windows_arm64*/bastion-cli.exe bin/windows_arm64/ 2>/dev/null || :
+          
+          pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
