@@ -68,14 +68,14 @@ export default function Overview() {
 
   return (
     <Stack gap="8">
-      <Box>
+      <Flex direction={'column'} gap="2">
         <Text size="7" weight="bold" color="source">
           Vault Overview
         </Text>
         <Text color="muted" size="2">
           Monitor the health and activity of your secure fortress.
         </Text>
-      </Box>
+      </Flex>
 
       <Grid columns="3" gap="6">
         <StatCard

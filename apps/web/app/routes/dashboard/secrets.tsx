@@ -203,7 +203,7 @@ export default function Secrets() {
     }
   }
 
-  const filteredSecrets = secrets.filter((s) =>
+  const filteredSecrets = (secrets || []).filter((s) =>
     s.key.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -230,7 +230,7 @@ export default function Secrets() {
           <Flex justify="between" align="end">
             <Box>
               <Flex align="center" gap="2">
-                <IconLockOpen size={24} color="var(--pittorica-color-teal)" />
+                <IconLockOpen size={24} />
                 <Text size="7" weight="bold" color="source">
                   Secrets
                 </Text>
@@ -240,7 +240,7 @@ export default function Secrets() {
               </Text>
             </Box>
             <Button
-              variant="filled"
+              variant="tonal"
               size="md"
               onClick={() => setIsModalOpen(true)}
             >
@@ -252,7 +252,7 @@ export default function Secrets() {
           <Card p="4">
             <TextField.Root size="md">
               <TextField.Slot>
-                <IconSearch size={18} color="var(--pittorica-color-muted)" />
+                <IconSearch size={18} />
               </TextField.Slot>
               <TextField.Input
                 placeholder="Search keys..."

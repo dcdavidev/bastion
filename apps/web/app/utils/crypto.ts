@@ -76,6 +76,7 @@ export async function decrypt(key: Uint8Array, ciphertextWithNonce: Uint8Array):
  * Helper to convert hex string to Uint8Array.
  */
 export function hexToBytes(hex: string): Uint8Array {
+  if (!hex) return new Uint8Array(0);
   const bytes = new Uint8Array(hex.length / 2);
   for (let i = 0; i < bytes.length; i++) {
     bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
@@ -87,6 +88,7 @@ export function hexToBytes(hex: string): Uint8Array {
  * Helper to convert Uint8Array to hex string.
  */
 export function bytesToHex(bytes: Uint8Array): string {
+  if (!bytes) return "";
   return Array.from(bytes)
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");

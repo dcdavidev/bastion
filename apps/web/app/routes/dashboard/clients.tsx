@@ -121,18 +121,16 @@ export default function Clients() {
             Manage your client base and their associated projects.
           </Text>
         </Box>
-        <Button variant="filled" size="md" onClick={() => setIsModalOpen(true)}>
-          <Flex gap="2" align="center">
-            <IconPlus size={18} />
-            <Text>New Client</Text>
-          </Flex>
+        <Button variant="tonal" size="md" onClick={() => setIsModalOpen(true)}>
+          <IconPlus size={18} />
+          <Text>New Client</Text>
         </Button>
       </Flex>
 
       <Card p="4">
         <TextField.Root size="md">
           <TextField.Slot>
-            <IconSearch size={18} color="var(--pittorica-color-muted)" />
+            <IconSearch size={18} />
           </TextField.Slot>
           <TextField.Input
             placeholder="Search clients by name or ID..."

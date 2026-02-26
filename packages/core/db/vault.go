@@ -6,8 +6,8 @@ import (
 
 // VaultConfig represents the global vault settings
 type VaultConfig struct {
-	WrappedMasterKey string
-	MasterKeySalt    string
+	WrappedMasterKey string `json:"wrapped_master_key"`
+	MasterKeySalt    string `json:"master_key_salt"`
 }
 
 // GetVaultConfig retrieves the global vault configuration.
