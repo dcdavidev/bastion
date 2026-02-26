@@ -110,6 +110,12 @@ jobs:
           cp ../../dist/bastion-cli_windows_amd64*/bastion-cli.exe bin/windows_amd64/ 2>/dev/null || :
           cp ../../dist/bastion-cli_windows_arm64*/bastion-cli.exe bin/windows_arm64/ 2>/dev/null || :
           
+          # Set executable permissions for all binaries
+          chmod +x bin/darwin_amd64/bastion-cli 2>/dev/null || :
+          chmod +x bin/darwin_arm64/bastion-cli 2>/dev/null || :
+          chmod +x bin/linux_amd64/bastion-cli 2>/dev/null || :
+          chmod +x bin/linux_arm64/bastion-cli 2>/dev/null || :
+          
           pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
