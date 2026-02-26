@@ -55,7 +55,7 @@ Secrets are encrypted locally before transmission.
 ./bastion list clients
 
 # List projects for a specific client
-./bastion list projects --client <CLIENT_ID>
+./bastion list projects --client=CLIENT_ID
 ```
 
 ### Store a Secret
@@ -64,13 +64,13 @@ You can use positional arguments or flags. If you omit values, the CLI will prom
 
 ```bash
 # Positional (Fastest)
-./bastion set DATABASE_URL "postgres://..." -p <PROJECT_ID>
+./bastion set DATABASE_URL "postgres://..." --project=PROJECT_ID
 
 # Using flags
-./bastion set --project <PROJECT_ID> --key DATABASE_URL --value "postgres://..."
+./bastion set --project=PROJECT_ID --key=DATABASE_URL --value "postgres://..."
 
 # Interactive (Safest, hides input)
-./bastion set -p <PROJECT_ID>
+./bastion set --project=PROJECT_ID
 ```
 
 _Note: You must enter your **Master Password** to derive the local encryption key._
@@ -84,19 +84,19 @@ The `run` command fetches decrypted secrets and injects them as environment vari
 ### Usage
 
 ```bash
-./bastion run --project <PROJECT_ID> -- <your-command>
+./bastion run --project=PROJECT_ID -- <your-command>
 ```
 
 ### Examples
 
 ```bash
 # Node.js
-./bastion run -p <PROJECT_ID> -- npm start
+./bastion run --project=PROJECT_ID -- npm start
 ```
 
 ```bash
 # Go / Binaries
-./bastion run -p <PROJECT_ID> -- ./my-app
+./bastion run --project=PROJECT_ID -- ./my-app
 ```
 
 **Benefits:**
