@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.0](https://github.com/dcdavidev/bastion/compare/v0.2.0...v0.3.0) (2026-02-26)
+
+### Features
+
+* **api/web:** add automatic version check and update notification in dashboard ([906eb6b](https://github.com/dcdavidev/bastion/commit/906eb6b038a4b985c98fb05625271ad75f902834))
+* **cli:** add automatic update check for bastion-cli ([7172bbd](https://github.com/dcdavidev/bastion/commit/7172bbd890987ed10c866ea4894eca3269293aa9))
+* **cli:** enable --version and -v global flags ([f60bf65](https://github.com/dcdavidev/bastion/commit/f60bf6589b8419a9dd25a013038fd5c8b717b883))
+* **web:** configure client for NPM distribution and update pipeline ([3cbd73e](https://github.com/dcdavidev/bastion/commit/3cbd73e4afbb9ff23239214d184d86d0c07cf6e4))
+
 ## [0.2.0](https://github.com/dcdavidev/bastion/compare/v0.1.10...v0.2.0) (2026-02-26)
 
 ### Features

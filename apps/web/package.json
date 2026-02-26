@@ -1,6 +1,6 @@
 {
   "name": "@dcdavidev/bastion-web",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Web Dashboard for Bastion E2EE Secrets Vault",
   "keywords": [
     "bastion",
