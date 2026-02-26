@@ -70,6 +70,9 @@ var initCmd = &cobra.Command{
 
 		// 2. Database Configuration
 		dbURL := os.Getenv("BASTION_DATABASE_URL")
+		if dbURL == "" {
+			dbURL = os.Getenv("DATABASE_URL")
+		}
 		if dbURL == "" || !status.ConnectedToDB {
 			pterm.DefaultSection.Println("Database Configuration")
 			dbHost, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("localhost").Show("Database Host")

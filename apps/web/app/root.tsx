@@ -63,7 +63,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <Links />
       </head>
       <body className="pittorica-theme" data-appearance="light">
-        <PittoricaTheme sourceColor="#cddadd" appearance="light">
+        <PittoricaTheme sourceColor="#388697" appearance="light">
           <AuthProvider>{children}</AuthProvider>
           <ToastProvider />
           <ScrollRestoration />

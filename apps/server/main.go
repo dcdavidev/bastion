@@ -12,9 +12,22 @@ import (
 	"github.com/dcdavidev/bastion/packages/core/version"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// Load .env file if it exists
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, relying on system environment variables")
+	}
+
+	// Debug environment
+	if os.Getenv("BASTION_JWT_SECRET") == "" {
+		log.Println("Warning: BASTION_JWT_SECRET is not set in the environment")
+	} else {
+		log.Println("BASTION_JWT_SECRET is set")
+	}
+
 	// Initialize Database
 	database, err := db.NewConnection()
 	if err != nil {

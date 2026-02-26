@@ -4,8 +4,10 @@ import (
 	"crypto/subtle"
 	"encoding/hex"
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/dcdavidev/bastion/packages/core/auth"
@@ -41,13 +43,23 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		var storedHashHex, saltHex string
 		var err error
 
+		identifier := req.Username
 		if req.Email != "" {
-			user, storedHashHex, saltHex, err = h.DB.GetUserByEmail(r.Context(), req.Email)
-		} else {
-			user, storedHashHex, saltHex, err = h.DB.GetUserByUsername(r.Context(), req.Username)
+			identifier = req.Email
 		}
 
-		if err != nil {
+		// Try Email lookup
+		if strings.Contains(identifier, "@") {
+			user, storedHashHex, saltHex, err = h.DB.GetUserByEmail(r.Context(), identifier)
+		}
+
+		// If not found by email (or not an email), try Username lookup
+		if user == nil {
+			user, storedHashHex, saltHex, err = h.DB.GetUserByUsername(r.Context(), identifier)
+		}
+
+		if err != nil || user == nil {
+			log.Printf("Login failed: identifier '%s' not found in database", identifier)
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -57,18 +69,22 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		computedHash := crypto.DeriveKey([]byte(req.Password), salt)
 
 		if subtle.ConstantTimeCompare(computedHash, storedHash) != 1 {
+			log.Printf("Login failed for user '%s': invalid password", identifier)
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 
 		role = user.Role
 		userID = user.ID.String()
+		log.Printf("Login successful: user '%s' authenticated via database", identifier)
 	} else {
 		// 2. Fallback to Admin Login (Environment Variables)
 		if !auth.VerifyAdmin(req.Password) {
+			log.Println("Login failed: admin fallback unauthorized")
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
+		log.Println("Login successful: admin fallback used")
 		role = "ADMIN"
 		userID = "00000000-0000-0000-0000-000000000000" // Reserved Admin ID
 	}

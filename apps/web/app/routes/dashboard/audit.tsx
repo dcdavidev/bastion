@@ -1,9 +1,15 @@
 import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
 
-import { IconCalendar, IconFilter } from '@tabler/icons-react';
+import {
+  IconCalendar,
+  IconDeviceDesktop,
+  IconFilter,
+  IconInfoCircle,
+} from '@tabler/icons-react';
 
 import {
+  Badge,
   Box,
   Button,
   Card,
@@ -61,32 +67,40 @@ export default function AuditLogs() {
   return (
     <Stack gap="6">
       <Box>
-        <Text size="6" weight="bold">
+        <Text size="7" weight="bold" color="source">
           Audit Logs
         </Text>
-        <Text color="muted">
-          Full history of sensitive operations within the vault.
+        <Text color="muted" size="2">
+          Historical record of all operations and security events.
         </Text>
       </Box>
 
       <Card p="4">
-        <Flex gap="4" align="center">
-          <Flex align="center" gap="2" style={{ flex: 1 }}>
-            <IconFilter size={16} color="var(--pittorica-color-muted)" />
-            <TextField.Root style={{ flex: 1 }}>
+        <Flex gap="4" align="end">
+          <Box style={{ flex: 1 }}>
+            <TextField.Root size="md" label="Action Filter">
+              <TextField.Slot>
+                <IconFilter size={16} color="var(--pittorica-color-muted)" />
+              </TextField.Slot>
               <TextField.Input
-                placeholder="Filter by Action"
+                placeholder="e.g. LOGIN, SECRET_READ"
                 value={actionFilter}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setActionFilter(e.target.value)
                 }
               />
             </TextField.Root>
-          </Flex>
+          </Box>
           <Box style={{ flex: 1 }}>
-            <TextField.Root>
+            <TextField.Root size="md" label="Target Type">
+              <TextField.Slot>
+                <IconDeviceDesktop
+                  size={16}
+                  color="var(--pittorica-color-muted)"
+                />
+              </TextField.Slot>
               <TextField.Input
-                placeholder="Filter by Target"
+                placeholder="e.g. PROJECT, CLIENT"
                 value={targetFilter}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setTargetFilter(e.target.value)
@@ -96,12 +110,13 @@ export default function AuditLogs() {
           </Box>
           <Button
             variant="text"
+            size="md"
             onClick={() => {
               setActionFilter('');
               setTargetFilter('');
             }}
           >
-            Clear
+            Reset Filters
           </Button>
         </Flex>
       </Card>
@@ -111,20 +126,24 @@ export default function AuditLogs() {
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeader>Timestamp</Table.ColumnHeader>
-              <Table.ColumnHeader>Action</Table.ColumnHeader>
+              <Table.ColumnHeader>Operation</Table.ColumnHeader>
               <Table.ColumnHeader>Target</Table.ColumnHeader>
-              <Table.ColumnHeader>Metadata</Table.ColumnHeader>
+              <Table.ColumnHeader>Context / Metadata</Table.ColumnHeader>
             </Table.Row>
           </Table.Header>
           <Table.Body>
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
+                // eslint-disable-next-line @eslint-react/no-array-index-key
                 <Table.Row key={`loading-${i}`}>
                   <Table.Cell colSpan={4}>
                     <Box
                       p="4"
-                      className="animate-pulse bg-surface-container-highest"
-                      style={{ borderRadius: 'var(--pittorica-radius-sm)' }}
+                      className="animate-pulse bg-surface-container"
+                      style={{
+                        borderRadius: 'var(--pittorica-radius-sm)',
+                        height: '40px',
+                      }}
                     />
                   </Table.Cell>
                 </Table.Row>
@@ -133,7 +152,15 @@ export default function AuditLogs() {
               <Table.Row>
                 <Table.Cell colSpan={4}>
                   <Flex p="8" justify="center">
-                    <Text color="muted">No logs found.</Text>
+                    <Stack align="center" gap="2">
+                      <IconInfoCircle
+                        size={32}
+                        color="var(--pittorica-color-muted)"
+                      />
+                      <Text color="muted">
+                        No events recorded for these filters.
+                      </Text>
+                    </Stack>
                   </Flex>
                 </Table.Cell>
               </Table.Row>
@@ -146,26 +173,23 @@ export default function AuditLogs() {
                         size={14}
                         color="var(--pittorica-color-muted)"
                       />
-                      <Text size="1" color="muted">
-                        {new Date(log.created_at).toLocaleString()}
-                      </Text>
+                      <Stack gap="0">
+                        <Text size="1" weight="bold">
+                          {new Date(log.created_at).toLocaleDateString()}
+                        </Text>
+                        <Text size="1" color="muted">
+                          {new Date(log.created_at).toLocaleTimeString()}
+                        </Text>
+                      </Stack>
                     </Flex>
                   </Table.Cell>
                   <Table.Cell>
-                    <Box
-                      p="1"
-                      px="2"
-                      style={{
-                        backgroundColor:
-                          'rgba(var(--pittorica-color-accent-rgb), 0.1)',
-                        borderRadius: 'var(--pittorica-radius-sm)',
-                      }}
-                      display="inline-block"
+                    <Badge
+                      variant="standard"
+                      style={{ textTransform: 'uppercase' }}
                     >
-                      <Text weight="bold" size="1" color="cyan">
-                        {log.action}
-                      </Text>
-                    </Box>
+                      {log.action}
+                    </Badge>
                   </Table.Cell>
                   <Table.Cell>
                     <Stack gap="0">
@@ -177,45 +201,28 @@ export default function AuditLogs() {
                         color="muted"
                         style={{ fontFamily: 'var(--pittorica-font-code)' }}
                       >
-                        {log.target_id?.slice(0, 8)}...
+                        {log.target_id?.slice(0, 13)}...
                       </Text>
                     </Stack>
                   </Table.Cell>
                   <Table.Cell>
-                    <Box
-                      p="2"
-                      style={{
-                        backgroundColor:
-                          'var(--pittorica-color-surface-container)',
-                        borderRadius: 'var(--pittorica-radius-sm)',
-                        maxHeight: '100px',
-                        overflow: 'auto',
-                      }}
-                    >
-                      {log.metadata && Object.keys(log.metadata).length > 0 ? (
-                        <Stack gap="1">
-                          {Object.entries(log.metadata).map(([k, v]) => (
-                            <Flex key={k} gap="2">
-                              <Text size="1" weight="bold" color="muted">
-                                {k}:
-                              </Text>
-                              <Text
-                                size="1"
-                                style={{
-                                  fontFamily: 'var(--pittorica-font-code)',
-                                }}
-                              >
-                                {String(v)}
-                              </Text>
-                            </Flex>
-                          ))}
-                        </Stack>
-                      ) : (
-                        <Text size="1" color="muted">
-                          No metadata
-                        </Text>
-                      )}
-                    </Box>
+                    {log.metadata && Object.keys(log.metadata).length > 0 ? (
+                      <Flex gap="1" wrap="wrap">
+                        {Object.entries(log.metadata).map(([k, v]) => (
+                          <Badge key={k} variant="standard" color="muted">
+                            {k}: {String(v)}
+                          </Badge>
+                        ))}
+                      </Flex>
+                    ) : (
+                      <Text
+                        size="1"
+                        color="muted"
+                        style={{ fontStyle: 'italic' }}
+                      >
+                        None
+                      </Text>
+                    )}
                   </Table.Cell>
                 </Table.Row>
               ))

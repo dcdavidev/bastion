@@ -3,15 +3,20 @@ import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { IconPlus, IconUser } from '@tabler/icons-react';
+import {
+  IconExternalLink,
+  IconPlus,
+  IconSearch,
+  IconUser,
+} from '@tabler/icons-react';
 
 import {
+  Badge,
   Box,
   Button,
   Card,
   Dialog,
   Flex,
-  IconButton,
   Stack,
   Table,
   Text,
@@ -29,6 +34,7 @@ interface Client {
 
 export default function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newClientName, setNewClientName] = useState('');
@@ -36,25 +42,25 @@ export default function Clients() {
   const { token } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function fetchClients() {
-      try {
-        const response = await fetch('/api/v1/clients', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setClients(data || []);
-        }
-      } catch (error) {
-        console.error('Failed to fetch clients', error);
-      } finally {
-        setLoading(false);
+  const fetchClients = async () => {
+    try {
+      const response = await fetch('/api/v1/clients', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setClients(data || []);
       }
+    } catch (error) {
+      console.error('Failed to fetch clients', error);
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
     fetchClients();
   }, [token]);
 
@@ -81,16 +87,7 @@ export default function Clients() {
           description: `Successfully added ${newClientName} to the vault.`,
           color: 'teal',
         });
-        // Refresh clients list
-        const refreshResponse = await fetch('/api/v1/clients', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (refreshResponse.ok) {
-          const data = await refreshResponse.json();
-          setClients(data || []);
-        }
+        fetchClients();
       } else {
         throw new Error('Failed to create client on server');
       }
@@ -107,31 +104,52 @@ export default function Clients() {
     }
   }
 
+  const filteredClients = clients.filter(
+    (c) =>
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <Stack gap="6">
-      <Flex justify="between" align="center">
+      <Flex justify="between" align="end">
         <Box>
-          <Text size="6" weight="bold">
+          <Text size="7" weight="bold" color="source">
             Clients
           </Text>
-          <Text color="muted">
+          <Text color="muted" size="2">
             Manage your client base and their associated projects.
           </Text>
         </Box>
-        <Button variant="filled" onClick={() => setIsModalOpen(true)}>
-          <Stack direction="row" gap="2" align="center">
+        <Button variant="filled" size="md" onClick={() => setIsModalOpen(true)}>
+          <Flex gap="2" align="center">
             <IconPlus size={18} />
             <Text>New Client</Text>
-          </Stack>
+          </Flex>
         </Button>
       </Flex>
+
+      <Card p="4">
+        <TextField.Root size="md">
+          <TextField.Slot>
+            <IconSearch size={18} color="var(--pittorica-color-muted)" />
+          </TextField.Slot>
+          <TextField.Input
+            placeholder="Search clients by name or ID..."
+            value={searchQuery}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setSearchQuery(e.target.value)
+            }
+          />
+        </TextField.Root>
+      </Card>
 
       <Card p="0" style={{ overflow: 'hidden' }}>
         <Table.Root>
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeader>Client Name</Table.ColumnHeader>
-              <Table.ColumnHeader>ID</Table.ColumnHeader>
+              <Table.ColumnHeader>UUID</Table.ColumnHeader>
               <Table.ColumnHeader>Created At</Table.ColumnHeader>
               <Table.ColumnHeader style={{ textAlign: 'right' }}>
                 Actions
@@ -147,55 +165,70 @@ export default function Clients() {
                   </Flex>
                 </Table.Cell>
               </Table.Row>
-            ) : clients.length === 0 ? (
+            ) : filteredClients.length === 0 ? (
               <Table.Row>
                 <Table.Cell colSpan={4}>
                   <Flex p="8" justify="center">
-                    <Text color="muted">No clients found.</Text>
+                    <Stack align="center" gap="2">
+                      <IconUser
+                        size={32}
+                        color="var(--pittorica-color-muted)"
+                      />
+                      <Text color="muted">No clients found.</Text>
+                    </Stack>
                   </Flex>
                 </Table.Cell>
               </Table.Row>
             ) : (
-              clients.map((client) => (
+              filteredClients.map((client) => (
                 <Table.Row key={client.id}>
                   <Table.Cell>
                     <Flex gap="3" align="center">
-                      <IconButton
-                        variant="text"
-                        color="source"
+                      <Box
+                        p="2"
                         style={{
                           backgroundColor:
-                            'rgba(var(--pittorica-color-accent-rgb), 0.1)',
+                            'rgba(var(--pittorica-color-source-rgb), 0.1)',
+                          borderRadius: 'var(--pittorica-radius-full)',
                         }}
                       >
-                        <IconUser size={16} />
-                      </IconButton>
-                      <Text weight="medium">{client.name}</Text>
+                        <IconUser
+                          size={16}
+                          color="var(--pittorica-color-source)"
+                        />
+                      </Box>
+                      <Text weight="bold">{client.name}</Text>
                     </Flex>
                   </Table.Cell>
                   <Table.Cell>
-                    <Text
-                      size="1"
-                      color="muted"
-                      style={{ fontFamily: 'var(--pittorica-font-code)' }}
-                    >
-                      {client.id}
-                    </Text>
+                    <Badge variant="standard">
+                      <Text
+                        style={{ fontFamily: 'var(--pittorica-font-code)' }}
+                      >
+                        {client.id}
+                      </Text>
+                    </Badge>
                   </Table.Cell>
                   <Table.Cell>
-                    <Text size="2">
-                      {new Date(client.created_at).toLocaleDateString()}
+                    <Text size="2" color="muted">
+                      {new Date(client.created_at).toLocaleDateString(
+                        undefined,
+                        { dateStyle: 'medium' }
+                      )}
                     </Text>
                   </Table.Cell>
                   <Table.Cell style={{ textAlign: 'right' }}>
                     <Button
-                      variant="text"
+                      variant="tonal"
                       size="sm"
                       onClick={() =>
                         navigate(`/dashboard/clients/${client.id}`)
                       }
                     >
-                      View Projects
+                      <Flex gap="1" align="center">
+                        <Text>View Projects</Text>
+                        <IconExternalLink size={14} />
+                      </Flex>
                     </Button>
                   </Table.Cell>
                 </Table.Row>
@@ -211,26 +244,37 @@ export default function Clients() {
         title="Register New Client"
       >
         <form onSubmit={handleCreateClient}>
-          <Stack gap="4">
-            <Text color="muted">
-              Enter the name of the new client to add to the vault.
+          <Stack gap="5">
+            <Text color="muted" size="2">
+              Add a new tenant to the vault. Each client can manage multiple
+              isolated projects.
             </Text>
-            <TextField.Root>
+            <TextField.Root size="md" label="Client Name">
               <TextField.Input
-                placeholder="e.g. Acme Corp"
+                placeholder="e.g. Acme Corporation"
                 autoFocus
                 value={newClientName}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setNewClientName(e.target.value)
                 }
+                required
               />
             </TextField.Root>
             <Flex justify="end" gap="3">
-              <Button variant="text" onClick={() => setIsModalOpen(false)}>
+              <Button
+                variant="text"
+                size="md"
+                onClick={() => setIsModalOpen(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit" variant="filled" disabled={creating}>
-                {creating ? 'Creating...' : 'Create Client'}
+              <Button
+                type="submit"
+                variant="filled"
+                size="md"
+                disabled={creating || !newClientName.trim()}
+              >
+                {creating ? 'Creating...' : 'Register Client'}
               </Button>
             </Flex>
           </Stack>

@@ -29,7 +29,7 @@ export async function deriveKey(password: string, salt: Uint8Array): Promise<Uin
 export async function encrypt(key: Uint8Array, plaintext: Uint8Array): Promise<Uint8Array> {
   const cryptoKey = await window.crypto.subtle.importKey(
     "raw",
-    key,
+    new Uint8Array(key),
     { name: "AES-GCM" },
     false,
     ["encrypt"]
@@ -39,7 +39,7 @@ export async function encrypt(key: Uint8Array, plaintext: Uint8Array): Promise<U
   const encrypted = await window.crypto.subtle.encrypt(
     { name: "AES-GCM", iv: nonce },
     cryptoKey,
-    plaintext
+    new Uint8Array(plaintext)
   );
 
   const result = new Uint8Array(nonce.length + encrypted.byteLength);
@@ -54,7 +54,7 @@ export async function encrypt(key: Uint8Array, plaintext: Uint8Array): Promise<U
 export async function decrypt(key: Uint8Array, ciphertextWithNonce: Uint8Array): Promise<Uint8Array> {
   const cryptoKey = await window.crypto.subtle.importKey(
     "raw",
-    key,
+    new Uint8Array(key),
     { name: "AES-GCM" },
     false,
     ["decrypt"]

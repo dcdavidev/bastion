@@ -35,11 +35,15 @@ func (h *Handler) StatusHandler(w http.ResponseWriter, r *http.Request) {
 		Version: "1.0.0", // Replace with version constant if available
 	}
 
-	requiredVars := []string{"BASTION_DATABASE_URL", "BASTION_JWT_SECRET"}
+	requiredVars := []string{"BASTION_JWT_SECRET"}
 	for _, v := range requiredVars {
 		if os.Getenv(v) == "" {
 			resp.MissingEnvVars = append(resp.MissingEnvVars, v)
 		}
+	}
+
+	if os.Getenv("BASTION_DATABASE_URL") == "" && os.Getenv("DATABASE_URL") == "" {
+		resp.MissingEnvVars = append(resp.MissingEnvVars, "BASTION_DATABASE_URL")
 	}
 
 	if h.DB != nil {

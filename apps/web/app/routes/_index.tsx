@@ -27,7 +27,7 @@ export default function Home() {
       style={{
         minHeight: '100vh',
         background:
-          'radial-gradient(circle at top right, #00bcd40d, transparent), radial-gradient(circle at bottom left, #00bcd40d, transparent)',
+          'radial-gradient(circle at top right, rgba(var(--pittorica-color-source-rgb), 0.05), transparent), radial-gradient(circle at bottom left, rgba(var(--pittorica-color-source-rgb), 0.05), transparent)',
       }}
     >
       <Container maxWidth="lg" p="8">
@@ -127,7 +127,7 @@ function FeatureCard({
   return (
     <Card p="6">
       <Stack gap="4" align="center">
-        <Box color="cyan">{icon}</Box>
+        <Box color="source">{icon}</Box>
         <Stack gap="2">
           <Text weight="bold" size="3">
             {title}

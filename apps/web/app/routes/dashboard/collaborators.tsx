@@ -1,14 +1,21 @@
 import type { ChangeEvent, FormEvent } from 'react';
 import { useState } from 'react';
 
-import { IconShield, IconUserPlus } from '@tabler/icons-react';
+import {
+  IconAlertCircle,
+  IconShield,
+  IconUserPlus,
+  IconUsers,
+} from '@tabler/icons-react';
 
 import {
   Box,
   Button,
   Card,
+  Chip,
   Dialog,
   Flex,
+  Grid,
   Stack,
   Text,
   TextField,
@@ -21,6 +28,7 @@ export default function Collaborators() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCollab, setNewCollab] = useState({
     username: '',
+    email: '',
     password: '',
     projectId: '',
   });
@@ -29,8 +37,18 @@ export default function Collaborators() {
 
   async function handleCreateCollaborator(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (
+      !newCollab.username ||
+      !newCollab.email ||
+      !newCollab.password ||
+      !newCollab.projectId
+    )
+      return;
+
     setCreating(true);
 
+    // In a real scenario, we would derive the KEK client-side
+    // For now, keeping the mock logic as per backend requirements
     const mockWrappedKey = 'collab-wrapped-key-' + Math.random().toString(16);
 
     try {
@@ -42,8 +60,9 @@ export default function Collaborators() {
         },
         body: JSON.stringify({
           username: newCollab.username,
-          password_hash: 'mock-hash', // Placeholder
-          salt: 'mock-salt', // Placeholder
+          email: newCollab.email,
+          password_hash: 'mock-hash', // Should be Argon2id in production
+          salt: 'mock-salt',
           project_id: newCollab.projectId,
           wrapped_data_key: mockWrappedKey,
         }),
@@ -52,7 +71,7 @@ export default function Collaborators() {
       if (response.ok) {
         setIsModalOpen(false);
         const addedUsername = newCollab.username;
-        setNewCollab({ username: '', password: '', projectId: '' });
+        setNewCollab({ username: '', email: '', password: '', projectId: '' });
         toast({
           title: 'Access granted',
           description: `Collaborator ${addedUsername} has been assigned to the project.`,
@@ -76,59 +95,117 @@ export default function Collaborators() {
 
   return (
     <Stack gap="6">
-      <Flex justify="between" align="center">
+      <Flex justify="between" align="end">
         <Box>
-          <Text size="6" weight="bold">
+          <Text size="7" weight="bold" color="source">
             Collaborators
           </Text>
-          <Text color="muted">Manage restricted access for team members.</Text>
+          <Text color="muted" size="2">
+            Manage restricted access for team members.
+          </Text>
         </Box>
-        <Button variant="filled" onClick={() => setIsModalOpen(true)}>
-          <Stack direction="row" gap="2" align="center">
+        <Button variant="filled" size="md" onClick={() => setIsModalOpen(true)}>
+          <Flex gap="2" align="center">
             <IconUserPlus size={18} />
             <Text>New Collaborator</Text>
-          </Stack>
+          </Flex>
         </Button>
       </Flex>
 
-      <Card p="8">
-        <Stack gap="4" align="center" style={{ textAlign: 'center' }}>
-          <Box color="cyan">
-            <IconShield size={48} />
-          </Box>
-          <Box>
-            <Text size="4" weight="bold">
-              Access Control
+      <Grid columns="2" gap="6">
+        <Card p="6">
+          <Stack gap="4">
+            <Flex color="source" align="center" gap="3">
+              <IconShield size={32} />
+              <Text size="4" weight="bold">
+                Access Control Policy
+              </Text>
+            </Flex>
+            <Text color="muted" size="2">
+              Collaborators are restricted users who only possess the keys to
+              specific projects. They cannot create clients or view audit logs
+              unless explicitly authorized.
             </Text>
-            <Text color="muted">
-              Collaborators can only see and use secrets for projects they are
-              assigned to.
-            </Text>
-          </Box>
-        </Stack>
-      </Card>
+            <Box
+              p="3"
+              style={{
+                backgroundColor:
+                  'rgba(var(--pittorica-color-source-rgb), 0.05)',
+                borderRadius: 'var(--pittorica-radius-md)',
+              }}
+            >
+              <Flex gap="2" align="start">
+                <IconAlertCircle
+                  size={18}
+                  color="var(--pittorica-color-source)"
+                  style={{ marginTop: '2px' }}
+                />
+                <Text size="1" color="muted">
+                  When you add a collaborator, a new unique re-wrapped project
+                  key is generated specifically for their password.
+                </Text>
+              </Flex>
+            </Box>
+          </Stack>
+        </Card>
+
+        <Card p="6">
+          <Flex
+            direction={'column'}
+            gap="4"
+            align="center"
+            justify="center"
+            style={{ height: '100%', textAlign: 'center' }}
+          >
+            <IconUsers size={48} color="var(--pittorica-color-muted)" />
+            <Stack>
+              <Text weight="bold">No active sessions</Text>
+              <Text size="2" color="muted">
+                Collaborator management is in read-only mode.
+              </Text>
+            </Stack>
+            <Chip variant="soft">Coming Soon: Active Sessions List</Chip>
+          </Flex>
+        </Card>
+      </Grid>
 
       <Dialog
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Add Collaborator"
+        title="Add Project Collaborator"
       >
         <form onSubmit={handleCreateCollaborator}>
-          <Stack gap="4">
-            <TextField.Root>
-              <TextField.Input
-                placeholder="Username"
-                value={newCollab.username}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setNewCollab({ ...newCollab, username: e.target.value })
-                }
-                required
-              />
-            </TextField.Root>
-            <TextField.Root>
+          <Stack gap="5">
+            <Text color="muted" size="2">
+              Assign a user to a specific project with restricted credentials.
+            </Text>
+            <Grid columns="2" gap="4">
+              <TextField.Root size="md" label="Username">
+                <TextField.Input
+                  placeholder="John Doe"
+                  value={newCollab.username}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setNewCollab({ ...newCollab, username: e.target.value })
+                  }
+                  required
+                />
+              </TextField.Root>
+              <TextField.Root size="md" label="Email Address">
+                <TextField.Input
+                  type="email"
+                  placeholder="john@example.com"
+                  value={newCollab.email}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setNewCollab({ ...newCollab, email: e.target.value })
+                  }
+                  required
+                />
+              </TextField.Root>
+            </Grid>
+            <TextField.Root size="md" label="Temporary Password">
               <TextField.Input
                 type="password"
-                placeholder="Assign a Password"
+                placeholder="Assign a secure password"
                 value={newCollab.password}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setNewCollab({ ...newCollab, password: e.target.value })
@@ -136,9 +213,9 @@ export default function Collaborators() {
                 required
               />
             </TextField.Root>
-            <TextField.Root>
+            <TextField.Root size="md" label="Target Project UUID">
               <TextField.Input
-                placeholder="Project ID (UUID)"
+                placeholder="00000000-0000-0000-0000-000000000000"
                 value={newCollab.projectId}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setNewCollab({ ...newCollab, projectId: e.target.value })
@@ -147,11 +224,20 @@ export default function Collaborators() {
               />
             </TextField.Root>
             <Flex justify="end" gap="3">
-              <Button variant="text" onClick={() => setIsModalOpen(false)}>
+              <Button
+                variant="text"
+                size="md"
+                onClick={() => setIsModalOpen(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit" variant="filled" disabled={creating}>
-                {creating ? 'Granting...' : 'Grant Access'}
+              <Button
+                type="submit"
+                variant="filled"
+                size="md"
+                disabled={creating}
+              >
+                {creating ? 'Provisioning...' : 'Grant Access'}
               </Button>
             </Flex>
           </Stack>

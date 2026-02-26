@@ -1,5 +1,13 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "BASTION_DATABASE_URL",
+    "DATABASE_URL",
+    "BASTION_JWT_SECRET",
+    "BASTION_HOST",
+    "BASTION_PORT",
+    "BASTION_STORE_DIR"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -12,6 +20,14 @@
       ]
     },
     "dev": {
+      "dependsOn": ["^build"],
+      "outputs": [
+        "dist/**",
+        "build/**",
+        ".react-router/**",
+        "bastion",
+        "bastion-server"
+      ],
       "cache": false,
       "persistent": true
     },

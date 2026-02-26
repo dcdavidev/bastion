@@ -67,7 +67,10 @@ type DB struct {
 func NewConnection() (*DB, error) {
 	connStr := os.Getenv("BASTION_DATABASE_URL")
 	if connStr == "" {
-		return nil, fmt.Errorf("BASTION_DATABASE_URL environment variable is not set")
+		connStr = os.Getenv("DATABASE_URL")
+	}
+	if connStr == "" {
+		return nil, fmt.Errorf("BASTION_DATABASE_URL or DATABASE_URL environment variable is not set")
 	}
 
 	config, err := pgxpool.ParseConfig(connStr)
@@ -115,6 +118,9 @@ func (db *DB) Ping(ctx context.Context) error {
 // RunMigrations applies all pending migrations.
 func (db *DB) RunMigrations() error {
 	connStr := os.Getenv("BASTION_DATABASE_URL")
+	if connStr == "" {
+		connStr = os.Getenv("DATABASE_URL")
+	}
 	
 	// We need a standard sql.DB for golang-migrate
 	importDB, err := sql.Open("postgres", connStr)
@@ -158,6 +164,9 @@ func (db *DB) getMigrationPath() string {
 // GetMigrationStatus returns the current migration version and whether there are pending migrations.
 func (db *DB) GetMigrationStatus() (uint, bool, error) {
 	connStr := os.Getenv("BASTION_DATABASE_URL")
+	if connStr == "" {
+		connStr = os.Getenv("DATABASE_URL")
+	}
 	importDB, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return 0, false, err

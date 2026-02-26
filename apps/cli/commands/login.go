@@ -16,7 +16,7 @@ type loginResponse struct {
 	Token string `json:"token"`
 }
 
-var loginUsername string
+var loginEmail string
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
@@ -24,15 +24,15 @@ var loginCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		serverURL, _ := cmd.Flags().GetString("url")
 		
-		if loginUsername == "" {
-			loginUsername, _ = pterm.DefaultInteractiveTextInput.Show("Enter Username (leave empty for Admin)")
+		if loginEmail == "" {
+			loginEmail, _ = pterm.DefaultInteractiveTextInput.Show("Enter Email (leave empty for Admin fallback)")
 		}
 		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Password")
 
 		spinner, _ := pterm.DefaultSpinner.Start("Authenticating...")
 
 		payload, _ := json.Marshal(map[string]string{
-			"username": loginUsername,
+			"email":    loginEmail,
 			"password": password,
 		})
 
@@ -80,6 +80,6 @@ func saveToken(token string) error {
 }
 
 func init() {
-	loginCmd.Flags().StringVarP(&loginUsername, "username", "n", "", "Username for login")
+	loginCmd.Flags().StringVarP(&loginEmail, "email", "e", "", "Email for login")
 	rootCmd.AddCommand(loginCmd)
 }

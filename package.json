@@ -3,9 +3,9 @@
   "version": "0.1.10",
   "private": true,
   "scripts": {
+    "bastion": "turbo build --filter=bastion-cli && ./bastion",
     "build": "turbo build",
-    "dev": "pnpm docker:db:up && turbo dev",
-    "docker:db:up": "docker compose up -d db",
+    "dev": "pnpm build --filter=bastion-server && turbo dev",
     "fmt": "pnpm dlx prettier --ignore-unknown --write .",
     "lint": "pnpm dlx eslint --no-warn-ignored --fix .",
     "lint:fmt": "pnpm run lint && pnpm run fmt",
@@ -43,7 +43,7 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "prettier-plugin-toml": "^2.0.6",
     "release-it": "^19.2.4",
-    "turbo": "^2.8.10"
+    "turbo": "^2.8.11"
   },
   "packageManager": "pnpm@10.0.0",
   "engines": {
