@@ -18,19 +18,32 @@ type loginResponse struct {
 
 var loginEmail string
 
+var loginPassword string
+
 var loginCmd = &cobra.Command{
-	Use:   "login",
-	Short: "Authenticate with the Bastion server",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		serverURL, _ := cmd.Flags().GetString("url")
-		
-		if loginEmail == "" {
-			loginEmail, _ = pterm.DefaultInteractiveTextInput.Show("Enter Email (leave empty for Admin fallback)")
-		}
-		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Password")
+        Use:   "login",
+        Short: "Authenticate with the Bastion server",
+        RunE: func(cmd *cobra.Command, args []string) error {
+                serverURL, _ := cmd.Flags().GetString("url")
 
-		spinner, _ := pterm.DefaultSpinner.Start("Authenticating...")
+                if loginEmail == "" {
+                        var err error
+                        loginEmail, err = pterm.DefaultInteractiveTextInput.Show("Enter Email (leave empty for Admin fallback)")
+                        if err != nil {
+                                return err
+                        }
+                }
+                
+                password := loginPassword
+                if password == "" {
+                        var err error
+                        password, err = pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Password")
+                        if err != nil {
+                                return err
+                        }
+                }
 
+                spinner, _ := pterm.DefaultSpinner.Start("Authenticating...")
 		payload, _ := json.Marshal(map[string]string{
 			"email":    loginEmail,
 			"password": password,
@@ -65,21 +78,21 @@ var loginCmd = &cobra.Command{
 }
 
 func saveToken(token string) error {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return err
-	}
+        configDir, err := getConfigDir()
+        if err != nil {
+                return err
+        }
 
-	configDir := filepath.Join(home, ".bastion")
-	if err := os.MkdirAll(configDir, 0700); err != nil {
-		return err
-	}
+        if err := os.MkdirAll(configDir, 0700); err != nil {
+                return err
+        }
 
-	configPath := filepath.Join(configDir, "token")
-	return os.WriteFile(configPath, []byte(token), 0600)
+        configPath := filepath.Join(configDir, "token")
+        return os.WriteFile(configPath, []byte(token), 0600)
 }
-
 func init() {
-	loginCmd.Flags().StringVarP(&loginEmail, "email", "e", "", "Email for login")
-	rootCmd.AddCommand(loginCmd)
+        loginCmd.Flags().StringVarP(&loginEmail, "email", "e", "", "Email for login")
+        loginCmd.Flags().StringVarP(&loginPassword, "password", "p", "", "Password for login")
+        rootCmd.AddCommand(loginCmd)
 }
+

@@ -2,25 +2,29 @@
 
 Bastion CLI provides a powerful interface for all vault operations.
 
-## Authentication & Setup
+## Setup & Configuration
 
-- **`bastion init`**: The smart interactive wizard to initialize the database, migrations, and admin account.
+- **`bastion init`**: The smart interactive wizard to initialize the database, migrations, and admin account. Now also configures the local client profile.
+- **`bastion profile`**: Manage multiple Bastion environments.
+  - `list`: Show all configured profiles.
+  - `add [NAME] [URL]`: Add a new server environment.
+  - `use [NAME]`: Set the default profile for subsequent commands.
 - **`bastion login`**: Authenticate with the server and store the session token.
-  - `--url, -u`: Server URL (default: `http://localhost:8287` or from `BASTION_HOST` env).
-  - `--email, -e`: Email address (interactive prompt if omitted).
-- **`bastion version`**: Print the version number of the Bastion CLI.
-- **`bastion create superuser`**: Initialize the vault with admin credentials and master keys manually.
-- **`bastion create jwtsecret`**: Generate and save a new random JWT secret.
-- **`bastion create masterkey`**: Generate a new 32-byte random master key (hex).
+  - `--url, -u`: Server URL.
+  - `--email, -e`: Email address.
+  - `--password, -p`: Password (avoids interactive prompt).
+- **`bastion version`**: Print the version number and check for updates.
 
 ## Resource Management
 
 - **`bastion create client`**: Create a new tenant/client in the vault.
-- **`bastion create project`**: Create a new project for a client with a dedicated encrypted data key.
-- **`bastion create collaborator`**: Create a restricted user with specific access roles.
+  - `--name, -n`: Client name.
+- **`bastion create project`**: Create a new project for a client.
+  - `--client, -c`: Client ID (UUID).
+  - `--name, -n`: Project name.
 - **`bastion list clients`**: Display all clients in the vault.
-- **`bastion list projects`**: List all projects belonging to a specific client.
-  - `--client, -c`: Client ID (required).
+- **`bastion list projects`**: List all projects for a specific client.
+  - `--client, -c`: Client ID (optional, interactive prompt if omitted).
 
 ## Secret Operations
 
@@ -28,23 +32,26 @@ Bastion CLI provides a powerful interface for all vault operations.
   - `--project, -p`: Project ID (required).
   - `--key, -k`: Secret key name.
   - `--value, -v`: Secret value.
-  - _Note: If KEY or VALUE are omitted, you will be prompted interactively with secure masking._
-- **`bastion run --project <ID> -- <command>`**: Inject all decrypted secrets from a project as environment variables into the specified command.
-  - `--project, -p`: Project ID to fetch secrets from (required).
-  - _Note: Requires your Master Password to decrypt the data key locally._
+  - `--password`: Admin password to unlock the vault (avoids interactive prompt).
+- **`bastion run --project <ID> -- <command>`**: Inject all decrypted secrets from a project as environment variables.
+  - `--project, -p`: Project ID (required).
+  - `--password`: Password to unlock the vault.
 
 ## Global Flags
 
-- `--url, -u`: Override the Bastion server URL for any command.
-- `--version, -v`: Print the version number of Bastion.
-- `--help, -h`: Help for any command.
+- `--profile, -P`: Use a specific profile for the command.
+- `--url, -u`: Override the server URL for any command.
+- `--version, -v`: Print the version number.
+- `--help, -h`: Show help.
 
 ## Environment Variables
-
-The CLI respects the following environment variables:
 
 | Variable               | Description                                      | Default                   |
 | :--------------------- | :----------------------------------------------- | :------------------------ |
 | `BASTION_HOST`         | The base URL of the Bastion server.              | `http://localhost:8287`   |
 | `BASTION_DATABASE_URL` | PostgreSQL connection string (used by `init`).   | -                         |
 | `BASTION_STORE_DIR`    | Path to the password store directory for `pass`. | `~/.config/bastion/store` |
+
+## Config File
+
+The CLI stores its configuration (profiles and tokens) in `~/.bastion/config.yaml`.

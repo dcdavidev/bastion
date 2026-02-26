@@ -14,19 +14,31 @@ import (
 	"github.com/pterm/pterm"
 )
 
-func loadToken() (string, error) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-	configPath := filepath.Join(home, ".bastion", "token")
-	data, err := os.ReadFile(configPath)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
+var customConfigDir string
+
+func getConfigDir() (string, error) {
+        if customConfigDir != "" {
+                return customConfigDir, nil
+        }
+        home, err := os.UserHomeDir()
+        if err != nil {
+                return "", err
+        }
+        return filepath.Join(home, ".bastion"), nil
 }
 
+func loadToken() (string, error) {
+        configDir, err := getConfigDir()
+        if err != nil {
+                return "", err
+        }
+        configPath := filepath.Join(configDir, "token")
+        data, err := os.ReadFile(configPath)
+        if err != nil {
+                return "", err
+        }
+        return string(data), nil
+}
 type vaultConfigResponse struct {
 	WrappedMasterKey string `json:"wrapped_master_key"`
 	MasterKeySalt    string `json:"master_key_salt"`

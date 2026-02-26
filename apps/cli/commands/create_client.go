@@ -10,42 +10,61 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var clientNameFlag string
+
 var createClientCmd = &cobra.Command{
-	Use:   "client",
-	Short: "Create a new client in the vault",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		clientName, _ := pterm.DefaultInteractiveTextInput.Show("Client Name")
+        Use:   "client",
+        Short: "Create a new client in the vault",
+        RunE: func(cmd *cobra.Command, args []string) error {
+                clientName := clientNameFlag
+                if clientName == "" {
+                        var err error
+                        clientName, err = pterm.DefaultInteractiveTextInput.Show("Client Name")
+                        if err != nil {
+                                return err
+                        }
+                }
 
-		url, _ := cmd.Flags().GetString("url")
-		token, err := loadToken()
-		if err != nil {
-			return fmt.Errorf("not logged in: %w", err)
-		}
+                if clientName == "" {
+                        return fmt.Errorf("client name is required")
+                }
 
-		payload := map[string]string{
-			"name": clientName,
-		}
+                url, _ := cmd.Flags().GetString("url")
+                token, err := loadToken()
+                if err != nil {
+                        return fmt.Errorf("not logged in: %w", err)
+                }
 
-		jsonPayload, _ := json.Marshal(payload)
-		req, _ := http.NewRequest("POST", url+"/api/v1/clients", bytes.NewBuffer(jsonPayload))
-		req.Header.Set("Authorization", "Bearer "+token)
-		req.Header.Set("Content-Type", "application/json")
+                spinner, _ := pterm.DefaultSpinner.Start("Creating client " + clientName + "...")
 
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			return err
-		}
-		defer resp.Body.Close()
+                payload := map[string]string{
+                        "name": clientName,
+                }
 
-		if resp.StatusCode != http.StatusCreated {
-			return fmt.Errorf("failed to create client: status %d", resp.StatusCode)
-		}
+                jsonPayload, _ := json.Marshal(payload)
+                req, _ := http.NewRequest("POST", url+"/api/v1/clients", bytes.NewBuffer(jsonPayload))
+                req.Header.Set("Authorization", "Bearer "+token)
+                req.Header.Set("Content-Type", "application/json")
 
-		pterm.Success.Printf("Client %s created successfully!\n", clientName)
-		return nil
-	},
+                resp, err := http.DefaultClient.Do(req)
+                if err != nil {
+                        spinner.Fail(err.Error())
+                        return err
+                }
+                defer resp.Body.Close()
+
+                if resp.StatusCode != http.StatusCreated {
+                        spinner.Fail(fmt.Sprintf("Failed to create client: status %d", resp.StatusCode))
+                        return fmt.Errorf("failed to create client: status %d", resp.StatusCode)
+                }
+
+                spinner.Success(fmt.Sprintf("Client %s created successfully!", clientName))
+                return nil
+        },
 }
 
 func init() {
-	createCmd.AddCommand(createClientCmd)
+        createClientCmd.Flags().StringVarP(&clientNameFlag, "name", "n", "", "Name of the client")
+        createCmd.AddCommand(createClientCmd)
 }
+

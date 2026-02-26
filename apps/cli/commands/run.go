@@ -15,39 +15,46 @@ import (
 )
 
 var (
-	projectID string
+        runProjectID string
+        runPassword  string
 )
 
 var runCmd = &cobra.Command{
-	Use:   "run -- [command]",
-	Short: "Inject secrets into a command's environment",
-	Args:  cobra.MinimumNArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		serverURL, _ := cmd.Flags().GetString("url")
-		
-		token, err := loadToken()
-		if err != nil {
-			return fmt.Errorf("not authenticated. Please run 'bastion login' first: %w", err)
-		}
+        Use:   "run -- [command]",
+        Short: "Inject secrets into a command's environment",
+        Args:  cobra.MinimumNArgs(1),
+        RunE: func(cmd *cobra.Command, args []string) error {
+                serverURL, _ := cmd.Flags().GetString("url")
 
-		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Password to unlock secrets")
+                token, err := loadToken()
+                if err != nil {
+                        return fmt.Errorf("not authenticated. Please run 'bastion login' first: %w", err)
+                }
 
-		spinner, _ := pterm.DefaultSpinner.Start("Fetching project credentials...")
+                password := runPassword
+                if password == "" {
+                        var err error
+                        password, err = pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Password to unlock secrets")
+                        if err != nil {
+                                return err
+                        }
+                }
 
-		// 1. Fetch Vault Config (Salt)
-		vaultConfig, err := fetchVaultConfig(serverURL, token)
-		if err != nil {
-			spinner.Fail("Failed to fetch vault config")
-			return err
-		}
+                spinner, _ := pterm.DefaultSpinner.Start("Fetching project credentials...")
 
-		// 2. Fetch User-Specific Wrapped Data Key
-		wrappedDK, err := fetchUserProjectKey(serverURL, token, projectID)
-		if err != nil {
-			spinner.Fail("Access denied or project not found")
-			return err
-		}
+                // 1. Fetch Vault Config (Salt)
+                vaultConfig, err := fetchVaultConfig(serverURL, token)
+                if err != nil {
+                        spinner.Fail("Failed to fetch vault config")
+                        return err
+                }
 
+                // 2. Fetch User-Specific Wrapped Data Key
+                wrappedDK, err := fetchUserProjectKey(serverURL, token, runProjectID)
+                if err != nil {
+                        spinner.Fail("Access denied or project not found")
+                        return err
+                }
 		// 3. Derive KEK and Unwrap Data Key
 		salt, _ := hex.DecodeString(vaultConfig.MasterKeySalt)
 		userKEK := crypto.DeriveKey([]byte(password), salt)
@@ -75,14 +82,15 @@ var runCmd = &cobra.Command{
 			}
 		}
 
-		// 4. Fetch and Decrypt Secrets
-		encryptedSecrets, err := fetchEncryptedSecrets(serverURL, token, projectID)
-		if err != nil {
-			spinner.Fail("Failed to fetch secrets")
-			return err
-		}
-
-		env := os.Environ()
+		                // 4. Fetch and Decrypt Secrets
+		                encryptedSecrets, err := fetchEncryptedSecrets(serverURL, token, runProjectID)
+		                if err != nil {
+		                        spinner.Fail("Failed to fetch secrets")
+		                        return err
+		                }
+		
+		                env := os.Environ()
+		
 		decryptedCount := 0
 		for _, s := range encryptedSecrets {
 			ciphertext, _ := hex.DecodeString(s.Value)
@@ -146,7 +154,9 @@ func fetchEncryptedSecrets(url, token, projectID string) ([]models.Secret, error
 }
 
 func init() {
-	runCmd.Flags().StringVarP(&projectID, "project", "p", "", "Project ID to fetch secrets from")
-	runCmd.MarkFlagRequired("project")
-	rootCmd.AddCommand(runCmd)
+        runCmd.Flags().StringVarP(&runProjectID, "project", "p", "", "Project ID to fetch secrets from")
+        runCmd.Flags().StringVar(&runPassword, "password", "", "Password to unlock vault")
+        runCmd.MarkFlagRequired("project")
+        rootCmd.AddCommand(runCmd)
 }
+

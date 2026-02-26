@@ -1,21 +1,21 @@
 package commands
 
 import (
-	"encoding/hex"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
+        "encoding/hex"
+        "encoding/json"
+        "fmt"
+        "net/http"
+        "os"
+        "os/exec"
+        "path/filepath"
+        "strings"
 
-	"github.com/dcdavidev/bastion/packages/core/crypto"
-	"github.com/dcdavidev/bastion/packages/core/db"
-	"github.com/pterm/pterm"
-	"github.com/spf13/cobra"
+        "github.com/dcdavidev/bastion/packages/core/config"
+        "github.com/dcdavidev/bastion/packages/core/crypto"
+        "github.com/dcdavidev/bastion/packages/core/db"
+        "github.com/pterm/pterm"
+        "github.com/spf13/cobra"
 )
-
 type BastionStatus struct {
 	ConnectedToDB  bool     `json:"connected_to_db"`
 	MissingEnvVars []string `json:"missing_env_vars"`
@@ -168,12 +168,32 @@ var initCmd = &cobra.Command{
 			}
 		}
 
-		pterm.Success.Println("Bastion setup complete!")
-		return nil
-	},
-}
-
-func checkBastionStatus(url string) (*BastionStatus, error) {
+		                // 7. Profile Configuration (Client-side)
+		                pterm.DefaultSection.Println("Client Configuration")
+		                profileName, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("default").Show("Profile Name")
+		                
+		                cfg, _ := config.LoadConfig()
+		                if cfg.Profiles == nil {
+		                        cfg.Profiles = make(map[string]config.Profile)
+		                }
+		                
+		                cfg.Profiles[profileName] = config.Profile{
+		                        Name: profileName,
+		                        URL:  serverURL,
+		                }
+		                cfg.ActiveProfile = profileName
+		                
+		                if err := cfg.Save(); err != nil {
+		                        pterm.Error.Printf("Failed to save profile: %v\n", err)
+		                } else {
+		                        pterm.Success.Printf("Profile '%s' configured and set as active!\n", profileName)
+		                }
+		
+		                pterm.Success.Println("Bastion setup complete!")
+		                return nil
+		        },
+		}
+		func checkBastionStatus(url string) (*BastionStatus, error) {
 	resp, err := http.Get(url + "/api/v1/status")
 	if err != nil {
 		return nil, err

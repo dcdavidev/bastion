@@ -1,5 +1,5 @@
 
 
-> bastion-server@0.1.10 build /home/dcdavidev/bastion/apps/server
+> @dcdavidev/bastion-server@0.3.1 build /home/dcdavidev/bastion/apps/server
 > go build -o ../../bastion-server main.go
 

@@ -10,24 +10,34 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var listProjectsClientID string
+
 var listProjectsCmd = &cobra.Command{
-	Use:   "projects",
-	Short: "List all projects for a specific client",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		serverURL, _ := cmd.Flags().GetString("url")
-		
-		token, err := loadToken()
-		if err != nil {
-			return fmt.Errorf("not authenticated: %w", err)
-		}
+        Use:   "projects",
+        Short: "List all projects for a specific client",
+        RunE: func(cmd *cobra.Command, args []string) error {
+                serverURL, _ := cmd.Flags().GetString("url")
 
-		clientID, _ := cmd.Flags().GetString("client")
-		if clientID == "" {
-			return fmt.Errorf("client ID is required")
-		}
+                token, err := loadToken()
+                if err != nil {
+                        return fmt.Errorf("not authenticated: %w", err)
+                }
 
-		spinner, _ := pterm.DefaultSpinner.Start(fmt.Sprintf("Fetching projects for client %s...", clientID))
+                clientID := listProjectsClientID
+                if clientID == "" {
+                        var err error
+                        clientID, err = pterm.DefaultInteractiveTextInput.Show("Client ID (UUID)")
+                        if err != nil {
+                                return err
+                        }
+                }
 
+                if clientID == "" {
+                        return fmt.Errorf("client ID is required")
+                }
+
+                spinner, _ := pterm.DefaultSpinner.Start(fmt.Sprintf("Fetching projects for client %s...", clientID))
+                // ... (rest of the function remains the same)
 		req, _ := http.NewRequest("GET", serverURL+"/api/v1/projects?client_id="+clientID, nil)
 		req.Header.Set("Authorization", "Bearer "+token)
 
@@ -71,7 +81,7 @@ var listProjectsCmd = &cobra.Command{
 }
 
 func init() {
-	listProjectsCmd.Flags().StringP("client", "c", "", "Client ID to list projects for")
-	listProjectsCmd.MarkFlagRequired("client")
-	listCmd.AddCommand(listProjectsCmd)
+        listProjectsCmd.Flags().StringVarP(&listProjectsClientID, "client", "c", "", "Client ID to list projects for")
+        listCmd.AddCommand(listProjectsCmd)
 }
+
