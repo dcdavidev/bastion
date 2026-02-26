@@ -1,12 +1,12 @@
 # Local Development Workflow 🛠️
 
-This guide walks you through the typical daily workflow for managing secrets using the Bastion CLI.
+This guide walks you through the daily workflow for managing and using secrets with the Bastion CLI.
 
 ---
 
 ## 🔐 1. Authentication
 
-Before performing any operation, you must authenticate with the Bastion server. The CLI will securely store your session token locally in `~/.bastion/token`.
+The CLI securely stores your session token in `~/.bastion/token` after a successful login.
 
 ### Login
 
@@ -14,46 +14,41 @@ Before performing any operation, you must authenticate with the Bastion server. 
 ./bastion login
 ```
 
-- **Server URL**: Usually `http://localhost:8287` for local development.
-- **Email**: Your admin email or collaborator email address.
+- **Server**: `http://localhost:8287` (default).
+- **Email**: Your admin or collaborator email.
 - **Password**: Your login password.
 
 ---
 
 ## 📂 2. Organizing Resources
 
-Bastion uses a three-level hierarchy to keep your secrets organized:
-**Client** → **Project** → **Secrets**.
+Bastion uses a three-level hierarchy: **Client** → **Project** → **Secrets**.
 
 ### Create a Client
 
-Think of a Client as a logical group (e.g., a customer, a department, or a large application suite).
+Logical groups for your environments (e.g., "Internal Tools" or "Client Alpha").
 
 ```bash
 ./bastion create client
 ```
 
-_Tip: You will be prompted for the client name. Use something descriptive like "AcmeCorp" or "InternalTools"._
-
 ### Create a Project
 
-Projects belong to a Client and hold the actual secrets. Each project has its own unique, encrypted Data Key.
+Specific environments belonging to a client (e.g., "Production", "Staging").
 
 ```bash
 ./bastion create project
 ```
 
-_Tip: You will need the **Client ID** (a UUID) which you can find by running `bastion list clients`._
+_Tip: You will need the **Client ID**, which you can find via `bastion list clients`._
 
 ---
 
 ## 🔑 3. Managing Secrets
 
-Once you have a project, you can start adding encrypted secrets to it.
+Secrets are encrypted locally before transmission.
 
-### List Clients and Projects
-
-To find the correct IDs for your commands:
+### Find IDs
 
 ```bash
 # List all clients
@@ -65,25 +60,28 @@ To find the correct IDs for your commands:
 
 ### Store a Secret
 
-You can store a secret using flags or positional arguments:
+You can use positional arguments or flags. If you omit values, the CLI will prompt you securely.
 
 ```bash
+# Positional (Fastest)
+./bastion set DATABASE_URL "postgres://..." -p <PROJECT_ID>
+
 # Using flags
 ./bastion set --project <PROJECT_ID> --key DATABASE_URL --value "postgres://..."
 
-# Using positional arguments (faster)
-./bastion set DATABASE_URL "postgres://..." -p <PROJECT_ID>
+# Interactive (Safest, hides input)
+./bastion set -p <PROJECT_ID>
 ```
 
-_Note: You will be prompted for your **Master Password** to unlock the vault and encrypt the data._
+_Note: You must enter your **Master Password** to derive the local encryption key._
 
 ---
 
 ## 🚀 4. Injecting Secrets (Runtime)
 
-The most powerful feature of Bastion is the ability to inject secrets directly into your application's environment without ever writing them to a `.env` file.
+The `run` command fetches decrypted secrets and injects them as environment variables directly into your application's process.
 
-### Basic Usage
+### Usage
 
 ```bash
 ./bastion run --project <PROJECT_ID> -- <your-command>
@@ -92,22 +90,24 @@ The most powerful feature of Bastion is the ability to inject secrets directly i
 ### Examples
 
 ```bash
-# Run a Node.js application
-./bastion run -p <PROJECT_ID> -- npm start
-
-# Run a Go binary
-./bastion run -p <PROJECT_ID> -- ./my-app
+# Node.js
+./bastion run -p npm start < PROJECT_ID > --
 ```
 
-### Why use `run`?
+```bash
+# Go / Binaries
+./bastion run -p ./my-app < PROJECT_ID > --
+```
 
-1. **Security**: Secrets only exist in memory during the execution of the command.
-2. **Convenience**: No need to manage multiple `.env` files across different environments.
-3. **Audit**: The server logs whenever secrets are fetched for a project.
+**Benefits:**
+
+1. **Memory Only**: Secrets never touch the disk in plaintext.
+2. **Zero Config**: No `.env` files to leak or manage.
+3. **Audit**: Every secret fetch is logged on the server.
 
 ---
 
 ## ⏭️ Next Steps
 
-- **[CLI Reference](cli-api.md)**: Explore all available flags and commands.
-- **[Configuration](config.md)**: Learn how to customize your CLI settings.
+- **[CLI Reference](cli-api.md)**: Full list of flags and commands.
+- **[Configuration](config.md)**: Customize your host and storage settings.

@@ -1,81 +1,69 @@
 # Getting Started with Bastion 🚀
 
-Welcome to Bastion! This guide will walk you through the initial steps to set up your own E2EE (End-to-End Encrypted) secrets vault for local development.
+Welcome to Bastion! This guide will walk you through the initial steps to set up your own E2EE (End-to-End Encrypted) secrets vault.
 
 ## 📋 Prerequisites
 
-Before you begin, ensure your development environment meets these requirements:
-
 ### 🛠️ Required Tools
 
-| Tool           | Version  | Purpose                                |
-| :------------- | :------- | :------------------------------------- |
-| **Go**         | `1.24+`  | Core backend logic and CLI.            |
-| **Node.js**    | `24+`    | React dashboard and frontend tooling.  |
-| **pnpm**       | `latest` | Fast, disk-efficient package manager.  |
-| **PostgreSQL** | `15+`    | A running instance (local or managed). |
-
-### 💡 Knowledge Base
-
-- Basic familiarity with the command line.
-- Knowledge of PostgreSQL connection strings.
-- Experience managing a PostgreSQL instance.
-- Basic Git usage.
+| Tool           | Version  | Purpose                                   |
+| :------------- | :------- | :---------------------------------------- |
+| **Go**         | `1.24+`  | Core backend logic and CLI.               |
+| **Node.js**    | `24+`    | React dashboard build and frontend tools. |
+| **pnpm**       | `latest` | Fast, disk-efficient package manager.     |
+| **PostgreSQL** | `15+`    | A running instance (local or managed).    |
 
 ---
 
 ## 🏗️ 1. Initial Setup
 
-### Clone the Repository
-
-Start by cloning the official repository and navigating into the project directory:
+### Clone and Install
 
 ```bash
 git clone https://github.com/dcdavidev/bastion.git
 cd bastion
-```
-
-### Install Dependencies
-
-Bastion is a monorepo managed by `pnpm`. Install all backend and frontend dependencies with a single command:
-
-```bash
 pnpm install
 ```
 
 ### Workspace Structure
 
-Once installed, you'll see several key directories:
-
-- `apps/server`: The Go backend.
-- `apps/web`: The React dashboard.
-- `apps/cli`: The Bastion command-line tool.
-- `packages/core`: Shared logic, crypto, and database models.
+- **`apps/server`**: Unified Go server (API + Web UI).
+- **`apps/web`**: React-based Dashboard source code.
+- **`apps/cli`**: The `bastion` command-line management tool.
+- **`packages/core`**: Shared logic, crypto, and database migrations.
 
 ---
 
-## ✅ 2. Verification
+## ✅ 2. Build for Production
 
-To ensure your environment is correctly configured, run the build command for the entire workspace:
+Bastion uses a **Unified Architecture**. The Go server is capable of directly serving the compiled Dashboard. To prepare the environment:
 
 ```bash
 pnpm build
 ```
 
-This will:
+This command will generate:
 
-1. Compile the **CLI** tool.
-2. Build the **Backend Server**.
-3. Bundle the **Web Dashboard**.
+1. The `bastion` executable (CLI).
+2. The `bastion-server` executable (Backend).
+3. The optimized web assets in `apps/web/build/client`.
 
-If the build completes without errors, you are ready to proceed!
+---
+
+## 🚀 3. Quick Launch
+
+To immediately test the entire stack (API + Dashboard) after building:
+
+```bash
+pnpm dev:server
+```
+
+You can now access the unified portal at **`http://localhost:8287`**.
 
 ---
 
 ## ⏭️ Next Steps
 
-Now that you have the source code and dependencies ready, it's time to configure and initialize your vault:
-
-1. **[Configure your environment](config.md)**: Learn about the required environment variables.
-2. **[Initialize the Vault](initial-steps.md)**: Set up your database and create your superuser account.
-3. **[Manage Secrets](local-workflow.md)**: Start using the CLI to store and inject secrets.
+1. **[Configure Environment](config.md)**: Set up your database connection and JWT secrets.
+2. **[Initialize the Vault](initial-steps.md)**: Use the `bastion init` wizard to configure the database and create your admin account.
+3. **[CLI Reference](cli-api.md)**: Explore the available commands to manage your secrets.
