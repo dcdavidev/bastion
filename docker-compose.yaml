@@ -1,25 +1,14 @@
 services:
-  backend:
+  bastion:
     build:
       context: .
       dockerfile: Dockerfile
+    ports:
+      - "8287:8287"
     environment:
       - BASTION_PORT=8287
-      - BASTION_JWT_SECRET=${BASTION_JWT_SECRET:-default_secret_change_me_in_production}
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    depends_on:
-      - backend
-
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/bastion.conf:ro
-    depends_on:
-      - frontend
-      - backend
+      - BASTION_DATABASE_URL=${BASTION_DATABASE_URL}
+      - BASTION_JWT_SECRET=${BASTION_JWT_SECRET}
+      - BASTION_ADMIN_PASSWORD_HASH=${BASTION_ADMIN_PASSWORD_HASH}
+      - BASTION_ADMIN_PASSWORD_SALT=${BASTION_ADMIN_PASSWORD_SALT}
+    restart: unless-stopped
