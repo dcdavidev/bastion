@@ -12,10 +12,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/lib/pq" // Required for golang-migrate postgres driver
+	"embed"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 )
+
+//go:embed migrations/*.sql
+var migrationsFS embed.FS
 
 // Database defines the interface for database operations.
 type Database interface {
@@ -134,10 +138,13 @@ func (db *DB) RunMigrations() error {
 		return fmt.Errorf("could not create migration driver: %w", err)
 	}
 
-	migrationPath := db.getMigrationPath()
+	sourceDriver, err := iofs.New(migrationsFS, "migrations")
+	if err != nil {
+		return fmt.Errorf("could not create iofs driver: %w", err)
+	}
 
-	m, err := migrate.NewWithDatabaseInstance(
-		migrationPath,
+	m, err := migrate.NewWithInstance(
+		"iofs", sourceDriver,
 		"postgres", driver)
 	if err != nil {
 		return fmt.Errorf("could not create migration instance: %w", err)
@@ -149,16 +156,6 @@ func (db *DB) RunMigrations() error {
 
 	log.Println("Database migrations applied successfully")
 	return nil
-}
-
-func (db *DB) getMigrationPath() string {
-	migrationPath := "file://internal/db/migrations"
-	if _, err := os.Stat("packages/core/db/migrations"); err == nil {
-		migrationPath = "file://packages/core/db/migrations"
-	} else if _, err := os.Stat("../../packages/core/db/migrations"); err == nil {
-		migrationPath = "file://../../packages/core/db/migrations"
-	}
-	return migrationPath
 }
 
 // GetMigrationStatus returns the current migration version and whether there are pending migrations.
@@ -178,8 +175,12 @@ func (db *DB) GetMigrationStatus() (uint, bool, error) {
 		return 0, false, err
 	}
 
-	migrationPath := db.getMigrationPath()
-	m, err := migrate.NewWithDatabaseInstance(migrationPath, "postgres", driver)
+	sourceDriver, err := iofs.New(migrationsFS, "migrations")
+	if err != nil {
+		return 0, false, err
+	}
+
+	m, err := migrate.NewWithInstance("iofs", sourceDriver, "postgres", driver)
 	if err != nil {
 		return 0, false, err
 	}
@@ -198,9 +199,6 @@ func (db *DB) GetMigrationStatus() (uint, bool, error) {
 	if err == migrate.ErrNoChange {
 		return version, false, nil
 	} else if err == nil {
-		// If Up() succeeded, it means there WERE pending migrations. 
-		// But Up() also applied them. For a "status" check we might want something non-destructive.
-		// However, golang-migrate doesn't have a simple "check" without applying or looking at the source.
 		return version, true, nil
 	}
 
