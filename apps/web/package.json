@@ -1,8 +1,33 @@
 {
   "name": "@dcdavidev/bastion-web",
   "version": "0.2.0",
-  "private": true,
+  "description": "Web Dashboard for Bastion E2EE Secrets Vault",
+  "keywords": [
+    "bastion",
+    "e2ee",
+    "secrets",
+    "vault",
+    "dashboard",
+    "security",
+    "react",
+    "react-router",
+    "secrets-manager",
+    "zero-knowledge"
+  ],
+  "homepage": "https://github.com/dcdavidev/bastion#readme",
+  "bugs": {
+    "url": "https://github.com/dcdavidev/bastion/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dcdavidev/bastion.git"
+  },
+  "license": "MIT",
+  "author": "Davide Di Criscito",
   "type": "module",
+  "files": [
+    "build/client"
+  ],
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
@@ -34,5 +59,8 @@
     "typescript": "^5.9.2",
     "vite": "^7.1.7",
     "vite-tsconfig-paths": "^5.1.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

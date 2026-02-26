@@ -87,7 +87,16 @@ jobs:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
 
-      - name: Publish to NPM
+      - name: Publish Web to NPM
+        run: |
+          pnpm install --ignore-scripts
+          pnpm --filter @dcdavidev/bastion-web build
+          cd apps/web
+          pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish CLI to NPM
         run: |
           cd apps/cli
           # Create directories for each platform matching the wrapper expectation
