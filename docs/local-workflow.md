@@ -91,12 +91,12 @@ The `run` command fetches decrypted secrets and injects them as environment vari
 
 ```bash
 # Node.js
-./bastion run -p npm start < PROJECT_ID > --
+./bastion run -p <PROJECT_ID> -- npm start
 ```
 
 ```bash
 # Go / Binaries
-./bastion run -p ./my-app < PROJECT_ID > --
+./bastion run -p <PROJECT_ID> -- ./my-app
 ```
 
 **Benefits:**
