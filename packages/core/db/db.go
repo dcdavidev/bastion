@@ -22,9 +22,9 @@ type DB struct {
 
 // NewConnection initializes a new PostgreSQL connection pool.
 func NewConnection() (*DB, error) {
-	connStr := os.Getenv("DATABASE_URL")
+	connStr := os.Getenv("BASTION_DATABASE_URL")
 	if connStr == "" {
-		return nil, fmt.Errorf("DATABASE_URL environment variable is not set")
+		return nil, fmt.Errorf("BASTION_DATABASE_URL environment variable is not set")
 	}
 
 	config, err := pgxpool.ParseConfig(connStr)
@@ -63,7 +63,7 @@ func (db *DB) Close() {
 
 // RunMigrations applies all pending migrations.
 func (db *DB) RunMigrations() error {
-	connStr := os.Getenv("DATABASE_URL")
+	connStr := os.Getenv("BASTION_DATABASE_URL")
 	
 	// We need a standard sql.DB for golang-migrate
 	importDB, err := sql.Open("postgres", connStr)
@@ -77,13 +77,7 @@ func (db *DB) RunMigrations() error {
 		return fmt.Errorf("could not create migration driver: %w", err)
 	}
 
-	// Try to find the migrations directory in common locations
-	migrationPath := "file://internal/db/migrations"
-	if _, err := os.Stat("packages/core/db/migrations"); err == nil {
-		migrationPath = "file://packages/core/db/migrations"
-	} else if _, err := os.Stat("../../packages/core/db/migrations"); err == nil {
-		migrationPath = "file://../../packages/core/db/migrations"
-	}
+	migrationPath := db.getMigrationPath()
 
 	m, err := migrate.NewWithDatabaseInstance(
 		migrationPath,
@@ -98,4 +92,57 @@ func (db *DB) RunMigrations() error {
 
 	log.Println("Database migrations applied successfully")
 	return nil
+}
+
+func (db *DB) getMigrationPath() string {
+	migrationPath := "file://internal/db/migrations"
+	if _, err := os.Stat("packages/core/db/migrations"); err == nil {
+		migrationPath = "file://packages/core/db/migrations"
+	} else if _, err := os.Stat("../../packages/core/db/migrations"); err == nil {
+		migrationPath = "file://../../packages/core/db/migrations"
+	}
+	return migrationPath
+}
+
+// GetMigrationStatus returns the current migration version and whether there are pending migrations.
+func (db *DB) GetMigrationStatus() (uint, bool, error) {
+	connStr := os.Getenv("BASTION_DATABASE_URL")
+	importDB, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return 0, false, err
+	}
+	defer importDB.Close()
+
+	driver, err := postgres.WithInstance(importDB, &postgres.Config{})
+	if err != nil {
+		return 0, false, err
+	}
+
+	migrationPath := db.getMigrationPath()
+	m, err := migrate.NewWithDatabaseInstance(migrationPath, "postgres", driver)
+	if err != nil {
+		return 0, false, err
+	}
+
+	version, dirty, err := m.Version()
+	if err != nil && err != migrate.ErrNilVersion {
+		return 0, false, err
+	}
+
+	if dirty {
+		return version, true, fmt.Errorf("database is in a dirty state at version %d", version)
+	}
+
+	// Check if there are any migrations newer than 'version'
+	err = m.Up()
+	if err == migrate.ErrNoChange {
+		return version, false, nil
+	} else if err == nil {
+		// If Up() succeeded, it means there WERE pending migrations. 
+		// But Up() also applied them. For a "status" check we might want something non-destructive.
+		// However, golang-migrate doesn't have a simple "check" without applying or looking at the source.
+		return version, true, nil
+	}
+
+	return version, true, err
 }

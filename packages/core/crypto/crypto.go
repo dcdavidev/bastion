@@ -83,6 +83,14 @@ func GenerateRandomKey() ([]byte, error) {
 	return key, nil
 }
 
+// GenerateRandomKeyInto fills the provided byte slice with random bytes.
+func GenerateRandomKeyInto(key []byte) error {
+	if _, err := io.ReadFull(rand.Reader, key); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WrapKey encrypts a target key using a wrapper key.
 func WrapKey(wrapperKey, targetKey []byte) ([]byte, error) {
 	return Encrypt(wrapperKey, targetKey)

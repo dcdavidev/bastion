@@ -10,11 +10,13 @@ import (
 
 	"github.com/dcdavidev/bastion/packages/core/auth"
 	"github.com/dcdavidev/bastion/packages/core/crypto"
+	"github.com/dcdavidev/bastion/packages/core/models"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type LoginRequest struct {
 	Username string `json:"username,omitempty"`
+	Email    string `json:"email,omitempty"`
 	Password string `json:"password"`
 }
 
@@ -33,9 +35,18 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var role string
 	var userID string
 
-	// 1. Check if it's a Collaborator Login (Database)
-	if req.Username != "" {
-		user, storedHashHex, saltHex, err := h.DB.GetUserByUsername(r.Context(), req.Username)
+	// 1. Check if it's a User Login (Database)
+	if req.Username != "" || req.Email != "" {
+		var user *models.User
+		var storedHashHex, saltHex string
+		var err error
+
+		if req.Email != "" {
+			user, storedHashHex, saltHex, err = h.DB.GetUserByEmail(r.Context(), req.Email)
+		} else {
+			user, storedHashHex, saltHex, err = h.DB.GetUserByUsername(r.Context(), req.Username)
+		}
+
 		if err != nil {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
@@ -63,7 +74,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate JWT
-	secret := os.Getenv("JWT_SECRET")
+	secret := os.Getenv("BASTION_JWT_SECRET")
 	if secret == "" {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return

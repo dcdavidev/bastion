@@ -24,6 +24,12 @@ var createCmd = &cobra.Command{
 	Short: "Create resources (superuser, collaborator, project, client, jwtsecret, masterkey)",
 }
 
+// listCmd represents the list command group
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List resources (clients, projects)",
+}
+
 // Execute adds all child commands to the root command and sets flags appropriately.
 func Execute() error {
 	return rootCmd.Execute()
@@ -32,13 +38,11 @@ func Execute() error {
 func init() {
 	// Global flags
 	config, _ := LoadConfig()
-	serverURL := "http://localhost:8081"
-	if config != nil && config.ServerURL != "" {
-		serverURL = config.ServerURL
-	}
+	serverURL := config.URL
 
 	rootCmd.PersistentFlags().StringP("url", "u", serverURL, "Bastion server URL")
 
-	// Add create command group
+	// Add command groups
 	rootCmd.AddCommand(createCmd)
+	rootCmd.AddCommand(listCmd)
 }

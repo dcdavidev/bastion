@@ -12,19 +12,9 @@ import (
 	"github.com/dcdavidev/bastion/packages/core/version"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	// Load .env file from root if it exists
-	if _, err := os.Stat(".env"); err == nil {
-		_ = godotenv.Load()
-	} else if _, err := os.Stat("../../.env"); err == nil {
-		_ = godotenv.Load("../../.env")
-	} else {
-		log.Println("No .env file found, using system environment variables")
-	}
-
 	// Initialize Database
 	database, err := db.NewConnection()
 	if err != nil {
@@ -52,6 +42,7 @@ func main() {
 	// API Routes
 	r.Route("/api/v1", func(r chi.Router) {
 		// Public routes
+		r.Get("/status", h.StatusHandler)
 		r.Post("/auth/login", h.LoginHandler)
 
 		// Protected routes
@@ -85,9 +76,9 @@ func main() {
 		w.Write([]byte(`{"status":"up", "version":"` + version.Version + `"}`))
 	})
 
-	port := os.Getenv("PORT")
+	port := os.Getenv("BASTION_PORT")
 	if port == "" {
-		port = "8080"
+		port = "8287"
 	}
 
 	log.Printf("Bastion server starting on port %s", port)

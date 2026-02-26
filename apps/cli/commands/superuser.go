@@ -12,7 +12,8 @@ import (
 var createSuperuserCmd = &cobra.Command{
 	Use:     "superuser",
 	Aliases: []string{"su"},
-	Short:   "Generate credentials and master key for the initial admin setup",
+	Short:   "Generate credentials and master key for manual initial setup",
+	Long:    "This command generates the necessary cryptographic material for manual setup. Use 'bastion init' for a guided setup.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Enter Admin Password")
 
@@ -28,7 +29,7 @@ var createSuperuserCmd = &cobra.Command{
 			return err
 		}
 
-		// 2. Derive KEK (and also the password hash for config)
+		// 2. Derive KEK
 		kek := crypto.DeriveKey([]byte(password), salt)
 
 		// 3. Generate Global Master Key
@@ -45,26 +46,16 @@ var createSuperuserCmd = &cobra.Command{
 
 		spinner.Success("Cryptographic material generated!")
 
-		// Save to Config
-		config, err := LoadConfig()
-		if err != nil {
-			return err
-		}
-
-		config.AdminPasswordHash = hex.EncodeToString(kek)
-		config.AdminPasswordSalt = hex.EncodeToString(salt)
+		pterm.DefaultHeader.WithFullWidth().Println("MANUAL INITIALIZATION REQUIRED")
 		
-		if err := SaveConfig(config); err != nil {
-			return fmt.Errorf("failed to save config: %w", err)
-		}
-
-		pterm.Success.Println("Saved credentials to ~/.config/bastion.yml")
-
-		pterm.DefaultHeader.WithFullWidth().Println("DATABASE INITIALIZATION REQUIRED")
-		pterm.Println("Run the following SQL command in your PostgreSQL database:")
-		
+		pterm.Info.Println("1. Run the following SQL command in your PostgreSQL database:")
 		pterm.DefaultBox.Println(fmt.Sprintf("INSERT INTO vault_config (wrapped_master_key, master_key_salt) VALUES ('%s', '%s');", 
 			hex.EncodeToString(wrappedMK), hex.EncodeToString(salt)))
+
+		pterm.Info.Println("2. Create your admin user in the 'users' table using these values:")
+		pterm.DefaultBox.Println(fmt.Sprintf("Password Hash: %s\nSalt: %s", hex.EncodeToString(kek), hex.EncodeToString(salt)))
+
+		pterm.Info.Println("3. Ensure your server environment variables are set correctly.")
 
 		return nil
 	},

@@ -11,7 +11,7 @@ import (
 )
 
 var listProjectsCmd = &cobra.Command{
-	Use:   "list-projects",
+	Use:   "projects",
 	Short: "List all projects for a specific client",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		serverURL, _ := cmd.Flags().GetString("url")
@@ -73,5 +73,5 @@ var listProjectsCmd = &cobra.Command{
 func init() {
 	listProjectsCmd.Flags().StringP("client", "c", "", "Client ID to list projects for")
 	listProjectsCmd.MarkFlagRequired("client")
-	rootCmd.AddCommand(listProjectsCmd)
+	listCmd.AddCommand(listProjectsCmd)
 }

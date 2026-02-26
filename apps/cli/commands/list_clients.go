@@ -11,7 +11,7 @@ import (
 )
 
 var listClientsCmd = &cobra.Command{
-	Use:   "list-clients",
+	Use:   "clients",
 	Short: "List all clients in the vault",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		serverURL, _ := cmd.Flags().GetString("url")
@@ -66,5 +66,5 @@ var listClientsCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(listClientsCmd)
+	listCmd.AddCommand(listClientsCmd)
 }

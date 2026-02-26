@@ -9,6 +9,7 @@ import (
 
 type CreateCollaboratorRequest struct {
 	Username       string    `json:"username"`
+	Email          string    `json:"email,omitempty"`
 	PasswordHash   string    `json:"password_hash"`
 	Salt           string    `json:"salt"`
 	ProjectID      uuid.UUID `json:"project_id"`
@@ -27,7 +28,7 @@ func (h *Handler) CreateCollaborator(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 1. Create User
-	user, err := h.DB.CreateUser(r.Context(), req.Username, req.PasswordHash, req.Salt, "COLLABORATOR")
+	user, err := h.DB.CreateUser(r.Context(), req.Username, req.Email, req.PasswordHash, req.Salt, "COLLABORATOR")
 	if err != nil {
 		http.Error(w, "Could not create user: "+err.Error(), http.StatusInternalServerError)
 		return

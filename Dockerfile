@@ -26,7 +26,7 @@ COPY --from=builder /app/bastion-server .
 COPY --from=builder /app/internal/db/migrations ./internal/db/migrations
 
 # Expose port
-EXPOSE 8080
+EXPOSE 8287
 
 # Command to run
 CMD ["./bastion-server"]

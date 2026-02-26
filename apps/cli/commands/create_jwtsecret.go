@@ -9,9 +9,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var printOnly bool
+
 var createJWTSecretCmd = &cobra.Command{
 	Use:   "jwtsecret",
-	Short: "Generate a new random JWT secret and save it to config",
+	Short: "Generate a new random JWT secret",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		secret := make([]byte, 32)
 		if _, err := rand.Read(secret); err != nil {
@@ -20,23 +22,20 @@ var createJWTSecretCmd = &cobra.Command{
 
 		encodedSecret := hex.EncodeToString(secret)
 
-		config, err := LoadConfig()
-		if err != nil {
-			return err
+		if printOnly {
+			fmt.Print(encodedSecret)
+			return nil
 		}
 
-		config.JWTSecret = encodedSecret
-		if err := SaveConfig(config); err != nil {
-			return fmt.Errorf("failed to save config: %w", err)
-		}
-
-		pterm.Success.Println("Generated and saved new JWT secret to ~/.config/bastion.yml")
-		pterm.Info.Printf("JWT_SECRET=%s\n", encodedSecret)
+		pterm.Success.Println("Generated new random JWT secret!")
+		pterm.Info.Println("Please set it as an environment variable:")
+		pterm.DefaultBox.WithTitle("Environment Variable").Println(fmt.Sprintf("export BASTION_JWT_SECRET=%s", encodedSecret))
 
 		return nil
 	},
 }
 
 func init() {
+	createJWTSecretCmd.Flags().BoolVar(&printOnly, "print-only", false, "Only print the secret (useful for scripting)")
 	createCmd.AddCommand(createJWTSecretCmd)
 }

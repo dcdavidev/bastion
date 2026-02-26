@@ -14,7 +14,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var projectID string
+var (
+	projectID string
+)
 
 var runCmd = &cobra.Command{
 	Use:   "run -- [command]",

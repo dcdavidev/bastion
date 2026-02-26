@@ -10,8 +10,8 @@ import (
 
 // AdminCredentials defines the expected environment variables for the admin user.
 const (
-	EnvAdminHash = "ADMIN_PASSWORD_HASH"
-	EnvAdminSalt = "ADMIN_PASSWORD_SALT"
+	EnvAdminHash = "BASTION_ADMIN_PASSWORD_HASH"
+	EnvAdminSalt = "BASTION_ADMIN_PASSWORD_SALT"
 )
 
 // VerifyAdmin checks if the provided password matches the hash stored in environment variables.

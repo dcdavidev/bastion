@@ -23,7 +23,7 @@ func (db *DB) GetVaultConfig(ctx context.Context) (*VaultConfig, error) {
 
 // InitializeVault sets up the master key for the first time.
 func (db *DB) InitializeVault(ctx context.Context, wrappedMK, salt string) error {
-	query := `INSERT INTO vault_config (wrapped_master_key, master_key_salt) VALUES ($1, $2)`
+	query := `INSERT INTO vault_config (wrapped_master_key, master_key_salt) VALUES ($1, $2) ON CONFLICT DO NOTHING`
 	_, err := db.Pool.Exec(ctx, query, wrappedMK, salt)
 	return err
 }
