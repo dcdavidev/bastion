@@ -32,7 +32,7 @@ bastion login --email your@email.com
 ### 3. Run your application with secrets
 
 ```bash
-bastion run -p <PROJECT_ID> -- npm start
+bastion run -p npm start < PROJECT_ID > --
 ```
 
 ## CLI Reference 📖
