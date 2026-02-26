@@ -38,17 +38,20 @@ bastion run -p <PROJECT_ID> -- npm start
 ## CLI Reference 📖
 
 ### Setup & Auth
+
 - `bastion init`: Interactive setup wizard for database and admin.
 - `bastion login --email <email>`: Authenticate and store session token.
 - `bastion version`: Show current version and check for updates.
 
 ### Management
+
 - `bastion create client`: Register a new tenant.
 - `bastion create project`: Add an E2EE environment to a client.
 - `bastion list clients`: Show all registered clients.
 - `bastion list projects -c <CLIENT_ID>`: Show projects for a client.
 
 ### Secrets
+
 - `bastion set <KEY> <VALUE> -p <PROJECT_ID>`: Encrypt and store a secret.
 - `bastion run -p <PROJECT_ID> -- <command>`: Inject secrets and execute a command.
 
