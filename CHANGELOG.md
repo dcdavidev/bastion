@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.0](https://github.com/dcdavidev/bastion/compare/v0.1.10...v0.2.0) (2026-02-26)
+
+### Features
+
+* **cli/server:** refactor init command, add status endpoint, and simplify environment-based config ([606538d](https://github.com/dcdavidev/bastion/commit/606538d0187c28a81099bd8da7b89f912ef54695))
+* **cli/web/server:** enhanced setup wizard, UI/UX overhaul, and environment-based config ([24509ef](https://github.com/dcdavidev/bastion/commit/24509efb9ecc6f6100652acca8dcf058b1e21eaf))
+* **cli:** refactor commands and add config management ([12df75d](https://github.com/dcdavidev/bastion/commit/12df75d795b5e3cbcd63789a5362c9e0d364754d))
+* **server:** serve frontend static files directly from bastion-server ([2193f42](https://github.com/dcdavidev/bastion/commit/2193f42a0b43c6c62df44db17ea3337ee22ccd69))
+
+### Bug Fixes
+
+* **api/web:** resolve project creation and vault config mapping issues ([4c00100](https://github.com/dcdavidev/bastion/commit/4c001006335a8eef5c0c54f21ed75bfa8f5d966a))
+* **server:** resolve UI path correctly when running from apps/server folder ([9914d71](https://github.com/dcdavidev/bastion/commit/9914d714714e7c7f4405fd5df4d95c40eb7bb321))
+
 ## [0.1.10](https://github.com/dcdavidev/bastion/compare/v0.1.9...v0.1.10) (2026-02-25)
 
 ## [0.1.9](https://github.com/dcdavidev/bastion/compare/v0.1.8...v0.1.9) (2026-02-25)
