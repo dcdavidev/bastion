@@ -8,12 +8,55 @@ import (
 	"os"
 	"time"
 
+	"github.com/dcdavidev/bastion/packages/core/models"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/lib/pq" // Required for golang-migrate postgres driver
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
+
+// Database defines the interface for database operations.
+type Database interface {
+	Close()
+	Ping(ctx context.Context) error
+	RunMigrations() error
+	GetMigrationStatus() (uint, bool, error)
+
+	// Auth & Users
+	HasAdmin(ctx context.Context) (bool, error)
+	CreateUser(ctx context.Context, username, email, hash, salt, role string) (*models.User, error)
+	GetUserByUsername(ctx context.Context, username string) (*models.User, string, string, error)
+	GetUserByEmail(ctx context.Context, email string) (*models.User, string, string, error)
+	GrantProjectAccess(ctx context.Context, userID, projectID uuid.UUID, wrappedKey string) error
+
+	// Vault
+	GetVaultConfig(ctx context.Context) (*VaultConfig, error)
+	InitializeVault(ctx context.Context, wrappedMK, salt string) error
+
+	// Clients
+	CreateClient(ctx context.Context, name string) (*models.Client, error)
+	GetClients(ctx context.Context) ([]models.Client, error)
+	GetClientByID(ctx context.Context, id uuid.UUID) (*models.Client, error)
+	DeleteClient(ctx context.Context, id uuid.UUID) error
+
+	// Projects
+	CreateProject(ctx context.Context, clientID uuid.UUID, name string, wrappedKey string) (*models.Project, error)
+	GetProjectsByClient(ctx context.Context, clientID uuid.UUID) ([]models.Project, error)
+	GetProjectByID(ctx context.Context, id uuid.UUID) (*models.Project, error)
+	DeleteProject(ctx context.Context, id uuid.UUID) error
+	GetProjectKeyForUser(ctx context.Context, projectID, userID uuid.UUID, isAdmin bool) (string, error)
+
+	// Secrets
+	CreateSecret(ctx context.Context, projectID uuid.UUID, key string, value string) (*models.Secret, error)
+	GetSecretsByProject(ctx context.Context, projectID uuid.UUID) ([]models.Secret, error)
+	GetSecretHistory(ctx context.Context, projectID uuid.UUID, key string) ([]models.Secret, error)
+
+	// Audit
+	LogEvent(ctx context.Context, action, targetType string, targetID uuid.UUID, metadata map[string]interface{}) error
+	GetAuditLogs(ctx context.Context, filter AuditFilter) ([]models.AuditLog, error)
+}
 
 // DB wrap the pgxpool.Pool to provide database access.
 type DB struct {
@@ -59,6 +102,14 @@ func (db *DB) Close() {
 	if db.Pool != nil {
 		db.Pool.Close()
 	}
+}
+
+// Ping checks if the database connection is alive.
+func (db *DB) Ping(ctx context.Context) error {
+	if db.Pool == nil {
+		return fmt.Errorf("database pool is nil")
+	}
+	return db.Pool.Ping(ctx)
 }
 
 // RunMigrations applies all pending migrations.

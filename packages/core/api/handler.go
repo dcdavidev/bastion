@@ -10,11 +10,11 @@ import (
 
 // Handler holds the dependencies for the API endpoints.
 type Handler struct {
-	DB *db.DB
+	DB db.Database
 }
 
 // NewHandler creates a new API handler with the provided database.
-func NewHandler(database *db.DB) *Handler {
+func NewHandler(database db.Database) *Handler {
 	return &Handler{DB: database}
 }
 
@@ -42,8 +42,8 @@ func (h *Handler) StatusHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if h.DB != nil && h.DB.Pool != nil {
-		err := h.DB.Pool.Ping(r.Context())
+	if h.DB != nil {
+		err := h.DB.Ping(r.Context())
 		if err == nil {
 			resp.ConnectedToDB = true
 			
