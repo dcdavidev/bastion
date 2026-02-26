@@ -45,7 +45,7 @@ pnpm build
 This command will generate:
 
 1. The `bastion` executable (CLI).
-2. The `bastion-server` executable (Backend).
+2. The `@dcdavidev/bastion-server` executable (Backend).
 3. The optimized web assets in `apps/web/build/client`.
 
 ---
