@@ -148,27 +148,24 @@ var initCmd = &cobra.Command{
 			database.Close()
 		}
 
-		// 6. Environment Storage
-		if len(envVars) > 0 {
-			pterm.DefaultSection.Println("Environment Configuration")
-			options := []string{".env file", ".bashrc", ".zshrc", "Password Store (pass)", "Display only"}
-			selected, _ := pterm.DefaultInteractiveSelect.WithOptions(options).Show("Where do you want to save the environment variables?")
-
-			switch selected {
-			case ".env file":
-				saveToEnvFile(envVars)
-			case ".bashrc":
-				saveToShellProfile(".bashrc", envVars)
-			case ".zshrc":
-				saveToShellProfile(".zshrc", envVars)
-			case "Password Store (pass)":
-				saveToPass(envVars)
-			default:
-				displayEnv(envVars)
-			}
-		}
-
-		                // 7. Profile Configuration (Client-side)
+		                // 6. Environment Storage
+		                if len(envVars) > 0 {
+		                        pterm.DefaultSection.Println("Environment Configuration")
+		                        options := []string{".env file", ".bashrc", ".zshrc", "Display only"}
+		                        selected, _ := pterm.DefaultInteractiveSelect.WithOptions(options).Show("Where do you want to save the environment variables?")
+		
+		                        switch selected {
+		                        case ".env file":
+		                                saveToEnvFile(envVars)
+		                        case ".bashrc":
+		                                saveToShellProfile(".bashrc", envVars)
+		                        case ".zshrc":
+		                                saveToShellProfile(".zshrc", envVars)
+		                        default:
+		                                displayEnv(envVars)
+		                        }
+		                }
+				                // 7. Profile Configuration (Client-side)
 		                pterm.DefaultSection.Println("Client Configuration")
 		                profileName, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("default").Show("Profile Name")
 		                
@@ -229,33 +226,6 @@ func saveToShellProfile(filename string, vars map[string]string) {
 	}
 	fmt.Fprintln(f, "## ENDBASTION")
 	pterm.Success.Printf("Variables saved to %s. Please run 'source ~/%s' to apply changes.\n", filename, filename)
-}
-
-func saveToPass(vars map[string]string) {
-	storePath := os.Getenv("BASTION_STORE_DIR")
-	if storePath == "" {
-		storePath = filepath.Join(os.Getenv("HOME"), ".config", "bastion", "store")
-	}
-
-	if _, err := os.Stat(storePath); os.IsNotExist(err) {
-		initGit, _ := pterm.DefaultInteractiveConfirm.WithDefaultValue(true).Show("Initialize a new git-backed password store at " + storePath + "?")
-		if initGit {
-			gpgID, _ := pterm.DefaultInteractiveTextInput.Show("Enter GPG ID to initialize the store")
-			if gpgID != "" {
-				exec.Command("pass", "init", gpgID).Run()
-				os.Setenv("PASSWORD_STORE_DIR", storePath)
-				exec.Command("pass", "git", "init").Run()
-				pterm.Info.Println("Password store initialized with Git. Remember to set up a private remote!")
-			}
-		}
-	}
-
-	for k, v := range vars {
-		cmd := exec.Command("pass", "insert", "-m", "bastion/"+k)
-		cmd.Stdin = strings.NewReader(v + "\n")
-		cmd.Run()
-	}
-	pterm.Success.Println("Variables saved to Password Store (bastion/*)")
 }
 
 func displayEnv(vars map[string]string) {

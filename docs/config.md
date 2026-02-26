@@ -1,21 +1,31 @@
 # Configuration Guide
 
-Bastion relies exclusively on environment variables for configuration. This ensures that sensitive credentials are never accidentally committed to version control and simplifies containerized deployments.
+Bastion uses environment variables for server configuration and a local configuration file for the CLI. This ensures that sensitive credentials are managed securely across different environments.
+
+---
+
+## CLI Configuration
+
+The Bastion CLI stores its configuration, including profiles and session tokens, in a local YAML file.
+
+- **Path**: `~/.bastion/config.yaml`
+- **Managed by**: `bastion profile` and `bastion init` commands.
+
+This file allows you to switch between different Bastion servers (e.g., development, staging, production) without re-entering credentials.
 
 ---
 
 ## Environment Variables
 
-These variables configure both the Bastion server and the CLI.
+These variables configure the Bastion server and are used by the CLI during the `init` process.
 
-| Variable               | Description                                                  | Default                   | Used By             |
-| :--------------------- | :----------------------------------------------------------- | :------------------------ | :------------------ |
-| `BASTION_HOST`         | The base URL of the Bastion server.                          | `http://localhost:8287`   | CLI                 |
-| `BASTION_PORT`         | The port the server listens on.                              | `8287`                    | Server              |
-| `BASTION_DATABASE_URL` | PostgreSQL connection string (fallback to `DATABASE_URL`).   | _(Required)_              | Server / CLI (init) |
-| `BASTION_JWT_SECRET`   | 32-byte hex string used to sign session tokens.              | _(Required)_              | Server              |
-| `BASTION_UI_DIR`       | Path to the built frontend assets.                           | `ui` (in Docker)          | Server              |
-| `BASTION_STORE_DIR`    | Path to the password store directory for `pass` integration. | `~/.config/bastion/store` | CLI (init)          |
+| Variable               | Description                                                | Default                 | Used By             |
+| :--------------------- | :--------------------------------------------------------- | :---------------------- | :------------------ |
+| `BASTION_HOST`         | The base URL of the Bastion server.                        | `http://localhost:8287` | CLI (Fallback)      |
+| `BASTION_PORT`         | The port the server listens on.                            | `8287`                  | Server              |
+| `BASTION_DATABASE_URL` | PostgreSQL connection string (fallback to `DATABASE_URL`). | _(Required)_            | Server / CLI (init) |
+| `BASTION_JWT_SECRET`   | 32-byte hex string used to sign session tokens.            | _(Required)_            | Server              |
+| `BASTION_UI_DIR`       | Path to the built frontend assets.                         | `ui` (in Docker)        | Server              |
 
 ### Admin Fallback (Optional)
 

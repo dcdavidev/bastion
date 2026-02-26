@@ -50,7 +50,6 @@ Bastion CLI provides a powerful interface for all vault operations.
 | :--------------------- | :----------------------------------------------- | :------------------------ |
 | `BASTION_HOST`         | The base URL of the Bastion server.              | `http://localhost:8287`   |
 | `BASTION_DATABASE_URL` | PostgreSQL connection string (used by `init`).   | -                         |
-| `BASTION_STORE_DIR`    | Path to the password store directory for `pass`. | `~/.config/bastion/store` |
 
 ## Config File
 
