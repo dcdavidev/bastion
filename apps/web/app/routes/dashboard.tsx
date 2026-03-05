@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 
 import { Outlet, redirect, useLocation, useNavigate } from 'react-router';
 
+import axios from 'axios';
+
 import Cookies from 'js-cookie';
 import {
   Box,
@@ -21,21 +23,34 @@ import { api } from '../configs/api';
  * Verifies the JWT token from cookies.
  */
 export async function clientLoader() {
+  // CRITICAL: Ensure this ONLY runs in the browser
+  if (globalThis.window === undefined) {
+    return null;
+  }
+
   const token = Cookies.get('bastion_session');
 
   if (!token) {
+    console.log('No token found, redirecting to login');
     return redirect('/login');
   }
 
   try {
     const res = await api.get('/auth/me');
     return { authenticated: true, user: res.data };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Dashboard Auth Error:', error);
-    // Remove invalid session
-    Cookies.remove('bastion_session', { path: '/' });
+
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      Cookies.remove('bastion_session', { path: '/' });
+    }
+
     return redirect('/login');
   }
+}
+
+export function shouldRevalidate() {
+  return false;
 }
 
 interface AuthenticatedUser {
@@ -56,6 +71,11 @@ export default function DashboardLayout({
   loaderData: DashboardLoaderData;
 }) {
   const navigate = useNavigate();
+
+  if (!loaderData || !loaderData.user) {
+    return null;
+  }
+
   const { user } = loaderData;
 
   const handleRegisterPasskey = useCallback(async () => {
@@ -72,7 +92,7 @@ export default function DashboardLayout({
         description: `Device registered for ${user.username}. You can now use this Passkey for future logins.`,
         color: 'teal',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Passkey Registration Error:', error);
       toast({
         title: 'Error',
@@ -80,7 +100,7 @@ export default function DashboardLayout({
         color: 'red',
       });
     }
-  }, []);
+  }, [user.username]);
 
   return (
     <Flex
