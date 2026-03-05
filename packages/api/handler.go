@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"net/http"
 	"os"
@@ -21,6 +22,7 @@ func NewHandler(database db.Database) *Handler {
 type StatusResponse struct {
 	ConnectedToDB  bool     `json:"connected_to_db"`
 	MissingEnvVars []string `json:"missing_env_vars"`
+	JwtSecretStatus string  `json:"jwt_secret_status"` // "strong", "weak", "missing"
 	Migrations     struct {
 		CurrentVersion uint `json:"current_version"`
 		HasPending     bool `json:"has_pending"`
@@ -33,12 +35,29 @@ type StatusResponse struct {
 func (h *Handler) StatusHandler(w http.ResponseWriter, r *http.Request) {
 	resp := StatusResponse{
 		Version: "1.0.0", // Replace with version constant if available
+		JwtSecretStatus: "missing",
 	}
 
-	requiredVars := []string{"BASTION_JWT_SECRET"}
-	for _, v := range requiredVars {
-		if os.Getenv(v) == "" {
-			resp.MissingEnvVars = append(resp.MissingEnvVars, v)
+	jwtSecret := os.Getenv("BASTION_JWT_SECRET")
+	if jwtSecret == "" {
+		resp.MissingEnvVars = append(resp.MissingEnvVars, "BASTION_JWT_SECRET")
+		resp.JwtSecretStatus = "missing"
+	} else {
+		// A "real" key in Bastion should be a hex-encoded string of at least 32 bytes (64 hex chars)
+		// and not one of the default placeholders.
+		isHex := true
+		decoded, err := hex.DecodeString(jwtSecret)
+		if err != nil {
+			isHex = false
+		}
+
+		isDefault := jwtSecret == "bastion_very_secret_key_change_me" || 
+					 jwtSecret == "your_super_secret_jwt_key_change_me"
+
+		if isDefault || !isHex || len(decoded) < 32 {
+			resp.JwtSecretStatus = "weak"
+		} else {
+			resp.JwtSecretStatus = "strong"
 		}
 	}
 

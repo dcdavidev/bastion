@@ -27,3 +27,10 @@ func (db *DB) InitializeVault(ctx context.Context, wrappedMK, salt string) error
 	_, err := db.Pool.Exec(ctx, query, wrappedMK, salt)
 	return err
 }
+
+// UpdateVaultConfig updates the global vault configuration.
+func (db *DB) UpdateVaultConfig(ctx context.Context, wrappedMK, salt string) error {
+	query := `UPDATE vault_config SET wrapped_master_key = $1, master_key_salt = $2, updated_at = NOW()`
+	_, err := db.Pool.Exec(ctx, query, wrappedMK, salt)
+	return err
+}

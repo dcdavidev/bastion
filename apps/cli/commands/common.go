@@ -17,28 +17,29 @@ import (
 var customConfigDir string
 
 func getConfigDir() (string, error) {
-        if customConfigDir != "" {
-                return customConfigDir, nil
-        }
-        home, err := os.UserHomeDir()
-        if err != nil {
-                return "", err
-        }
-        return filepath.Join(home, ".bastion"), nil
+	if customConfigDir != "" {
+		return customConfigDir, nil
+	}
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(home, ".bastion"), nil
 }
 
 func loadToken() (string, error) {
-        configDir, err := getConfigDir()
-        if err != nil {
-                return "", err
-        }
-        configPath := filepath.Join(configDir, "token")
-        data, err := os.ReadFile(configPath)
-        if err != nil {
-                return "", err
-        }
-        return string(data), nil
+	configDir, err := getConfigDir()
+	if err != nil {
+		return "", err
+	}
+	configPath := filepath.Join(configDir, "token")
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }
+
 type vaultConfigResponse struct {
 	WrappedMasterKey string `json:"wrapped_master_key"`
 	MasterKeySalt    string `json:"master_key_salt"`
@@ -91,7 +92,7 @@ func CheckForUpdates() {
 	}
 
 	cachePath := filepath.Join(home, ".bastion", "last_update_check")
-	
+
 	// 1. Check if we checked recently (last 24 hours)
 	if info, err := os.Stat(cachePath); err == nil {
 		if time.Since(info.ModTime()) < 24*time.Hour {
@@ -133,7 +134,7 @@ func CheckForUpdates() {
 			WithTitle("Update Available").
 			WithTitleTopCenter().
 			WithBoxStyle(pterm.NewStyle(pterm.FgYellow)).
-			Printf("A new version of Bastion CLI is available: %s (current: %s)\n\nPlease install it using: npm install -g @dcdavidev/bastion-cli", 
+			Printf("A new version of Bastion CLI is available: %s (current: %s)\n\nPlease install it using: npm install -g @dcdavidev/bastion-cli",
 				pterm.Bold.Sprint(latest), pterm.FgGray.Sprint(current))
 		fmt.Println()
 	}
@@ -144,10 +145,10 @@ func isNewer(latest, current string) bool {
 	if latest == current {
 		return false
 	}
-	
+
 	lParts := strings.Split(latest, ".")
 	cParts := strings.Split(current, ".")
-	
+
 	for i := 0; i < len(lParts) && i < len(cParts); i++ {
 		if lParts[i] > cParts[i] {
 			return true
@@ -156,6 +157,6 @@ func isNewer(latest, current string) bool {
 			return false
 		}
 	}
-	
+
 	return len(lParts) > len(cParts)
 }

@@ -1,5 +1,5 @@
 
 
-> bastion-cli@0.1.10 build /home/dcdavidev/bastion/apps/cli
+> @dcdavidev/bastion-cli@0.4.0 build /home/dcdavidev/bastion/apps/cli
 > go build -o ../../bastion main.go
 

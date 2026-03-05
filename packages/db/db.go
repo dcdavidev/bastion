@@ -31,6 +31,7 @@ type Database interface {
 	// Auth & Users
 	HasAdmin(ctx context.Context) (bool, error)
 	CreateUser(ctx context.Context, username, email, hash, salt, role string) (*models.User, error)
+	UpdateUserPassword(ctx context.Context, userID uuid.UUID, hash, salt string) error
 	GetUserByUsername(ctx context.Context, username string) (*models.User, string, string, error)
 	GetUserByEmail(ctx context.Context, email string) (*models.User, string, string, error)
 	GrantProjectAccess(ctx context.Context, userID, projectID uuid.UUID, wrappedKey string) error
@@ -38,6 +39,7 @@ type Database interface {
 	// Vault
 	GetVaultConfig(ctx context.Context) (*VaultConfig, error)
 	InitializeVault(ctx context.Context, wrappedMK, salt string) error
+	UpdateVaultConfig(ctx context.Context, wrappedMK, salt string) error
 
 	// Clients
 	CreateClient(ctx context.Context, name string) (*models.Client, error)

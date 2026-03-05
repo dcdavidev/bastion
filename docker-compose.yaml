@@ -1,4 +1,16 @@
 services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=bastion
+      - POSTGRES_PASSWORD=bastion
+      - POSTGRES_DB=bastion
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   bastion:
     build:
       context: .
@@ -7,8 +19,11 @@ services:
       - "8287:8287"
     environment:
       - BASTION_PORT=8287
-      - BASTION_DATABASE_URL=${BASTION_DATABASE_URL}
+      - BASTION_DATABASE_URL=postgres://bastion:bastion@db:5432/bastion?sslmode=disable
       - BASTION_JWT_SECRET=${BASTION_JWT_SECRET}
-      - BASTION_ADMIN_PASSWORD_HASH=${BASTION_ADMIN_PASSWORD_HASH}
-      - BASTION_ADMIN_PASSWORD_SALT=${BASTION_ADMIN_PASSWORD_SALT}
+    depends_on:
+      - db
     restart: unless-stopped
+
+volumes:
+  postgres_data:

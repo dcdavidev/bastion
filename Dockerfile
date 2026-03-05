@@ -4,7 +4,7 @@ FROM node:24-alpine AS frontend-builder
 WORKDIR /app
 COPY . .
 # Use pnpm for faster builds in the monorepo
-RUN corepack enable && pnpm install --frozen-lockfile --ignore-scripts
+RUN corepack enable && CI=true pnpm install --frozen-lockfile --ignore-scripts
 RUN pnpm build --filter @dcdavidev/bastion-web
 
 # Stage 2: Build the Go backend

@@ -41,6 +41,13 @@ func (db *DB) CreateUser(ctx context.Context, username, email, hash, salt, role 
 	return user, nil
 }
 
+// UpdateUserPassword updates the password hash and salt for a user.
+func (db *DB) UpdateUserPassword(ctx context.Context, userID uuid.UUID, hash, salt string) error {
+	query := `UPDATE users SET password_hash = $1, salt = $2, updated_at = NOW() WHERE id = $3`
+	_, err := db.Pool.Exec(ctx, query, hash, salt, userID)
+	return err
+}
+
 // GrantProjectAccess links a user to a project with a specific wrapped data key.
 func (db *DB) GrantProjectAccess(ctx context.Context, userID, projectID uuid.UUID, wrappedKey string) error {
 	query := `
