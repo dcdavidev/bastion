@@ -3,12 +3,13 @@ import { useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { IconEye, IconEyeOff } from '@tabler/icons-react';
+import { IconEye, IconEyeOff, IconFingerprint } from '@tabler/icons-react';
 
 import {
   Avatar,
   Button,
   Card,
+  Divider,
   Flex,
   IconButton,
   Stack,
@@ -16,6 +17,7 @@ import {
   TextField,
   toast,
 } from '@pittorica/react';
+import { startAuthentication } from '@simplewebauthn/browser';
 
 import { useAuth } from '../contexts/auth-context';
 
@@ -24,6 +26,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [passkeyLoading, setPasskeyLoading] = useState(false);
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
@@ -74,6 +77,57 @@ export default function Login() {
     }
   }
 
+  async function handlePasskeyLogin() {
+    if (!email.trim()) {
+      setError('Please enter your email to use Passkey');
+      return;
+    }
+
+    setPasskeyLoading(true);
+    setError('');
+
+    try {
+      // 1. Get options from server
+      const beginResp = await fetch(
+        `/api/v1/auth/passkey/login/begin?email=${encodeURIComponent(email)}`
+      );
+      if (!beginResp.ok) throw new Error('Failed to start Passkey login');
+
+      const options = await beginResp.json();
+
+      // 2. Browser authentication
+      const assertion = await startAuthentication(options);
+
+      // 3. Verify assertion on server
+      const finishResp = await fetch(
+        `/api/v1/auth/passkey/login/finish?email=${encodeURIComponent(email)}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(assertion),
+        }
+      );
+
+      if (!finishResp.ok) throw new Error('Passkey verification failed');
+
+      const data = await finishResp.json();
+      setToken(data.token);
+      toast({
+        title: 'Access granted',
+        description: 'Signed in with Passkey',
+        color: 'teal',
+      });
+      navigate('/dashboard');
+    } catch (error: unknown) {
+      console.error(error);
+      const message =
+        error instanceof Error ? error.message : 'Passkey login failed';
+      setError(message);
+    } finally {
+      setPasskeyLoading(false);
+    }
+  }
+
   return (
     <Flex align="center" justify="center" height="100vh" p="4">
       <Card p="6" style={{ width: '100%', maxWidth: '400px' }}>
@@ -90,63 +144,90 @@ export default function Login() {
             </Stack>
           </Flex>
 
-          <form onSubmit={handleSubmit}>
-            <Stack gap="4">
-              <TextField.Root label="Email (optional)" size="md">
-                <TextField.Input
-                  placeholder="Leave empty for Admin fallback"
-                  value={email}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setEmail(e.target.value)
-                  }
-                />
-              </TextField.Root>
+          <Stack gap="4">
+            <TextField.Root label="Email" size="md">
+              <TextField.Input
+                placeholder="Required for Passkey / Admin fallback"
+                value={email}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setEmail(e.target.value)
+                }
+              />
+            </TextField.Root>
 
-              <TextField.Root label="Password" size="md">
-                <TextField.Input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setPassword(e.target.value)
-                  }
-                />
-                <TextField.Slot
-                  style={{ cursor: 'pointer', paddingRight: '8px' }}
-                >
-                  <IconButton
-                    type="button"
-                    variant="text"
-                    size="2"
-                    onClick={() => setShowPassword(!showPassword)}
+            <form onSubmit={handleSubmit}>
+              <Stack gap="4">
+                <TextField.Root label="Password" size="md">
+                  <TextField.Input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setPassword(e.target.value)
+                    }
+                  />
+                  <TextField.Slot
+                    style={{ cursor: 'pointer', paddingRight: '8px' }}
                   >
-                    {showPassword ? (
-                      <IconEyeOff size={20} />
-                    ) : (
-                      <IconEye size={20} />
-                    )}
-                  </IconButton>
-                </TextField.Slot>
-              </TextField.Root>
+                    <IconButton
+                      type="button"
+                      variant="text"
+                      size="2"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <IconEyeOff size={20} />
+                      ) : (
+                        <IconEye size={20} />
+                      )}
+                    </IconButton>
+                  </TextField.Slot>
+                </TextField.Root>
 
-              {error && (
-                <Text size="2" color="red">
-                  {error}
+                {error && (
+                  <Text size="2" color="red">
+                    {error}
+                  </Text>
+                )}
+
+                <Button
+                  type="submit"
+                  variant="filled"
+                  disabled={loading || passkeyLoading || !isFormValid}
+                  width="100%"
+                  size="md"
+                >
+                  {loading ? 'Unlocking...' : 'Unlock Vault'}
+                </Button>
+              </Stack>
+            </form>
+
+            <Flex align="center" gap="3">
+              <Divider style={{ flex: 1 }} />
+              <Text size="1" color="muted">
+                OR
+              </Text>
+              <Divider style={{ flex: 1 }} />
+            </Flex>
+
+            <Button
+              variant="tonal"
+              width="100%"
+              size="md"
+              disabled={loading || passkeyLoading}
+              onClick={handlePasskeyLogin}
+            >
+              <Flex align="center" gap="2">
+                <IconFingerprint size={20} />
+                <Text>
+                  {passkeyLoading
+                    ? 'Authenticating...'
+                    : 'Sign in with Passkey'}
                 </Text>
-              )}
-
-              <Button
-                type="submit"
-                variant="filled"
-                disabled={loading || !isFormValid}
-                width="100%"
-                size="md"
-              >
-                {loading ? 'Unlocking...' : 'Unlock Vault'}
-              </Button>
-            </Stack>
-          </form>
+              </Flex>
+            </Button>
+          </Stack>
         </Stack>
       </Card>
     </Flex>

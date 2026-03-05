@@ -59,10 +59,15 @@ func main() {
 		r.Get("/status", h.StatusHandler)
 		r.Get("/version/check", h.VersionCheckHandler)
 		r.Post("/auth/login", h.LoginHandler)
+		r.Get("/auth/passkey/login/begin", h.PasskeyLoginBegin)
+		r.Post("/auth/passkey/login/finish", h.PasskeyLoginFinish)
 
 		// Protected routes
 		r.Group(func(r chi.Router) {
 			r.Use(auth.JWTMiddleware)
+			
+			r.Get("/auth/passkey/register/begin", h.PasskeyRegisterBegin)
+			r.Post("/auth/passkey/register/finish", h.PasskeyRegisterFinish)
 			
 			r.Get("/vault/config", h.GetVaultConfigHandler)
 			r.Get("/audit", h.ListAuditLogs)

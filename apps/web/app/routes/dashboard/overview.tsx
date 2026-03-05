@@ -2,16 +2,18 @@ import { useEffect, useState } from 'react';
 
 import {
   IconActivity,
+  IconAlertTriangle,
+  IconDownload,
+  IconFingerprint,
   IconHistory,
   IconShieldCheck,
   IconUsers,
-  IconAlertTriangle,
-  IconDownload,
 } from '@tabler/icons-react';
 
 import {
   Badge,
   Box,
+  Button,
   Card,
   Chip,
   Flex,
@@ -19,8 +21,9 @@ import {
   Stack,
   Table,
   Text,
-  Button,
+  toast,
 } from '@pittorica/react';
+import { startRegistration } from '@simplewebauthn/browser';
 
 import { useAuth } from '../../contexts/auth-context';
 
@@ -43,6 +46,7 @@ export default function Overview() {
   const [latestLogs, setLatestLogs] = useState<AuditLog[]>([]);
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [registeringPasskey, setRegisteringPasskey] = useState(false);
   const { token, isAdmin } = useAuth();
 
   useEffect(() => {
@@ -79,15 +83,75 @@ export default function Overview() {
     fetchStats();
   }, [token]);
 
+  async function handleRegisterPasskey() {
+    setRegisteringPasskey(true);
+    try {
+      // 1. Get options from server
+      const beginResp = await fetch('/api/v1/auth/passkey/register/begin', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!beginResp.ok)
+        throw new Error('Failed to start Passkey registration');
+
+      const options = await beginResp.json();
+
+      // 2. Browser registration
+      const attestation = await startRegistration({
+        ...options,
+      });
+
+      // 3. Verify attestation on server
+      const finishResp = await fetch('/api/v1/auth/passkey/register/finish', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(attestation),
+      });
+
+      if (!finishResp.ok) throw new Error('Passkey verification failed');
+
+      toast({
+        title: 'Passkey registered',
+        description: 'You can now use this device to sign in.',
+        color: 'teal',
+      });
+    } catch (error: unknown) {
+      console.error(error);
+      toast({
+        title: 'Registration failed',
+        description: error instanceof Error ? error.message : 'Unknown error',
+        color: 'red',
+      });
+    } finally {
+      setRegisteringPasskey(false);
+    }
+  }
+
   return (
     <Stack gap="8">
-      <Flex direction={'column'} gap="2">
-        <Text size="7" weight="bold" color="source">
-          Vault Overview
-        </Text>
-        <Text color="muted" size="2">
-          Monitor the health and activity of your secure fortress.
-        </Text>
+      <Flex direction={'row'} justify="between" align="start">
+        <Flex direction={'column'} gap="2">
+          <Text size="7" weight="bold" color="source">
+            Vault Overview
+          </Text>
+          <Text color="muted" size="2">
+            Monitor the health and activity of your secure fortress.
+          </Text>
+        </Flex>
+        <Button
+          variant="tonal"
+          onClick={handleRegisterPasskey}
+          disabled={registeringPasskey}
+        >
+          <Flex align="center" gap="2" p="1">
+            <IconFingerprint size={18} />
+            <Text>
+              {registeringPasskey ? 'Registering...' : 'Register Passkey'}
+            </Text>
+          </Flex>
+        </Button>
       </Flex>
 
       <Grid columns="3" gap="6">
@@ -175,7 +239,8 @@ export default function Overview() {
         <Card
           p="4"
           style={{
-            backgroundColor: 'rgba(var(--pittorica-color-amber-rgb, 255, 193, 7), 0.1)',
+            backgroundColor:
+              'rgba(var(--pittorica-color-amber-rgb, 255, 193, 7), 0.1)',
             border: '1px solid var(--pittorica-color-amber, #ffc107)',
           }}
         >
@@ -189,8 +254,9 @@ export default function Overview() {
                   Update Available
                 </Text>
                 <Text size="2" color="muted">
-                  A new version of Bastion is available (v{versionInfo.latest_version}). 
-                  Your current version is v{versionInfo.current_version}.
+                  A new version of Bastion is available (v
+                  {versionInfo.latest_version}). Your current version is v
+                  {versionInfo.current_version}.
                 </Text>
               </Stack>
             </Flex>

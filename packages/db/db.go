@@ -34,7 +34,13 @@ type Database interface {
 	UpdateUserPassword(ctx context.Context, userID uuid.UUID, hash, salt string) error
 	GetUserByUsername(ctx context.Context, username string) (*models.User, string, string, error)
 	GetUserByEmail(ctx context.Context, email string) (*models.User, string, string, error)
+	GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error)
 	GrantProjectAccess(ctx context.Context, userID, projectID uuid.UUID, wrappedKey string) error
+
+	// WebAuthn
+	AddWebAuthnCredential(ctx context.Context, userID uuid.UUID, cred *models.WebAuthnCredential) error
+	GetWebAuthnCredentials(ctx context.Context, userID uuid.UUID) ([]models.WebAuthnCredential, error)
+	UpdateWebAuthnCredential(ctx context.Context, cred *models.WebAuthnCredential) error
 
 	// Vault
 	GetVaultConfig(ctx context.Context) (*VaultConfig, error)

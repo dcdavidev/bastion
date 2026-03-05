@@ -5,18 +5,40 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"sync"
 
 	"github.com/dcdavidev/bastion/packages/db"
+	"github.com/go-webauthn/webauthn/webauthn"
 )
 
 // Handler holds the dependencies for the API endpoints.
 type Handler struct {
-	DB db.Database
+	DB       db.Database
+	WebAuthn *webauthn.WebAuthn
+	sessions sync.Map // Store for WebAuthn session data
 }
 
-// NewHandler creates a new API handler with the provided database.
+// NewHandler creates a new API handler with the provided database and initializes WebAuthn.
 func NewHandler(database db.Database) *Handler {
-	return &Handler{DB: database}
+	wconfig := &webauthn.Config{
+		RPDisplayName: "Bastion",
+		RPID:          os.Getenv("BASTION_RPID"),
+		RPOrigins:     []string{os.Getenv("BASTION_ORIGIN")},
+	}
+
+	if wconfig.RPID == "" {
+		wconfig.RPID = "localhost"
+	}
+	if len(wconfig.RPOrigins) == 0 || wconfig.RPOrigins[0] == "" {
+		wconfig.RPOrigins = []string{"http://localhost:8287", "http://localhost:3500", "http://localhost:5173"}
+	}
+
+	w, _ := webauthn.New(wconfig)
+
+	return &Handler{
+		DB:       database,
+		WebAuthn: w,
+	}
 }
 
 type StatusResponse struct {

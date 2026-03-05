@@ -6,15 +6,37 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 )
 
 type contextKey string
 
-const AdminContextKey contextKey = "admin_claims"
+const (
+	AdminContextKey contextKey = "admin_claims"
+	UserKey         contextKey = "user_id"
+)
 
-// JWTMiddleware validates the JWT token and ensures the user is an admin.
+// GenerateToken creates a new JWT for a user.
+func GenerateToken(userID uuid.UUID, username string, isAdmin bool) (string, error) {
+	secret := os.Getenv("BASTION_JWT_SECRET")
+	if secret == "" {
+		return "", fmt.Errorf("BASTION_JWT_SECRET not set")
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id":  userID.String(),
+		"username": username,
+		"admin":    isAdmin,
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	return token.SignedString([]byte(secret))
+}
+
+// JWTMiddleware validates the JWT token and ensures the user is authenticated.
 func JWTMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
@@ -45,13 +67,18 @@ func JWTMiddleware(next http.Handler) http.Handler {
 		}
 
 		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok || claims["admin"] != true {
-			http.Error(w, "Forbidden: Admin access required", http.StatusForbidden)
+		if !ok {
+			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
 			return
 		}
 
-		// Add claims to context
+		uidStr, _ := claims["user_id"].(string)
+		uid, _ := uuid.Parse(uidStr)
+
+		// Add claims and user ID to context
 		ctx := context.WithValue(r.Context(), AdminContextKey, claims)
+		ctx = context.WithValue(ctx, UserKey, uid)
+		
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

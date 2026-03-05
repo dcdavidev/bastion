@@ -36,6 +36,9 @@ func (m *MockDatabase) CreateUser(ctx context.Context, u, e, h, s, r string) (*m
 	if args.Get(0) == nil { return nil, args.Error(1) }
 	return args.Get(0).(*models.User), args.Error(1)
 }
+func (m *MockDatabase) UpdateUserPassword(ctx context.Context, userID uuid.UUID, hash, salt string) error {
+	return m.Called(ctx, userID, hash, salt).Error(0)
+}
 func (m *MockDatabase) GetUserByUsername(ctx context.Context, u string) (*models.User, string, string, error) {
 	args := m.Called(ctx, u)
 	if args.Get(0) == nil { return nil, "", "", args.Error(3) }
@@ -46,15 +49,36 @@ func (m *MockDatabase) GetUserByEmail(ctx context.Context, e string) (*models.Us
 	if args.Get(0) == nil { return nil, "", "", args.Error(3) }
 	return args.Get(0).(*models.User), args.String(1), args.String(2), args.Error(3)
 }
+func (m *MockDatabase) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
+	args := m.Called(ctx, id)
+	if args.Get(0) == nil { return nil, args.Error(1) }
+	return args.Get(0).(*models.User), args.Error(1)
+}
 func (m *MockDatabase) GrantProjectAccess(ctx context.Context, u, p uuid.UUID, k string) error {
 	return m.Called(ctx, u, p, k).Error(0)
 }
+
+// WebAuthn
+func (m *MockDatabase) AddWebAuthnCredential(ctx context.Context, userID uuid.UUID, cred *models.WebAuthnCredential) error {
+	return m.Called(ctx, userID, cred).Error(0)
+}
+func (m *MockDatabase) GetWebAuthnCredentials(ctx context.Context, userID uuid.UUID) ([]models.WebAuthnCredential, error) {
+	args := m.Called(ctx, userID)
+	return args.Get(0).([]models.WebAuthnCredential), args.Error(1)
+}
+func (m *MockDatabase) UpdateWebAuthnCredential(ctx context.Context, cred *models.WebAuthnCredential) error {
+	return m.Called(ctx, cred).Error(0)
+}
+
 func (m *MockDatabase) GetVaultConfig(ctx context.Context) (*db.VaultConfig, error) {
 	args := m.Called(ctx)
 	if args.Get(0) == nil { return nil, args.Error(1) }
 	return args.Get(0).(*db.VaultConfig), args.Error(1)
 }
 func (m *MockDatabase) InitializeVault(ctx context.Context, w, s string) error {
+	return m.Called(ctx, w, s).Error(0)
+}
+func (m *MockDatabase) UpdateVaultConfig(ctx context.Context, w, s string) error {
 	return m.Called(ctx, w, s).Error(0)
 }
 func (m *MockDatabase) CreateClient(ctx context.Context, n string) (*models.Client, error) {

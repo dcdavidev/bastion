@@ -106,3 +106,84 @@ func (db *DB) GetUserByEmail(ctx context.Context, email string) (*models.User, s
 	
 	return user, hash, salt, nil
 }
+
+// GetUserByID retrieves a user by their UUID.
+func (db *DB) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
+	query := `SELECT id, username, email, role, created_at, updated_at FROM users WHERE id = $1`
+	user := &models.User{}
+	err := db.Pool.QueryRow(ctx, query, id).Scan(
+		&user.ID,
+		&user.Username,
+		&user.Email,
+		&user.Role,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+// AddWebAuthnCredential saves a new WebAuthn credential for a user.
+func (db *DB) AddWebAuthnCredential(ctx context.Context, userID uuid.UUID, cred *models.WebAuthnCredential) error {
+	query := `
+		INSERT INTO webauthn_credentials (id, user_id, public_key, attestation_type, transport, sign_count, clone_warning)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`
+	_, err := db.Pool.Exec(ctx, query, 
+		cred.ID, 
+		userID, 
+		cred.PublicKey, 
+		cred.AttestationType, 
+		cred.Transport, 
+		cred.SignCount, 
+		cred.CloneWarning,
+	)
+	return err
+}
+
+// GetWebAuthnCredentials retrieves all WebAuthn credentials for a user.
+func (db *DB) GetWebAuthnCredentials(ctx context.Context, userID uuid.UUID) ([]models.WebAuthnCredential, error) {
+	query := `
+		SELECT id, public_key, attestation_type, transport, sign_count, clone_warning, created_at, updated_at
+		FROM webauthn_credentials
+		WHERE user_id = $1
+	`
+	rows, err := db.Pool.Query(ctx, query, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var creds []models.WebAuthnCredential
+	for rows.Next() {
+		var cred models.WebAuthnCredential
+		err := rows.Scan(
+			&cred.ID,
+			&cred.PublicKey,
+			&cred.AttestationType,
+			&cred.Transport,
+			&cred.SignCount,
+			&cred.CloneWarning,
+			&cred.CreatedAt,
+			&cred.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		creds = append(creds, cred)
+	}
+	return creds, nil
+}
+
+// UpdateWebAuthnCredential updates the sign count and other fields of a WebAuthn credential.
+func (db *DB) UpdateWebAuthnCredential(ctx context.Context, cred *models.WebAuthnCredential) error {
+	query := `
+		UPDATE webauthn_credentials
+		SET sign_count = $1, clone_warning = $2, updated_at = NOW()
+		WHERE id = $3
+	`
+	_, err := db.Pool.Exec(ctx, query, cred.SignCount, cred.CloneWarning, cred.ID)
+	return err
+}

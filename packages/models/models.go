@@ -56,3 +56,15 @@ type AuditLog struct {
 	Metadata   map[string]interface{} `json:"metadata,omitempty"`
 	CreatedAt  time.Time              `json:"created_at"`
 }
+
+// WebAuthnCredential represents a stored passkey.
+type WebAuthnCredential struct {
+	ID              []byte    `json:"id"`
+	PublicKey       []byte    `json:"public_key"`
+	AttestationType string    `json:"attestation_type"`
+	Transport       []string  `json:"transport"`
+	SignCount       uint32    `json:"sign_count"`
+	CloneWarning    bool      `json:"clone_warning"`
+	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
+}
