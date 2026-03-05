@@ -70,7 +70,7 @@ func TestGenerateRandomKeyInto(t *testing.T) {
 	key := make([]byte, 32)
 	err := GenerateRandomKeyInto(key)
 	require.NoError(t, err)
-	
+
 	// Check it's not all zeros
 	isZero := true
 	for _, b := range key {

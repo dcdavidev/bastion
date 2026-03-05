@@ -14,7 +14,7 @@ import (
 // PasskeyRegisterBegin generates registration options for a new passkey.
 func (h *Handler) PasskeyRegisterBegin(w http.ResponseWriter, r *http.Request) {
 	uid := r.Context().Value(auth.UserKey).(uuid.UUID)
-	
+
 	user, err := h.DB.GetUserByID(r.Context(), uid)
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
@@ -46,7 +46,7 @@ func (h *Handler) PasskeyRegisterBegin(w http.ResponseWriter, r *http.Request) {
 // PasskeyRegisterFinish finalizes passkey registration.
 func (h *Handler) PasskeyRegisterFinish(w http.ResponseWriter, r *http.Request) {
 	uid := r.Context().Value(auth.UserKey).(uuid.UUID)
-	
+
 	user, err := h.DB.GetUserByID(r.Context(), uid)
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)

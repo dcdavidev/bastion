@@ -20,7 +20,7 @@ import {
   TextField,
 } from '@pittorica/react';
 
-import { useAuth } from '../../contexts/auth-context';
+import { useAuth } from '../contexts/auth-context';
 
 interface AuditLog {
   id: string;

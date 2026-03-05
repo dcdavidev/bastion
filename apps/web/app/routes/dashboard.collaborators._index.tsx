@@ -22,7 +22,7 @@ import {
   toast,
 } from '@pittorica/react';
 
-import { useAuth } from '../../contexts/auth-context';
+import { useAuth } from '../contexts/auth-context';
 
 export default function Collaborators() {
   const [isModalOpen, setIsModalOpen] = useState(false);

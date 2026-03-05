@@ -40,7 +40,7 @@ var createMasterKeyCmd = &cobra.Command{
 		// 2. Identify an admin to wrap the key
 		pterm.Info.Println("A Master Key must be wrapped with an Admin password.")
 		adminUser, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("admin").Show("Enter Admin Username to associate with this Master Key")
-		
+
 		user, _, _, err := database.GetUserByUsername(context.Background(), adminUser)
 		if err != nil {
 			return fmt.Errorf("user '%s' not found: %w", adminUser, err)
@@ -53,7 +53,7 @@ var createMasterKeyCmd = &cobra.Command{
 
 		// 3. Generate and wrap
 		spinner, _ = pterm.DefaultSpinner.Start("Generating and wrapping new Master Key...")
-		
+
 		masterKey, _ := crypto.GenerateRandomKey()
 		salt, _ := crypto.GenerateSalt()
 		kek := crypto.DeriveKey([]byte(password), salt)
@@ -77,7 +77,7 @@ var createMasterKeyCmd = &cobra.Command{
 
 		spinner.Success("Master Key successfully created and vault initialized!")
 		pterm.Info.Println("Note: This key is now encrypted with the admin's password and stored in the database.")
-		
+
 		return nil
 	},
 }

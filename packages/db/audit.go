@@ -16,7 +16,7 @@ func (db *DB) LogEvent(ctx context.Context, action, targetType string, targetID 
 		INSERT INTO audit_logs (action, target_type, target_id, metadata)
 		VALUES ($1, $2, $3, $4)
 	`
-	
+
 	metaJSON, err := json.Marshal(metadata)
 	if err != nil {
 		metaJSON = []byte("{}")

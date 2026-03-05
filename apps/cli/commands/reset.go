@@ -111,7 +111,7 @@ var resetCredentialsCmd = &cobra.Command{
 		}
 
 		spinner, _ = pterm.DefaultSpinner.Start("Updating credentials...")
-		
+
 		var finalSaltHex, finalHashHex string
 		if reWrapped {
 			// If we re-wrapped, the salt and hash were already used for vault, so we use them

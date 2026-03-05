@@ -20,20 +20,22 @@ type MockDatabase struct {
 	mock.Mock
 }
 
-func (m *MockDatabase) Close()                                         { m.Called() }
-func (m *MockDatabase) Ping(ctx context.Context) error                 { return m.Called(ctx).Error(0) }
-func (m *MockDatabase) RunMigrations() error                          { return m.Called().Error(0) }
-func (m *MockDatabase) GetMigrationStatus() (uint, bool, error)        { 
+func (m *MockDatabase) Close()                         { m.Called() }
+func (m *MockDatabase) Ping(ctx context.Context) error { return m.Called(ctx).Error(0) }
+func (m *MockDatabase) RunMigrations() error           { return m.Called().Error(0) }
+func (m *MockDatabase) GetMigrationStatus() (uint, bool, error) {
 	args := m.Called()
 	return args.Get(0).(uint), args.Bool(1), args.Error(2)
 }
-func (m *MockDatabase) HasAdmin(ctx context.Context) (bool, error)     { 
+func (m *MockDatabase) HasAdmin(ctx context.Context) (bool, error) {
 	args := m.Called(ctx)
 	return args.Bool(0), args.Error(1)
 }
 func (m *MockDatabase) CreateUser(ctx context.Context, u, e, h, s, r string) (*models.User, error) {
 	args := m.Called(ctx, u, e, h, s, r)
-	if args.Get(0) == nil { return nil, args.Error(1) }
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*models.User), args.Error(1)
 }
 func (m *MockDatabase) UpdateUserPassword(ctx context.Context, userID uuid.UUID, hash, salt string) error {
@@ -41,17 +43,23 @@ func (m *MockDatabase) UpdateUserPassword(ctx context.Context, userID uuid.UUID,
 }
 func (m *MockDatabase) GetUserByUsername(ctx context.Context, u string) (*models.User, string, string, error) {
 	args := m.Called(ctx, u)
-	if args.Get(0) == nil { return nil, "", "", args.Error(3) }
+	if args.Get(0) == nil {
+		return nil, "", "", args.Error(3)
+	}
 	return args.Get(0).(*models.User), args.String(1), args.String(2), args.Error(3)
 }
 func (m *MockDatabase) GetUserByEmail(ctx context.Context, e string) (*models.User, string, string, error) {
 	args := m.Called(ctx, e)
-	if args.Get(0) == nil { return nil, "", "", args.Error(3) }
+	if args.Get(0) == nil {
+		return nil, "", "", args.Error(3)
+	}
 	return args.Get(0).(*models.User), args.String(1), args.String(2), args.Error(3)
 }
 func (m *MockDatabase) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	args := m.Called(ctx, id)
-	if args.Get(0) == nil { return nil, args.Error(1) }
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*models.User), args.Error(1)
 }
 func (m *MockDatabase) GrantProjectAccess(ctx context.Context, u, p uuid.UUID, k string) error {
@@ -72,7 +80,9 @@ func (m *MockDatabase) UpdateWebAuthnCredential(ctx context.Context, cred *model
 
 func (m *MockDatabase) GetVaultConfig(ctx context.Context) (*db.VaultConfig, error) {
 	args := m.Called(ctx)
-	if args.Get(0) == nil { return nil, args.Error(1) }
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*db.VaultConfig), args.Error(1)
 }
 func (m *MockDatabase) InitializeVault(ctx context.Context, w, s string) error {
@@ -83,7 +93,9 @@ func (m *MockDatabase) UpdateVaultConfig(ctx context.Context, w, s string) error
 }
 func (m *MockDatabase) CreateClient(ctx context.Context, n string) (*models.Client, error) {
 	args := m.Called(ctx, n)
-	if args.Get(0) == nil { return nil, args.Error(1) }
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*models.Client), args.Error(1)
 }
 func (m *MockDatabase) GetClients(ctx context.Context) ([]models.Client, error) {
@@ -92,7 +104,9 @@ func (m *MockDatabase) GetClients(ctx context.Context) ([]models.Client, error) 
 }
 func (m *MockDatabase) GetClientByID(ctx context.Context, id uuid.UUID) (*models.Client, error) {
 	args := m.Called(ctx, id)
-	if args.Get(0) == nil { return nil, args.Error(1) }
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*models.Client), args.Error(1)
 }
 func (m *MockDatabase) DeleteClient(ctx context.Context, id uuid.UUID) error {
@@ -100,7 +114,9 @@ func (m *MockDatabase) DeleteClient(ctx context.Context, id uuid.UUID) error {
 }
 func (m *MockDatabase) CreateProject(ctx context.Context, c uuid.UUID, n, k string) (*models.Project, error) {
 	args := m.Called(ctx, c, n, k)
-	if args.Get(0) == nil { return nil, args.Error(1) }
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*models.Project), args.Error(1)
 }
 func (m *MockDatabase) GetProjectsByClient(ctx context.Context, c uuid.UUID) ([]models.Project, error) {
@@ -109,7 +125,9 @@ func (m *MockDatabase) GetProjectsByClient(ctx context.Context, c uuid.UUID) ([]
 }
 func (m *MockDatabase) GetProjectByID(ctx context.Context, id uuid.UUID) (*models.Project, error) {
 	args := m.Called(ctx, id)
-	if args.Get(0) == nil { return nil, args.Error(1) }
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*models.Project), args.Error(1)
 }
 func (m *MockDatabase) DeleteProject(ctx context.Context, id uuid.UUID) error {
@@ -121,7 +139,9 @@ func (m *MockDatabase) GetProjectKeyForUser(ctx context.Context, p, u uuid.UUID,
 }
 func (m *MockDatabase) CreateSecret(ctx context.Context, p uuid.UUID, k, v string) (*models.Secret, error) {
 	args := m.Called(ctx, p, k, v)
-	if args.Get(0) == nil { return nil, args.Error(1) }
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).(*models.Secret), args.Error(1)
 }
 func (m *MockDatabase) GetSecretsByProject(ctx context.Context, p uuid.UUID) ([]models.Secret, error) {
@@ -157,7 +177,7 @@ func TestStatusHandler(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", "/api/v1/status", nil)
 	rr := httptest.NewRecorder()
-	
+
 	h.StatusHandler(rr, req)
 
 	assert.Equal(t, http.StatusOK, rr.Code)
@@ -187,7 +207,7 @@ func TestStatusHandler_MissingEnv(t *testing.T) {
 
 	req, _ := http.NewRequest("GET", "/api/v1/status", nil)
 	rr := httptest.NewRecorder()
-	
+
 	h.StatusHandler(rr, req)
 
 	var resp StatusResponse

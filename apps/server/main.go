@@ -65,23 +65,28 @@ func main() {
 		// Protected routes
 		r.Group(func(r chi.Router) {
 			r.Use(auth.JWTMiddleware)
-			
+
+			r.Get("/auth/me", h.GetMe)
 			r.Get("/auth/passkey/register/begin", h.PasskeyRegisterBegin)
 			r.Post("/auth/passkey/register/finish", h.PasskeyRegisterFinish)
-			
+
 			r.Get("/vault/config", h.GetVaultConfigHandler)
 			r.Get("/audit", h.ListAuditLogs)
 			r.Get("/clients", h.ListClients)
-			r.Post("/clients", h.CreateClient)
-			r.Delete("/clients/{id}", h.DeleteClient)
+
+			// Admin-only routes
+			r.Group(func(r chi.Router) {
+				r.Use(auth.AdminMiddleware)
+				r.Post("/clients", h.CreateClient)
+				r.Delete("/clients/{id}", h.DeleteClient)
+				r.Post("/collaborators", h.CreateCollaborator)
+			})
 
 			r.Get("/projects", h.ListProjectsByClient)
 			r.Get("/projects/{id}", h.GetProject)
 			r.Get("/projects/{id}/key", h.GetProjectKey)
 			r.Post("/projects", h.CreateProject)
 			r.Delete("/projects/{id}", h.DeleteProject)
-
-			r.Post("/collaborators", h.CreateCollaborator)
 
 			r.Get("/secrets", h.ListSecretsByProject)
 			r.Post("/secrets", h.CreateSecret)
@@ -100,7 +105,7 @@ func main() {
 			uiDir = workDir + "/apps/web/build/client"
 		}
 	}
-	
+
 	log.Printf("Serving UI from: %s", uiDir)
 	staticDir := http.Dir(uiDir)
 	fileServer := http.FileServer(staticDir)

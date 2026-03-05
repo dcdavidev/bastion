@@ -18,6 +18,7 @@ import {
   toast,
 } from '@pittorica/react';
 import { startAuthentication } from '@simplewebauthn/browser';
+import Cookies from 'js-cookie';
 
 import { useAuth } from '../contexts/auth-context';
 
@@ -57,6 +58,7 @@ export default function Login() {
 
       const data = await response.json();
       setToken(data.token);
+      Cookies.set('bastion_session', data.token, { expires: 1, path: '/' });
       toast({
         title: 'Access granted',
         description: 'Welcome back!',
@@ -112,6 +114,7 @@ export default function Login() {
 
       const data = await finishResp.json();
       setToken(data.token);
+      Cookies.set('bastion_session', data.token, { expires: 1, path: '/' });
       toast({
         title: 'Access granted',
         description: 'Signed in with Passkey',

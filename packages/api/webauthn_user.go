@@ -37,7 +37,7 @@ func (u *WebAuthnUser) WebAuthnCredentials() []webauthn.Credential {
 			AttestationType: c.AttestationType,
 			Transport:       u.toWebAuthnTransport(c.Transport),
 			Authenticator: webauthn.Authenticator{
-				SignCount: c.SignCount,
+				SignCount:    c.SignCount,
 				CloneWarning: c.CloneWarning,
 			},
 		}

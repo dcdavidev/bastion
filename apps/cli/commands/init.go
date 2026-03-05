@@ -37,7 +37,7 @@ var initCmd = &cobra.Command{
 			dbName, _ := pterm.DefaultInteractiveTextInput.WithDefaultText("bastion").Show("Database Name")
 
 			dbURL = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", dbUser, dbPass, dbHost, dbPort, dbName)
-			
+
 			// Save to .env
 			saveToEnv("BASTION_DATABASE_URL", dbURL)
 			os.Setenv("BASTION_DATABASE_URL", dbURL)
@@ -55,7 +55,7 @@ var initCmd = &cobra.Command{
 				return err
 			}
 			jwtSecret = hex.EncodeToString(secret)
-			
+
 			// Save to .env
 			saveToEnv("BASTION_JWT_SECRET", jwtSecret)
 			os.Setenv("BASTION_JWT_SECRET", jwtSecret)
@@ -90,10 +90,10 @@ var initCmd = &cobra.Command{
 			password, _ := pterm.DefaultInteractiveTextInput.WithMask("*").Show("Admin Password")
 
 			spinner, _ = pterm.DefaultSpinner.Start("Creating admin and initializing vault...")
-			
+
 			salt, _ := crypto.GenerateSalt()
 			hash := crypto.DeriveKey([]byte(password), salt)
-			
+
 			saltHex := hex.EncodeToString(salt)
 			hashHex := hex.EncodeToString(hash)
 
@@ -107,14 +107,14 @@ var initCmd = &cobra.Command{
 			masterKey, _ := crypto.GenerateRandomKey()
 			kek := crypto.DeriveKey([]byte(password), salt)
 			wrappedMK, _ := crypto.WrapKey(kek, masterKey)
-			
+
 			err = database.InitializeVault(context.Background(), hex.EncodeToString(wrappedMK), hex.EncodeToString(salt))
 			if err != nil {
 				spinner.Fail("Failed to initialize vault: " + err.Error())
 				return err
 			}
 
-			// Grant admin access to their own master key? 
+			// Grant admin access to their own master key?
 			// In our current architecture, the vault initialization already sets up the master key.
 			// The admin will be able to decrypt it because they know the password and the salt is in the vault_config.
 

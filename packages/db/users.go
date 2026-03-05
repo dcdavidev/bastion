@@ -62,7 +62,7 @@ func (db *DB) GrantProjectAccess(ctx context.Context, userID, projectID uuid.UUI
 // GetUserByUsername retrieves a user for authentication.
 func (db *DB) GetUserByUsername(ctx context.Context, username string) (*models.User, string, string, error) {
 	query := `SELECT id, username, email, password_hash, salt, role, created_at, updated_at FROM users WHERE username = $1`
-	
+
 	user := &models.User{}
 	var hash, salt string
 	err := db.Pool.QueryRow(ctx, query, username).Scan(
@@ -75,18 +75,18 @@ func (db *DB) GetUserByUsername(ctx context.Context, username string) (*models.U
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
-	
+
 	if err != nil {
 		return nil, "", "", err
 	}
-	
+
 	return user, hash, salt, nil
 }
 
 // GetUserByEmail retrieves a user by email for authentication.
 func (db *DB) GetUserByEmail(ctx context.Context, email string) (*models.User, string, string, error) {
 	query := `SELECT id, username, email, password_hash, salt, role, created_at, updated_at FROM users WHERE email = $1`
-	
+
 	user := &models.User{}
 	var hash, salt string
 	err := db.Pool.QueryRow(ctx, query, email).Scan(
@@ -99,16 +99,25 @@ func (db *DB) GetUserByEmail(ctx context.Context, email string) (*models.User, s
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
-	
+
 	if err != nil {
 		return nil, "", "", err
 	}
-	
+
 	return user, hash, salt, nil
 }
 
 // GetUserByID retrieves a user by their UUID.
 func (db *DB) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
+	// Handle Reserved Admin ID (Environment-based admin)
+	if id.String() == "00000000-0000-0000-0000-000000000000" {
+		return &models.User{
+			ID:       id,
+			Username: "admin",
+			Role:     "ADMIN",
+		}, nil
+	}
+
 	query := `SELECT id, username, email, role, created_at, updated_at FROM users WHERE id = $1`
 	user := &models.User{}
 	err := db.Pool.QueryRow(ctx, query, id).Scan(
@@ -131,13 +140,13 @@ func (db *DB) AddWebAuthnCredential(ctx context.Context, userID uuid.UUID, cred 
 		INSERT INTO webauthn_credentials (id, user_id, public_key, attestation_type, transport, sign_count, clone_warning)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`
-	_, err := db.Pool.Exec(ctx, query, 
-		cred.ID, 
-		userID, 
-		cred.PublicKey, 
-		cred.AttestationType, 
-		cred.Transport, 
-		cred.SignCount, 
+	_, err := db.Pool.Exec(ctx, query,
+		cred.ID,
+		userID,
+		cred.PublicKey,
+		cred.AttestationType,
+		cred.Transport,
+		cred.SignCount,
 		cred.CloneWarning,
 	)
 	return err

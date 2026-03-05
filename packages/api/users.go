@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/dcdavidev/bastion/packages/auth"
 	"github.com/google/uuid"
 )
 
@@ -20,7 +21,7 @@ type CreateCollaboratorRequest struct {
 func (h *Handler) CreateCollaborator(w http.ResponseWriter, r *http.Request) {
 	// Check if the current user is an admin (later integration with JWT claims)
 	// For now, we assume the middleware protects it or we check manually
-	
+
 	var req CreateCollaboratorRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -51,4 +52,22 @@ func (h *Handler) CreateCollaborator(w http.ResponseWriter, r *http.Request) {
 		"project_id": req.ProjectID,
 		"ip":         r.RemoteAddr,
 	})
+}
+
+// GetMe returns the currently authenticated user's information.
+func (h *Handler) GetMe(w http.ResponseWriter, r *http.Request) {
+	uid, ok := r.Context().Value(auth.UserKey).(uuid.UUID)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	user, err := h.DB.GetUserByID(r.Context(), uid)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
 }

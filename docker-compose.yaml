@@ -17,6 +17,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8287:8287"
+    env_file:
+      - .env
     environment:
       - BASTION_PORT=8287
       - BASTION_DATABASE_URL=postgres://bastion:bastion@db:5432/bastion?sslmode=disable

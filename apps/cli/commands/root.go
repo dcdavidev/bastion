@@ -61,6 +61,8 @@ func runRootInteractive(cmd *cobra.Command, args []string) error {
 		"Init - Initialize local Bastion (database & admin)",
 		"Create - Create resources",
 		"Reset - Reset resources (credentials, etc.)",
+		"Remove - Remove resources (client, project)",
+		"DB - Database management (migrations, etc.)",
 		"Exit",
 	}
 
@@ -78,6 +80,10 @@ func runRootInteractive(cmd *cobra.Command, args []string) error {
 		return createInteractive()
 	case strings.HasPrefix(selected, "Reset"):
 		return resetInteractive()
+	case strings.HasPrefix(selected, "Remove"):
+		return removeInteractive()
+	case strings.HasPrefix(selected, "DB"):
+		return dbInteractive()
 	case selected == "Exit":
 		return nil
 	}
@@ -94,6 +100,8 @@ func createInteractive() error {
 	options := []string{
 		"secretkey - Generate a new secure JWT secret",
 		"masterkey - Initialize the vault with a new Master Key",
+		"client - Create a new client",
+		"project - Create a new secured project",
 		"Back",
 	}
 
@@ -134,6 +142,59 @@ func resetInteractive() error {
 
 	cmdStr := strings.Split(selected, " ")[0]
 	for _, c := range resetCmd.Commands() {
+		if c.Use == cmdStr {
+			return c.RunE(c, []string{})
+		}
+	}
+
+	pterm.Error.Println("Command not implemented interactively yet")
+	return nil
+}
+
+func removeInteractive() error {
+	options := []string{
+		"client - Remove a client and all its projects",
+		"project - Remove a project and its secrets",
+		"Back",
+	}
+
+	selected, err := pterm.DefaultInteractiveSelect.WithOptions(options).Show("What do you want to remove?")
+	if err != nil {
+		return err
+	}
+
+	if selected == "Back" {
+		return runRootInteractive(rootCmd, []string{})
+	}
+
+	cmdStr := strings.Split(selected, " ")[0]
+	for _, c := range removeCmd.Commands() {
+		if c.Use == cmdStr {
+			return c.RunE(c, []string{})
+		}
+	}
+
+	pterm.Error.Println("Command not implemented interactively yet")
+	return nil
+}
+
+func dbInteractive() error {
+	options := []string{
+		"migrate - Check and apply database migrations",
+		"Back",
+	}
+
+	selected, err := pterm.DefaultInteractiveSelect.WithOptions(options).Show("What database operation do you want to perform?")
+	if err != nil {
+		return err
+	}
+
+	if selected == "Back" {
+		return runRootInteractive(rootCmd, []string{})
+	}
+
+	cmdStr := strings.Split(selected, " ")[0]
+	for _, c := range dbCmd.Commands() {
 		if c.Use == cmdStr {
 			return c.RunE(c, []string{})
 		}

@@ -24,7 +24,7 @@ import {
   toast,
 } from '@pittorica/react';
 
-import { useAuth } from '../../contexts/auth-context';
+import { useAuth } from '../contexts/auth-context';
 
 interface Client {
   id: string;

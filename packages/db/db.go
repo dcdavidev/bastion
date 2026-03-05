@@ -8,14 +8,14 @@ import (
 	"os"
 	"time"
 
-	"github.com/dcdavidev/bastion/packages/models"
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgxpool"
-	_ "github.com/lib/pq" // Required for golang-migrate postgres driver
 	"embed"
+	"github.com/dcdavidev/bastion/packages/models"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
+	_ "github.com/lib/pq" // Required for golang-migrate postgres driver
 )
 
 //go:embed migrations/*.sql
@@ -133,7 +133,7 @@ func (db *DB) RunMigrations() error {
 	if connStr == "" {
 		connStr = os.Getenv("DATABASE_URL")
 	}
-	
+
 	// We need a standard sql.DB for golang-migrate
 	importDB, err := sql.Open("postgres", connStr)
 	if err != nil {

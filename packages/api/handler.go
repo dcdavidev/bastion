@@ -42,10 +42,10 @@ func NewHandler(database db.Database) *Handler {
 }
 
 type StatusResponse struct {
-	ConnectedToDB  bool     `json:"connected_to_db"`
-	MissingEnvVars []string `json:"missing_env_vars"`
-	JwtSecretStatus string  `json:"jwt_secret_status"` // "strong", "weak", "missing"
-	Migrations     struct {
+	ConnectedToDB   bool     `json:"connected_to_db"`
+	MissingEnvVars  []string `json:"missing_env_vars"`
+	JwtSecretStatus string   `json:"jwt_secret_status"` // "strong", "weak", "missing"
+	Migrations      struct {
 		CurrentVersion uint `json:"current_version"`
 		HasPending     bool `json:"has_pending"`
 		IsDirty        bool `json:"is_dirty"`
@@ -56,7 +56,7 @@ type StatusResponse struct {
 
 func (h *Handler) StatusHandler(w http.ResponseWriter, r *http.Request) {
 	resp := StatusResponse{
-		Version: "1.0.0", // Replace with version constant if available
+		Version:         "1.0.0", // Replace with version constant if available
 		JwtSecretStatus: "missing",
 	}
 
@@ -73,8 +73,8 @@ func (h *Handler) StatusHandler(w http.ResponseWriter, r *http.Request) {
 			isHex = false
 		}
 
-		isDefault := jwtSecret == "bastion_very_secret_key_change_me" || 
-					 jwtSecret == "your_super_secret_jwt_key_change_me"
+		isDefault := jwtSecret == "bastion_very_secret_key_change_me" ||
+			jwtSecret == "your_super_secret_jwt_key_change_me"
 
 		if isDefault || !isHex || len(decoded) < 32 {
 			resp.JwtSecretStatus = "weak"
@@ -91,7 +91,7 @@ func (h *Handler) StatusHandler(w http.ResponseWriter, r *http.Request) {
 		err := h.DB.Ping(r.Context())
 		if err == nil {
 			resp.ConnectedToDB = true
-			
+
 			// Check migrations
 			version, pending, err := h.DB.GetMigrationStatus()
 			resp.Migrations.CurrentVersion = version

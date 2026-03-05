@@ -12,7 +12,7 @@ import (
 // ListAuditLogs returns filtered audit events.
 func (h *Handler) ListAuditLogs(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
-	
+
 	limit, _ := strconv.Atoi(query.Get("limit"))
 	if limit <= 0 {
 		limit = 50

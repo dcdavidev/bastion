@@ -28,14 +28,14 @@ import {
   toast,
 } from '@pittorica/react';
 
-import { useAuth } from '../../contexts/auth-context';
+import { useAuth } from '../contexts/auth-context';
 import {
   bytesToHex,
   decrypt,
   deriveKey,
   encrypt,
   hexToBytes,
-} from '../../utils/crypto';
+} from '../utils/crypto';
 
 interface Secret {
   id: string;

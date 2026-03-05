@@ -78,7 +78,19 @@ func JWTMiddleware(next http.Handler) http.Handler {
 		// Add claims and user ID to context
 		ctx := context.WithValue(r.Context(), AdminContextKey, claims)
 		ctx = context.WithValue(ctx, UserKey, uid)
-		
+
 		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+// AdminMiddleware ensures that the authenticated user has admin privileges.
+func AdminMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := r.Context().Value(AdminContextKey).(jwt.MapClaims)
+		if !ok || claims["admin"] != true {
+			http.Error(w, "Forbidden: Admin access required", http.StatusForbidden)
+			return
+		}
+		next.ServeHTTP(w, r)
 	})
 }

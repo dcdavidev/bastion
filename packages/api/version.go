@@ -17,10 +17,10 @@ type VersionCheckResponse struct {
 }
 
 var (
-	versionCache      *VersionCheckResponse
-	versionCacheLock  sync.Mutex
-	lastVersionCheck  time.Time
-	versionCacheTTL   = 6 * time.Hour
+	versionCache     *VersionCheckResponse
+	versionCacheLock sync.Mutex
+	lastVersionCheck time.Time
+	versionCacheTTL  = 6 * time.Hour
 )
 
 func (h *Handler) VersionCheckHandler(w http.ResponseWriter, r *http.Request) {

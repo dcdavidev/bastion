@@ -2,19 +2,39 @@
 FROM node:24-alpine AS frontend-builder
 
 WORKDIR /app
+
+# Enable corepack and copy dependency files first for caching
+RUN corepack enable
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+# Copy workspace package.json files
+COPY apps/web/package.json ./apps/web/
+COPY apps/cli/package.json ./apps/cli/
+COPY apps/server/package.json ./apps/server/
+COPY packages/api/package.json ./packages/api/
+COPY packages/auth/package.json ./packages/auth/
+COPY packages/config/package.json ./packages/config/
+COPY packages/crypto/package.json ./packages/crypto/
+COPY packages/db/package.json ./packages/db/
+COPY packages/models/package.json ./packages/models/
+COPY packages/version/package.json ./packages/version/
+
+RUN CI=true pnpm install --frozen-lockfile --ignore-scripts
+
+# Copy source and build
 COPY . .
-# Use pnpm for faster builds in the monorepo
-RUN corepack enable && CI=true pnpm install --frozen-lockfile --ignore-scripts
 RUN pnpm build --filter @dcdavidev/bastion-web
 
 # Stage 2: Build the Go backend
-FROM golang:1.24-alpine AS backend-builder
+FROM golang:1.25-alpine AS backend-builder
 
 WORKDIR /app
-COPY . .
-# Download dependencies
+
+# Copy go.mod and go.sum first for caching
+COPY go.mod go.sum ./
 RUN go mod download
-# Build the server
+
+# Copy source and build
+COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o bastion-server ./apps/server/main.go
 
 # Stage 3: Final image

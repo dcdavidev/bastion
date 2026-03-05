@@ -6,6 +6,11 @@ import (
 	"github.com/google/uuid"
 )
 
+// ParseUUID parses a string into a UUID.
+func ParseUUID(s string) (uuid.UUID, error) {
+	return uuid.Parse(s)
+}
+
 // Client represents a customer who owns multiple projects.
 type Client struct {
 	ID        uuid.UUID `json:"id"`

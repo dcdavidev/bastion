@@ -9,6 +9,11 @@ export default defineConfig({
   define: {
     'import.meta.env.VITE_BASTION_VERSION': JSON.stringify(pkg.version),
   },
+  build: {
+    rollupOptions: {
+      external: ['axios'],
+    },
+  },
   server: {
     port: 3500,
     proxy: {

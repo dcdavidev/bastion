@@ -25,7 +25,7 @@ import {
 } from '@pittorica/react';
 import { startRegistration } from '@simplewebauthn/browser';
 
-import { useAuth } from '../../contexts/auth-context';
+import { useAuth } from '../contexts/auth-context';
 
 interface AuditLog {
   id: string;
