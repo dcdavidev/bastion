@@ -8,8 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/dcdavidev/bastion/packages/core/crypto"
-	"github.com/dcdavidev/bastion/packages/core/models"
+	"github.com/dcdavidev/bastion/packages/crypto"
+	"github.com/dcdavidev/bastion/packages/models"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )

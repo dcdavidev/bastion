@@ -8,8 +8,8 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/dcdavidev/bastion/packages/core/crypto"
-	"github.com/dcdavidev/bastion/packages/core/models"
+	"github.com/dcdavidev/bastion/packages/crypto"
+	"github.com/dcdavidev/bastion/packages/models"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dcdavidev/bastion/packages/core/config"
-	"github.com/dcdavidev/bastion/packages/core/version"
+	"github.com/dcdavidev/bastion/packages/config"
+	"github.com/dcdavidev/bastion/packages/version"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )

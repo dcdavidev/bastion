@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/dcdavidev/bastion/packages/core/config"
+	"github.com/dcdavidev/bastion/packages/config"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )

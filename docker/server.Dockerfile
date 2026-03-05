@@ -6,7 +6,7 @@ WORKDIR /root/
 
 ARG TARGETPLATFORM
 COPY $TARGETPLATFORM/bastion-server .
-COPY packages/core/db/migrations ./packages/core/db/migrations
+COPY packages/db/migrations ./packages/db/migrations
 
 EXPOSE 8080
 

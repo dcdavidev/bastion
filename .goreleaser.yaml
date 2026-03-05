@@ -46,7 +46,7 @@ dockers_v2:
     platforms: [linux/amd64, linux/arm64]
     sbom: false
     extra_files:
-      - packages/core/db/migrations
+      - packages/db/migrations
 
   - id: bastion-cli
     ids: [bastion-cli]

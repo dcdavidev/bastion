@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/dcdavidev/bastion/packages/core/config"
+	"github.com/dcdavidev/bastion/packages/config"
 )
 
 type Config = config.Config

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dcdavidev/bastion/packages/core/models"
-	"github.com/dcdavidev/bastion/packages/core/version"
+	"github.com/dcdavidev/bastion/packages/models"
+	"github.com/dcdavidev/bastion/packages/version"
 	"github.com/pterm/pterm"
 )
 

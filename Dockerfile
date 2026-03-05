@@ -27,7 +27,7 @@ WORKDIR /app
 # Copy binary
 COPY --from=backend-builder /app/bastion-server .
 # Copy migrations
-COPY --from=backend-builder /app/packages/core/db/migrations ./packages/core/db/migrations
+COPY --from=backend-builder /app/packages/db/migrations ./packages/db/migrations
 # Copy frontend build
 COPY --from=frontend-builder /app/apps/web/build/client ./ui
 

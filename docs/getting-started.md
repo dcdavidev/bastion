@@ -30,7 +30,7 @@ pnpm install
 - **`apps/server`**: Unified Go server (API + Web UI).
 - **`apps/web`**: React-based Dashboard source code.
 - **`apps/cli`**: The `bastion` command-line management tool.
-- **`packages/core`**: Shared logic, crypto, and database migrations.
+- **`packages/`**: Shared logic, crypto, and database migrations.
 
 ---
 

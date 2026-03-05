@@ -9,9 +9,9 @@ import (
         "path/filepath"
         "strings"
 
-        "github.com/dcdavidev/bastion/packages/core/config"
-        "github.com/dcdavidev/bastion/packages/core/crypto"
-        "github.com/dcdavidev/bastion/packages/core/db"
+        "github.com/dcdavidev/bastion/packages/config"
+        "github.com/dcdavidev/bastion/packages/crypto"
+        "github.com/dcdavidev/bastion/packages/db"
         "github.com/pterm/pterm"
         "github.com/spf13/cobra"
 )

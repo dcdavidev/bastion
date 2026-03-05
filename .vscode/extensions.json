@@ -38,6 +38,7 @@
     "ms-azuretools.vscode-containers",
     "ms-azuretools.vscode-docker",
     "docker.docker",
-    "streetsidesoftware.code-spell-checker-italian"
+    "streetsidesoftware.code-spell-checker-italian",
+    "golang.go"
   ]
 }

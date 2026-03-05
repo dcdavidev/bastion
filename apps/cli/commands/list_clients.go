@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/dcdavidev/bastion/packages/core/models"
+	"github.com/dcdavidev/bastion/packages/models"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )

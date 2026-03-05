@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/dcdavidev/bastion/packages/core/version"
+	"github.com/dcdavidev/bastion/packages/version"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )

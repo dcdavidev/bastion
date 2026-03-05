@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/dcdavidev/bastion/packages/core/crypto"
+	"github.com/dcdavidev/bastion/packages/crypto"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )
