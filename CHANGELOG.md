@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.1](https://github.com/dcdavidev/bastion/compare/v0.5.0...v0.5.1) (2026-03-06)
+
+### Bug Fixes
+
+* **@dcdavidev/bastion-cli:** wrapper ([ddcde13](https://github.com/dcdavidev/bastion/commit/ddcde1371a3034fac1684b2b4182d5a3e1e92487))
+
 ## [0.5.0](https://github.com/dcdavidev/bastion/compare/v0.4.0...v0.5.0) (2026-03-06)
 
 ### Features
