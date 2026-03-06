@@ -3,6 +3,7 @@
 import { spawn } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,25 @@ if (!platforms[platform] || !platforms[platform][arch]) {
 }
 
 const binaryPath = path.join(__dirname, platforms[platform][arch]);
+
+if (!fs.existsSync(binaryPath)) {
+  console.error(`Error: Bastion CLI binary not found at ${binaryPath}`);
+  console.error('Please try reinstalling the package: npm install -g @dcdavidev/bastion-cli');
+  process.exit(1);
+}
+
+// Ensure the binary is executable on non-Windows platforms
+if (platform !== 'win32') {
+  try {
+    const stats = fs.statSync(binaryPath);
+    if (!(stats.mode & fs.constants.S_IXUSR)) {
+      fs.chmodSync(binaryPath, 0o755);
+    }
+  } catch (err) {
+    // If we can't chmod, we'll try spawning anyway
+  }
+}
+
 const args = process.argv.slice(2);
 
 const child = spawn(binaryPath, args, { stdio: 'inherit' });
