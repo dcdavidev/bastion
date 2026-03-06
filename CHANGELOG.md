@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.0](https://github.com/dcdavidev/bastion/compare/v0.4.0...v0.5.0) (2026-03-06)
+
+### Features
+
+* **cli:** rewrite CLI to be fully interactive and add init/reset commands ([18b64ba](https://github.com/dcdavidev/bastion/commit/18b64bae2b890e440d1bb5769a9a8b30095b79fa))
+* enhance CLI with interactive management and migrate web routes to flat routes structure ([1dc5f7f](https://github.com/dcdavidev/bastion/commit/1dc5f7fb91f826e621327f204d81b9ff78190ed9))
+* implement enhanced error handling, beautiful 404 page, and finalized flat routes structure ([e5f96e7](https://github.com/dcdavidev/bastion/commit/e5f96e7c26aaff7cf10a80d62723c69b8ea05fae))
+* implement Passkey (WebAuthn) support for login and registration ([f5f817a](https://github.com/dcdavidev/bastion/commit/f5f817a0fcb8fc7109d5c3f2daf49cdebd81de5c))
+
 ## [0.4.0](https://github.com/dcdavidev/bastion/compare/v0.3.1...v0.4.0) (2026-02-26)
 
 ### Features
