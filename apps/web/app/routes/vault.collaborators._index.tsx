@@ -47,8 +47,8 @@ export default function Collaborators() {
 
     setCreating(true);
 
-    // In a real scenario, we would derive the KEK client-side
-    // For now, keeping the mock logic as per backend requirements
+    // In a production scenario, we would derive the KEK client-side
+    // For now, keeping the mock logic consistent with current backend integration
     const mockWrappedKey = 'collab-wrapped-key-' + Math.random().toString(16);
 
     try {
@@ -61,7 +61,7 @@ export default function Collaborators() {
         body: JSON.stringify({
           username: newCollab.username,
           email: newCollab.email,
-          password_hash: 'mock-hash', // Should be Argon2id in production
+          password_hash: 'mock-hash', // Should be Argon2id in full production
           salt: 'mock-salt',
           project_id: newCollab.projectId,
           wrapped_data_key: mockWrappedKey,
@@ -78,7 +78,8 @@ export default function Collaborators() {
           color: 'teal',
         });
       } else {
-        throw new Error('Failed to create collaborator on server');
+        const errText = await response.text();
+        throw new Error(errText || 'Failed to create collaborator');
       }
     } catch (error) {
       console.error('Failed to create collaborator', error);
@@ -96,14 +97,14 @@ export default function Collaborators() {
   return (
     <Stack gap="6">
       <Flex justify="between" align="end">
-        <Box>
+        <Stack gap="2">
           <Text size="7" weight="bold" color="source">
             Collaborators
           </Text>
           <Text color="muted" size="2">
             Manage restricted access for team members.
           </Text>
-        </Box>
+        </Stack>
         <Button variant="filled" size="md" onClick={() => setIsModalOpen(true)}>
           <Flex gap="2" align="center">
             <IconUserPlus size={18} />
@@ -158,13 +159,13 @@ export default function Collaborators() {
             style={{ height: '100%', textAlign: 'center' }}
           >
             <IconUsers size={48} color="var(--pittorica-color-muted)" />
-            <Stack>
-              <Text weight="bold">No active sessions</Text>
+            <Stack align="center" gap="1">
+              <Text weight="bold">Collaborator List</Text>
               <Text size="2" color="muted">
-                Collaborator management is in read-only mode.
+                Management is currently limited to new assignments.
               </Text>
             </Stack>
-            <Chip variant="soft">Coming Soon: Active Sessions List</Chip>
+            <Chip variant="soft">Coming Soon: Detailed User List</Chip>
           </Flex>
         </Card>
       </Grid>

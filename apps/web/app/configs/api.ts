@@ -5,9 +5,17 @@ export const api = axios.create({
   baseURL: '/api/v1',
 });
 
-// Add interceptor to include Bearer token from cookie if available
+// Add interceptor to include Bearer token from localStorage or cookie if available
 api.interceptors.request.use((config) => {
-  const token = Cookies.get('bastion_session');
+  let token = null;
+  if (globalThis.window !== undefined) {
+    token = localStorage.getItem('bastion_token');
+  }
+  
+  if (!token) {
+    token = Cookies.get('bastion_session');
+  }
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

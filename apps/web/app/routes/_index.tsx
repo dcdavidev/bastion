@@ -39,18 +39,31 @@ export default function Home() {
           <Stack gap="4" align="center">
             <Avatar src="/static/logo/square.png" fallback="B" size="9" />
             <Stack gap="1">
-              <Text size="5" color="source" weight="medium">
-                The Secure Fortress for Your Secrets
+              <Text
+                size="5"
+                color="source"
+                weight="medium"
+                style={{ letterSpacing: '2px', textTransform: 'uppercase' }}
+              >
+                Bastion E2EE
               </Text>
             </Stack>
           </Stack>
+
+          <Text
+            size="8"
+            weight="bold"
+            style={{ lineHeight: '1.1', maxWidth: '800px' }}
+          >
+            The Secure Fortress for Your Secrets
+          </Text>
 
           <Text
             size="4"
             color="muted"
             style={{ maxWidth: '600px', lineHeight: '1.6' }}
           >
-            A self-hosted, end-to-end encrypted vault designed for developers
+            A self-hosted, end-to-end encrypted platform designed for developers
             and teams. Manage multiple client secrets with zero-knowledge
             architecture and a blind-backend approach.
           </Text>
@@ -59,11 +72,11 @@ export default function Home() {
             <Button
               size="lg"
               variant="filled"
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/vault')}
               style={{ minWidth: '200px' }}
             >
               <Flex gap="2" align="center">
-                Unlock Vault
+                Enter the Vault
                 <IconArrowRight size={18} />
               </Flex>
             </Button>
@@ -127,7 +140,16 @@ function FeatureCard({
   return (
     <Card p="6">
       <Stack gap="4" align="center">
-        <Box color="source">{icon}</Box>
+        <Box
+          color="source"
+          p="3"
+          style={{
+            backgroundColor: 'rgba(var(--pittorica-color-source-rgb), 0.1)',
+            borderRadius: '12px',
+          }}
+        >
+          {icon}
+        </Box>
         <Stack gap="2">
           <Text weight="bold" size="3">
             {title}

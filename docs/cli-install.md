@@ -58,7 +58,7 @@ npm install -g @dcdavidev/bastion-cli
 
 ### Docker (Unified Server + UI)
 
-For the server-side deployment, use the unified Docker image which includes both the Go backend and the React dashboard.
+For the server-side deployment, use the unified Docker image which includes both the Go backend and the React Dashboard UI.
 
 ```bash
 # Pull the latest unified image
@@ -81,4 +81,4 @@ After installing, verify the installation by checking the version:
 bastion version
 ```
 
-Next, follow the **[Getting Started](getting-started.md)** guide to initialize your vault.
+Next, follow the **[Getting Started](getting-started.md)** guide to initialize your dashboard.

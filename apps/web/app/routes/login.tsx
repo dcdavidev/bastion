@@ -1,10 +1,11 @@
 import type { ChangeEvent, SyntheticEvent } from 'react';
 import { useState } from 'react';
 
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 
 import { IconEye, IconEyeOff, IconFingerprint } from '@tabler/icons-react';
 
+import Cookies from 'js-cookie';
 import {
   Avatar,
   Button,
@@ -18,7 +19,6 @@ import {
   toast,
 } from '@pittorica/react';
 import { startAuthentication } from '@simplewebauthn/browser';
-import Cookies from 'js-cookie';
 
 import { useAuth } from '../contexts/auth-context';
 
@@ -31,10 +31,28 @@ export default function Login() {
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { setToken } = useAuth();
 
-  // Calculate form validity (password is always required, email is optional for admin fallback)
+  const nextPath = searchParams.get('next') || '/vault';
+
+  // Calculate form validity
   const isFormValid = password.trim().length > 0;
+
+  const handleLoginSuccess = (token: string) => {
+    // Set token in context (handles localStorage)
+    setToken(token);
+    // Also set cookie for server-side / secondary checks
+    Cookies.set('bastion_session', token, { expires: 1, path: '/' });
+
+    toast({
+      title: 'Access granted',
+      description: 'Welcome back to the fortress!',
+      color: 'teal',
+    });
+
+    navigate(nextPath);
+  };
 
   async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,19 +70,13 @@ export default function Login() {
           password,
         }),
       });
+
       if (!response.ok) {
         throw new Error('Invalid credentials');
       }
 
       const data = await response.json();
-      setToken(data.token);
-      Cookies.set('bastion_session', data.token, { expires: 1, path: '/' });
-      toast({
-        title: 'Access granted',
-        description: 'Welcome back!',
-        color: 'teal',
-      });
-      navigate('/dashboard');
+      handleLoginSuccess(data.token);
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : 'Something went wrong';
@@ -113,14 +125,7 @@ export default function Login() {
       if (!finishResp.ok) throw new Error('Passkey verification failed');
 
       const data = await finishResp.json();
-      setToken(data.token);
-      Cookies.set('bastion_session', data.token, { expires: 1, path: '/' });
-      toast({
-        title: 'Access granted',
-        description: 'Signed in with Passkey',
-        color: 'teal',
-      });
-      navigate('/dashboard');
+      handleLoginSuccess(data.token);
     } catch (error: unknown) {
       console.error(error);
       const message =
@@ -132,8 +137,21 @@ export default function Login() {
   }
 
   return (
-    <Flex align="center" justify="center" height="100vh" p="4">
-      <Card p="6" style={{ width: '100%', maxWidth: '400px' }}>
+    <Flex
+      align="center"
+      justify="center"
+      height="100vh"
+      p="4"
+      style={{ background: 'var(--pittorica-surface-1)' }}
+    >
+      <Card
+        p="6"
+        style={{
+          width: '100%',
+          maxWidth: '400px',
+          boxShadow: 'var(--pittorica-shadow-lg)',
+        }}
+      >
         <Stack gap="6">
           <Flex direction="column" gap="3" justify="center" align="center">
             <Avatar src="/static/logo/square.png" fallback="B" size="9" />
@@ -142,7 +160,7 @@ export default function Login() {
                 BASTION
               </Text>
               <Text size="2" color="muted">
-                Secure E2EE Secrets Vault
+                Secure E2EE Vault
               </Text>
             </Stack>
           </Flex>
@@ -150,7 +168,7 @@ export default function Login() {
           <Stack gap="4">
             <TextField.Root label="Email" size="md">
               <TextField.Input
-                placeholder="Required for Passkey / Admin fallback"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setEmail(e.target.value)

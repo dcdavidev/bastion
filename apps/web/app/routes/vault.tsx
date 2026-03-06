@@ -1,6 +1,12 @@
 import { useCallback } from 'react';
 
-import { Outlet, redirect, useLocation, useNavigate } from 'react-router';
+import {
+  Outlet,
+  redirect,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from 'react-router';
 
 import axios from 'axios';
 
@@ -19,33 +25,41 @@ import { startRegistration } from '@simplewebauthn/browser';
 import { api } from '../configs/api';
 
 /**
- * clientLoader to protect all dashboard routes.
- * Verifies the JWT token from cookies.
+ * clientLoader to protect all vault routes.
+ * Verifies the JWT token from localStorage or cookies.
  */
 export async function clientLoader() {
-  // CRITICAL: Ensure this ONLY runs in the browser
-  if (globalThis.window === undefined) {
-    return null;
+  // Try localStorage first (more reliable in SPA), then cookie
+  let token = null;
+  if (globalThis.window !== undefined) {
+    token = localStorage.getItem('bastion_token');
   }
 
-  const token = Cookies.get('bastion_session');
+  if (!token) {
+    token = Cookies.get('bastion_session');
+  }
 
   if (!token) {
-    console.log('No token found, redirecting to login');
-    return redirect('/login');
+    console.warn('No authentication token found, redirecting to login');
+    return redirect('/login?next=/vault');
   }
 
   try {
-    const res = await api.get('/auth/me');
+    const res = await api.get('/auth/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return { authenticated: true, user: res.data };
   } catch (error: unknown) {
-    console.error('Dashboard Auth Error:', error);
+    console.error('Vault Auth Error:', error);
 
     if (axios.isAxiosError(error) && error.response?.status === 401) {
+      if (globalThis.window !== undefined) {
+        localStorage.removeItem('bastion_token');
+      }
       Cookies.remove('bastion_session', { path: '/' });
     }
 
-    return redirect('/login');
+    return redirect('/login?next=/vault');
   }
 }
 
@@ -60,16 +74,13 @@ interface AuthenticatedUser {
   role: string;
 }
 
-interface DashboardLoaderData {
+interface VaultLoaderData {
   authenticated: boolean;
   user: AuthenticatedUser;
 }
 
-export default function DashboardLayout({
-  loaderData,
-}: {
-  loaderData: DashboardLoaderData;
-}) {
+export default function VaultLayout() {
+  const loaderData = useLoaderData<VaultLoaderData>();
   const navigate = useNavigate();
 
   if (!loaderData || !loaderData.user) {
@@ -133,13 +144,10 @@ export default function DashboardLayout({
           </Text>
 
           <Flex direction="column" gap="2">
-            <DashboardLink to="/dashboard" label="Overview" />
-            <DashboardLink to="/dashboard/clients" label="Clients" />
-            <DashboardLink to="/dashboard/audit" label="Audit Logs" />
-            <DashboardLink
-              to="/dashboard/collaborators"
-              label="Collaborators"
-            />
+            <VaultLink to="/vault" label="Overview" />
+            <VaultLink to="/vault/clients" label="Clients" />
+            <VaultLink to="/vault/audit" label="Audit Logs" />
+            <VaultLink to="/vault/collaborators" label="Collaborators" />
 
             <Divider my="4" />
 
@@ -155,6 +163,9 @@ export default function DashboardLayout({
               variant="tonal"
               color="red"
               onClick={() => {
+                if (globalThis.window !== undefined) {
+                  localStorage.removeItem('bastion_token');
+                }
                 Cookies.remove('bastion_session', { path: '/' });
                 navigate('/login');
               }}
@@ -184,7 +195,7 @@ export default function DashboardLayout({
   );
 }
 
-function DashboardLink({ to, label }: { to: string; label: string }) {
+function VaultLink({ to, label }: { to: string; label: string }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isActive = location.pathname === to;

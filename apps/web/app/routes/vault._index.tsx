@@ -41,7 +41,7 @@ interface VersionInfo {
   needs_update: boolean;
 }
 
-export default function Overview() {
+export default function VaultOverview() {
   const [stats, setStats] = useState({ clients: 0, logs: 0 });
   const [latestLogs, setLatestLogs] = useState<AuditLog[]>([]);
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
@@ -51,6 +51,8 @@ export default function Overview() {
 
   useEffect(() => {
     async function fetchStats() {
+      if (!token) return;
+
       setLoading(true);
       try {
         const [cResp, lResp, vResp] = await Promise.all([
@@ -71,10 +73,10 @@ export default function Overview() {
           clients: clients?.length || 0,
           logs: logs?.length || 0,
         });
-        setLatestLogs(logs || []);
+        setLatestLogs(Array.isArray(logs) ? logs : []);
         setVersionInfo(versionData);
       } catch (error) {
-        console.error('Failed to fetch dashboard stats', error);
+        console.error('Failed to fetch vault stats', error);
       } finally {
         setLoading(false);
       }

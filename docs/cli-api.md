@@ -1,6 +1,6 @@
 # CLI API Reference
 
-Bastion CLI provides a powerful interface for all vault operations.
+Bastion CLI provides a powerful interface for all dashboard operations.
 
 ## Setup & Configuration
 
@@ -17,12 +17,12 @@ Bastion CLI provides a powerful interface for all vault operations.
 
 ## Resource Management
 
-- **`bastion create client`**: Create a new tenant/client in the vault.
+- **`bastion create client`**: Create a new tenant/client in the dashboard.
   - `--name, -n`: Client name.
 - **`bastion create project`**: Create a new project for a client.
   - `--client, -c`: Client ID (UUID).
   - `--name, -n`: Project name.
-- **`bastion list clients`**: Display all clients in the vault.
+- **`bastion list clients`**: Display all clients in the dashboard.
 - **`bastion list projects`**: List all projects for a specific client.
   - `--client, -c`: Client ID (optional, interactive prompt if omitted).
 
@@ -32,10 +32,10 @@ Bastion CLI provides a powerful interface for all vault operations.
   - `--project, -p`: Project ID (required).
   - `--key, -k`: Secret key name.
   - `--value, -v`: Secret value.
-  - `--password`: Admin password to unlock the vault (avoids interactive prompt).
+  - `--password`: Admin password to unlock the dashboard (avoids interactive prompt).
 - **`bastion run --project <ID> -- <command>`**: Inject all decrypted secrets from a project as environment variables.
   - `--project, -p`: Project ID (required).
-  - `--password`: Password to unlock the vault.
+  - `--password`: Password to unlock the dashboard.
 
 ## Global Flags
 

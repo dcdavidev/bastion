@@ -1,12 +1,12 @@
 # @dcdavidev/bastion-web
 
-Static assets for the **Bastion E2EE Secrets Vault** Dashboard.
+Static assets for the **Bastion E2EE Secrets Dashboard** Web UI.
 
-This package contains the compiled frontend of Bastion, a secure self-hosted end-to-end encrypted vault. It is designed to be served by the [Bastion Server](https://www.npmjs.com/package/@dcdavidev/bastion-server) or any static file server.
+This package contains the compiled frontend of Bastion, a secure self-hosted end-to-end encrypted dashboard. It is designed to be served by the [Bastion Server](https://www.npmjs.com/package/@dcdavidev/bastion-server) or any static file server.
 
 ## Features
 
-- **E2EE Dashboard**: Encrypt and decrypt secrets directly in your browser.
+- **E2EE Dashboard UI**: Encrypt and decrypt secrets directly in your browser.
 - **Blind Backend Integration**: Zero-knowledge architecture.
 - **Multi-Tenant UI**: Manage clients, projects, and collaborators.
 - **Built with React Router 7 & Pittorica UI**.
@@ -23,7 +23,7 @@ The assets will be available in `node_modules/@dcdavidev/bastion-web/build/clien
 
 ## Manual Usage
 
-If you want to serve the dashboard using Nginx or another web server, copy the contents of the `build/client` directory to your web root and ensure you handle SPA routing (redirecting all non-file requests to `index.html`).
+If you want to serve the dashboard UI using Nginx or another web server, copy the contents of the `build/client` directory to your web root and ensure you handle SPA routing (redirecting all non-file requests to `index.html`).
 
 ## Links
 

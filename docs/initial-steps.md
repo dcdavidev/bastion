@@ -1,6 +1,6 @@
 # Initial Steps 🚀
 
-Once you have cloned the repository and installed the dependencies, follow these steps to initialize your vault and start the Bastion services.
+Once you have cloned the repository and installed the dependencies, follow these steps to initialize your dashboard and start the Bastion services.
 
 ---
 
@@ -16,7 +16,7 @@ Once you have these, you can proceed with the automated setup.
 
 ---
 
-## 🔐 2. Initialize the Vault (Interactive Wizard)
+## 🔐 2. Initialize the Dashboard (Interactive Wizard)
 
 Bastion provides a comprehensive setup wizard that handles database connection, migrations, and superuser creation.
 
@@ -49,7 +49,7 @@ _Tip: Save these variables in a `.env` file in the project root._
 
 ## 🏗️ 3. Run the Unified Service
 
-Bastion serves both the API and the Web Dashboard from the same process. It relies on the frontend assets built in `apps/web/build/client`.
+Bastion serves both the API and the Dashboard UI from the same process. It relies on the frontend assets built in `apps/web/build/client`.
 
 ```bash
 # Start the server (requires the frontend to be built first)
@@ -60,7 +60,7 @@ pnpm dev:server
 
 | Service            | URL                                   | Description                     |
 | :----------------- | :------------------------------------ | :------------------------------ |
-| **Unified Portal** | `http://localhost:8287`               | Both the API and Web Dashboard. |
+| **Unified Portal** | `http://localhost:8287`               | Both the API and Dashboard UI.      |
 | **Status API**     | `http://localhost:8287/api/v1/status` | Real-time health check.         |
 
 ---

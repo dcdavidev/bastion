@@ -30,7 +30,7 @@ export default function NotFound() {
           p="8"
           style={{
             textAlign: 'center',
-            boxShadow: 'var(--pittorica-shadow-lg)',
+            boxShadow: 'var(--pittorica-shadow-6)',
           }}
         >
           <Stack gap="6" align="center">
@@ -58,11 +58,11 @@ export default function NotFound() {
                 404
               </Text>
               <Heading size="6" weight="bold">
-                Access Denied: Page Missing
+                Page Not Found
               </Heading>
               <Text color="muted" size="3">
-                The vault section you are trying to access does not exist or has
-                been unauthorized.
+                The section you are trying to access does not exist or has been
+                moved.
               </Text>
             </Stack>
 
@@ -84,7 +84,7 @@ export default function NotFound() {
               >
                 <Flex align="center" gap="2">
                   <IconHome size={18} />
-                  Dashboard
+                  Home
                 </Flex>
               </Button>
             </Flex>

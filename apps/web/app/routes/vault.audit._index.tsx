@@ -40,6 +40,7 @@ export default function AuditLogs() {
 
   useEffect(() => {
     async function fetchLogs() {
+      if (!token) return;
       setLoading(true);
       let url = `/api/v1/audit?limit=100`;
       if (actionFilter) url += `&action=${encodeURIComponent(actionFilter)}`;
@@ -52,7 +53,7 @@ export default function AuditLogs() {
         });
         if (response.ok) {
           const data = await response.json();
-          setLogs(data || []);
+          setLogs(Array.isArray(data) ? data : []);
         }
       } catch (error) {
         console.error('Failed to fetch logs', error);
@@ -61,7 +62,7 @@ export default function AuditLogs() {
       }
     }
 
-    fetchLogs();
+    void fetchLogs();
   }, [token, actionFilter, targetFilter]);
 
   return (
@@ -133,21 +134,13 @@ export default function AuditLogs() {
           </Table.Header>
           <Table.Body>
             {loading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                // eslint-disable-next-line @eslint-react/no-array-index-key
-                <Table.Row key={`loading-${i}`}>
-                  <Table.Cell colSpan={4}>
-                    <Box
-                      p="4"
-                      className="animate-pulse bg-surface-container"
-                      style={{
-                        borderRadius: 'var(--pittorica-radius-sm)',
-                        height: '40px',
-                      }}
-                    />
-                  </Table.Cell>
-                </Table.Row>
-              ))
+              <Table.Row>
+                <Table.Cell colSpan={4}>
+                  <Flex p="8" justify="center">
+                    <Text color="muted">Fetching logs...</Text>
+                  </Flex>
+                </Table.Cell>
+              </Table.Row>
             ) : logs.length === 0 ? (
               <Table.Row>
                 <Table.Cell colSpan={4}>
@@ -201,7 +194,7 @@ export default function AuditLogs() {
                         color="muted"
                         style={{ fontFamily: 'var(--pittorica-font-code)' }}
                       >
-                        {log.target_id?.slice(0, 13)}...
+                        {log.target_id?.slice(0, 8)}...
                       </Text>
                     </Stack>
                   </Table.Cell>
@@ -210,7 +203,9 @@ export default function AuditLogs() {
                       <Flex gap="1" wrap="wrap">
                         {Object.entries(log.metadata).map(([k, v]) => (
                           <Badge key={k} variant="standard" color="muted">
-                            {k}: {String(v)}
+                            <Text size="1">
+                              {k}: {String(v)}
+                            </Text>
                           </Badge>
                         ))}
                       </Flex>

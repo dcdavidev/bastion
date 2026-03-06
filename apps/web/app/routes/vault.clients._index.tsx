@@ -43,6 +43,7 @@ export default function Clients() {
   const navigate = useNavigate();
 
   const fetchClients = async () => {
+    if (!token) return;
     try {
       const response = await fetch('/api/v1/clients', {
         headers: {
@@ -51,7 +52,7 @@ export default function Clients() {
       });
       if (response.ok) {
         const data = await response.json();
-        setClients(data || []);
+        setClients(Array.isArray(data) ? data : []);
       }
     } catch (error) {
       console.error('Failed to fetch clients', error);
@@ -219,9 +220,7 @@ export default function Clients() {
                     <Button
                       variant="tonal"
                       size="sm"
-                      onClick={() =>
-                        navigate(`/dashboard/clients/${client.id}`)
-                      }
+                      onClick={() => navigate(`/vault/clients/${client.id}`)}
                     >
                       <Flex gap="1" align="center">
                         <Text>View Projects</Text>

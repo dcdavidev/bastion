@@ -61,11 +61,11 @@ export const meta: Route.MetaFunction = () => [
   {
     name: 'description',
     content:
-      'Bastion is a single-user, open-source E2EE secrets vault built with Go. It provides a secure, self-hosted fortress to manage multiple client secrets via a powerful CLI and dashboard, ensuring data stays private with blind-backend architecture.',
+      'Bastion is a single-user, open-source E2EE secrets dashboard built with Go. It provides a secure, self-hosted fortress to manage multiple client secrets via a powerful CLI and dashboard, ensuring data stays private with blind-backend architecture.',
   },
   { name: 'apple-mobile-web-app-title', content: 'Bastion' },
   { property: 'og:title', content: 'Bastion' },
-  { property: 'og:description', content: 'Secure E2EE secrets vault' },
+  { property: 'og:description', content: 'Secure E2EE secrets dashboard' },
   { property: 'og:image', content: '/og-image.png' },
   { name: 'twitter:card', content: 'summary_large_image' },
   { name: 'twitter:image', content: '/og-image.png' },
@@ -112,7 +112,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     if (error.status === 404) {
       title = 'Page Not Found';
       message =
-        "The vault section you're looking for doesn't exist or has been moved.";
+        "The dashboard section you're looking for doesn't exist or has been moved.";
     } else {
       title = error.statusText || title;
     }
